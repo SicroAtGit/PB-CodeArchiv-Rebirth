@@ -1,0 +1,5 @@
+;   Description: Adds lexer to the scintilla gadget
+;            OS: Windows, Linux, Mac
+; English-Forum:
+;  French-Forum:
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?f=8&t=30081

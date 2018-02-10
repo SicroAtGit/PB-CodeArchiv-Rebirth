@@ -1,0 +1,5 @@
+;   Description: Adds support for 3D drawing (uses the 2D drawing functions of PB)
+;            OS: Windows, Linux, Mac
+; English-Forum:
+;  French-Forum:
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?p=326490#p326490

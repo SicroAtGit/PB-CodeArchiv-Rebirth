@@ -1,0 +1,6 @@
+﻿;   Description: Audio IN and Out with WinAPI
+;            OS: Windows
+; English-Forum:
+;  French-Forum:
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?p=326031#p326031
+; -----------------------------------------------------------------------------

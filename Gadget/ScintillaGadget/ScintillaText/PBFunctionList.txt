@@ -1,0 +1,1755 @@
+AbortFTPFile (#Ftp) - Abort the current asyncrhonous file operation.
+AbortHTTP (HttpConnection) - Abort the download of the specified HTTP connection.
+Abs (Value) - Returns the absolute value (no sign) of the given float value.
+ACos (Number) - Returns the arc cosine of the specified number, in radian.
+ACosH (Number) - Returns the area hyperbolic cosine of the specified number.
+Add3DArchive (Name$, Type) - Add a new archive as path to search.
+AddBillboard (#BillboardGroup, x, y, z) - Add a billboard to the #BillboardGroup.
+AddCipherBuffer (#Cipher, *Input, *Output, Size) - Add a new buffer to the #Cipher.
+AddDate (Date, Type, Value) - Returns a new date.
+AddElement (List()) - Adds a new empty element after the current element.
+AddEntityAnimationTime (#Entity, Animation$, Time) - Add time to the specified #Entity animation.
+AddFingerprintBuffer (#Fingerprint, *Buffer, Size) - Add a new buffer to the fingerprint calculation.
+AddGadgetColumn (#Gadget, Position, Title$, Width) - Add a column to the specified #Gadget.
+AddGadgetItem (#Gadget, Position, Text$ [, ImageID [, Flags]]) - Add an item to a gadget (ListView, ComboBox etc...)
+AddGadgetItem3D (#Gadget3D, Position, Text$) - Add an item to a gadget (ListView, ComboBox etc...)
+AddImageFrame (#Image [, Index]) - Add a new frame to the image and set it as current frame.
+AddJSONElement (*JSONValue [, Index]) - Add an element to a JSON array
+AddJSONMember (*JSONValue, Key$) - Add a member to a JSON object
+AddKeyboardShortcut (#Window, Key, Event) - Add a keyboard shortcut to the specified #Window.
+AddMailAttachment (#Mail, Description$, Filename$ [, MimeType$]) - Add a file attachement.
+AddMailAttachmentData (#Mail, Description$, *Buffer, Size [, MimeType$]) - Add a file attachement from a memory area.
+AddMailRecipient (#Mail, Address$, Flags) - Add a recipient to the specified #Mail.
+AddMapElement (Map(), Key$ [, Flags]) - Adds a new empty element in the map.
+AddMaterialLayer (#Material, TextureID [, Mode [, TextureCoordinateIndex]) - Add a new texture layer to the #Material.
+AddNodeAnimationTime (#NodeAnimation, Time) - Add time to the specified #NodeAnimation.
+AddPackFile (#Pack, Filename$, PackedFilename$) - Add and compress the file to pack file.
+AddPackMemory (#Pack, *Buffer, Size, PackedFilename$) - Add and compress the memory area to pack file.
+AddPathArc (x1.d, y1.d, x2.d, y2.d, Radius.d, [, Flags]) - Add an arc to the vector drawing path
+AddPathBox (x.d, y.d, Width.d, Height.d [, Flags]) - Add a box to the vector drawing path
+AddPathCircle (x.d, y.d, Radius.d [, StartAngle.d, EndAngle.d [, Flags]]) - Add a circle (or part of it) to the vector drawing path
+AddPathCurve (x1.d, y1.d, x2.d, y2.d, x3.d, y3.d [, Flags]) - Add a curve to the vector drawing path
+AddPathEllipse (x.d, y.d, RadiusX.d, RadiusY.d [, StartAngle.d, EndAngle.d [, Flags]]) - Add an ellipse (or part of it) to the vector drawing path
+AddPathLine (x.d, y.d [, Flags]) - Add a straight line to the vector drawing path
+AddPathSegments (Segments$ [, Flags]) - Add path segments described in a string to the path
+AddPathText (Text$) - Add text to the vector drawing path
+AddSplinePoint (#Spline, x, y, z)
+AddStaticGeometryEntity (#StaticGeometry, EntityID, x, y, z [, ScaleX, ScaleY, ScaleZ [, RotateX, RotateY, RotateZ [, RotateW, Mode]]])
+AddStatusBarField (Width) - Add a field to the current Status Bar previously created with CreateStatusBar().
+AddSubEntity (#Entity, #SubEntity, Type [, OffsetX, OffsetY, OffsetZ [, SizeX, SizeY, SizeZ [, AxisX, AxisY, AxisZ]]]]]) - Add a sub entity to the #Entity.
+AddSubMesh ([Type])
+AddSysTrayIcon (#SysTrayIcon, WindowID, ImageID) - Add an icon in the SysTray area.
+AddTerrainTexture (#Terrain, Layer, WorldSize, DiffuseSpecular$, NormalHeight$) - Add a texture to the #Terrain.
+AddVehicleWheel (#Entity, #WheelEntity, xCP.f, yCP.f, zCP.f, AxisX.f, AxisY.f, AxisZ.f, MaxSuspensionLength.f, WheelRadius.f, TractionWheel, RollInfluence.f) - Add a wheel to a vehicle.
+AddVertexPoseReference (#Mesh, Animation$, Track, Index, PoseIndex, Influence) - Add a new vertex pose reference to the #Mesh track.
+AddWindowTimer (#Window, Timer, Timeout) - Add a timer event to the window.
+AESDecoder (*Input, *Output, Size, *Key, Bits, *InitializationVector [, Mode]) - Decodes the specified buffer using the AES algorithm.
+AESEncoder (*Input, *Output, Size, *Key, Bits, *InitializationVector [, Mode]) - Encodes the specified buffer using the AES algorithm.
+AffectedDatabaseRows (#Database) - Get number of rows affected by a database update.
+AllocateMemory (Size [, Flags]) - Allocates a contiguous memory area according to the specified size and returns the buffer start.
+AllocateStructure (StructureName)
+Alpha (Color) - Returns the alpha component of the given color
+AlphaBlend (Color1, Color2) - Returns the result of blending Color1 on Color2 with alphachannel.
+AmbientColor (Color) - Changes the ambient color of the world
+AntialiasingMode (Mode) - Set the fullscreen antialising mode for the 3D world.
+ApplyEntityForce (#Entity, x, y, z [, PositionX, PositionY, PositionZ]) - Apply a force to the #Entity.
+ApplyEntityImpulse (#Entity, x, y, z [, PositionX, PositionY, PositionZ]) - Apply a force to the  #Entity.
+ApplyEntityTorque (#Entity, x, y, z) - Apply a rotation force to the  #Entity.
+ApplyEntityTorqueImpulse (#Entity, x, y, z) - Apply a rotation force to the #Entity.
+ApplyVehicleBrake (#Entity, Wheel, Brake.f) - Apply brakes force to a vehicle wheel.
+ApplyVehicleForce (#Entity, Wheel, Force.f) - Apply force to a vehicle wheel.
+ApplyVehicleSteering (#Entity, Wheel, Steering.f) - Apply steering to a vehicle wheel.
+ArraySize (Array() [, Dimension]) - Returns the array size.
+Asc (String) - Returns the ASCII value of the first character in the string.
+Ascii (String$) - Create an Ascii string buffer.
+ASin (Number) - Returns the arc sine of the specified number, in radian.
+ASinH (Number) - Returns the area hyperbolic sine of the specified number.
+ATan (Number) - Returns the arc tangent of the specified number, in radian.
+ATan2 (x, y) - Returns the Arc-Tangent of x/y, in radian.
+ATanH (Number) - Returns the area hyperbolic tangent of the specified number.
+AttachEntityObject (#Entity, Bone$, ObjectID [, x, y, z, Pitch, Yaw, Roll]) - Attach an object to the #Entity.
+AttachNodeObject (#Node, ObjectID) - Attach an object to the #Node.
+AttachRibbonEffect (#Effect, NodeID) - Attach the ribbon #Effect to the node.
+AudioCDLength () - Returns the full length of an CD-Audio in seconds.
+AudioCDName () - Returns the name, system dependent, attached to the current CD-Audio drive.
+AudioCDStatus () - Possible values: -1 Ready; 0 Stopped; >0 Audio track which is currently playing.
+AudioCDTrackLength (TrackNumber) - Returns the length of the specified track, in seconds.
+AudioCDTracks () - Return the total numbers of tracks on the CD available for playing.
+AudioCDTrackSeconds () - Return the number of seconds elapsed since the current track has being start to play.
+AvailableProgramOutput (Program) - returns the number of bytes available for reading
+AvailableSerialPortInput (#SerialPort) - Return the number of remaining bytes in the input buffer.
+AvailableSerialPortOutput (#SerialPort) - Return the number of remaining bytes in the output buffer.
+BackColor (Color) - Set the default background color for graphic functions and text display.
+Base64Decoder (Input$, *Output, OutputSize) - Decodes the specified buffer using the Base64 algorithm.
+Base64DecoderBuffer (*Input, InputSize, *Output, OutputSize) - Decodes the specified buffer using the Base64 algorithm.
+Base64Encoder (*Input, InputSize [, Flags]) - Encodes the specified buffer using the Base64 algorithm.
+Base64EncoderBuffer (*Input, InputSize, *Output, OutputSize [, Flags]) - Encodes the specified buffer using the Base64 algorithm.
+BeginVectorLayer ([Alpha]) - Begin a new transparent layer for vector drawing
+BillboardGroupCommonDirection (#BillboardGroup, x, y, z) - Set the billboardgroup common direction.
+BillboardGroupCommonUpVector (#BillboardGroup, x, y, z) - Set the billboardgroup common up vector.
+BillboardGroupID (#BillboardGroup) - Returns the unique ID which identifies the billboard group in the operating system.
+BillboardGroupMaterial (#BillboardGroup, MaterialID) - Change the #BillboardGroup material used by all the billboards.
+BillboardGroupX (#BillboardGroup [, Mode]) - Returns the #BillboardGroup X absolute position.
+BillboardGroupY (#BillboardGroup [, Mode]) - Returns the #BillboardGroup Y absolute position.
+BillboardGroupZ (#BillboardGroup [, Mode]) - Returns the #BillboardGroup Z absolute position.
+BillboardHeight (#Billboard, #BillboardGroup) - Returns the #Billboard height, in world metric.
+BillboardLocate (#Billboard, #BillboardGroup, x, y, z) - Change the #Billboard absolute location, relative to the #BillboardGroup.
+BillboardWidth (#Billboard, #BillboardGroup) - Returns the #Billboard width, in world metric.
+BillboardX (#Billboard, #BillboardGroup) - Returns the #Billboard X absolute position in the #BillboardGroup.
+BillboardY (#Billboard, #BillboardGroup) - Returns the #Billboard Y absolute position in the #BillboardGroup.
+BillboardZ (#Billboard, #BillboardGroup) - Returns the #Billboard Z absolute position in the #BillboardGroup.
+Bin (Number.q [, Type]) - Converts a number in binary string form.
+BindEvent (Event, @Callback() [, Window [, Object [, EventType]]]) - Bind an event to a callback.
+BindGadgetEvent (#Gadget, @Callback() [, EventType]) - Bind a gadget event to a callback.
+BindMenuEvent (#Menu, MenuItem, @Callback()) - Bind a menu item event to a callback.
+Blue (Color) - Returns the blue component of the given color
+BodyPick (#Camera, Picked, x, y, Locked) - Allow to manipulate a body with the mouse
+Box (x, y, Width, Height [, Color]) - Draw a filled box of given dimensions on the current output.
+BoxedGradient (x, y, Width, Height) - Use a box shaped gradient when gradint drawing is enabled.
+BuildMeshShadowVolume (#Mesh)
+BuildMeshTangents (#Mesh)
+BuildStaticGeometry (#StaticGeometry)
+BuildTerrain (#Terrain) - Construct the #Terrain.
+ButtonGadget (#Gadget, x, y, Width, Height, Text$ [, Flags]) - Create a button gadget in the current GadgetList.
+ButtonGadget3D (#Gadget3D, x, y, Width, Height, Text$) - Create a button gadget in the current GadgetList
+ButtonImageGadget (#Gadget, x, y, Width, Height, ImageID [, Flags]) - Create a button gadget in the current GadgetList.
+CalendarGadget (#Gadget, x, y, Width, Height [, Date [, Flags]]) - Create Date selection Calendar
+CallCFunction (#Library, FunctionName$, [Arg1, [Arg2, ...]]) - Call a C function using its name.
+CallCFunctionFast (*Function, [Arg1, [Arg2, ...]]) - Call a C function quickly, using its pointer.
+CallFunction (#Library, FunctionName$, [Arg1, [Arg2, ...]]) - Call a function using its name.
+CallFunctionFast (*Function, [Arg1, [Arg2, ...]]) - Call a function quickly, using its pointer.
+CameraBackColor (#Camera, Color) - Changes the #Camera background color.
+CameraCustomParameter (#Camera, ParameterIndex, Value1, Value2, Value3, Value4) - Set a custom parameter to the #Entity shader script.
+CameraDirection (#Camera, x, y, z) - Change the #Camera direction.
+CameraDirectionX (#Camera [, Mode]) - Retrieve the x direction of the #Camera.
+CameraDirectionY (#Camera [, Mode]) - Retrieve the y direction of the #Camera.
+CameraDirectionZ (#Camera [, Mode]) - Retrieve the z direction of the #Camera.
+CameraFixedYawAxis (#Camera, Mode [, VectorX, VectorY, VectorZ]) - Change the way the yaw axis is managed.
+CameraFollow (#Camera, ObjectID, Angle, Height, Distance, RotationPercent, PositionPercent [, Mode])
+CameraFOV (#Camera, FOV) - Changes the #Camera Field Of View (FOV).
+CameraID (#Camera) - Returns the unique ID which identifies the camera in the operating system.
+CameraLookAt (#Camera, x, y, z) - Makes the camera to look at the x,y,z point.
+CameraPitch (#Camera [, Mode]) - Retrieve the pitch of the #Camera.
+CameraProjectionMode (#Camera, Mode [, Width, Height]) - Change the #Camera projection mode.
+CameraProjectionX (#Camera, x, y, z) - Return the X position, in pixels, of the 3D point.
+CameraProjectionY (#Camera, x, y, z) - Return the Y position, in pixels, of the 3D point.
+CameraRange (#Camera, Near, Far) - Change the #Camera range.
+CameraRenderMode (#Camera, RenderMode) - Change the #Camera render mode.
+CameraRoll (#Camera [, Mode]) - Retrieve the roll of the #Camera.
+CameraViewHeight (#Camera) - Retrieve the height of the #Camera view, in pixels.
+CameraViewWidth (#Camera) - Retrieve the width of the #Camera view, in pixels.
+CameraViewX (#Camera) - Retrieve the x position on the screen of the #Camera view, in pixels.
+CameraViewY (#Camera) - Retrieve the y position on the screen of the #Camera view, in pixels.
+CameraX (#Camera [, Mode]) - Retrieve the x position of the #Camera.
+CameraY (#Camera [, Mode]) - Retrieve the y position of the #Camera.
+CameraYaw (#Camera [, Mode]) - Retrieve the yaw of the #Camera.
+CameraZ (#Camera [, Mode]) - Retrieve the z position of the #Camera.
+CanvasGadget (#Gadget, x, y, Width, Height [, Flags]) - Create a canvas gadget in the current GadgetList.
+CanvasOutput (#Gadget) - Returns the OutputID of the specified #Gadget to perform 2D rendering operation on it.
+CanvasVectorOutput (#Gadget [, Unit]) - Returns the OutputID of the specified #Gadget to perform vector drawing on it.
+CatchImage (#Image, *Memory [, Size]) - Create a new #Image found at the specified memory address.
+CatchJSON (#JSON, *Buffer, Size [, Flags]) - Parse JSON from a memory buffer
+CatchMusic (#Music, *Memory, Length) - Create a new #Music found at the specified memory address.
+CatchSound (#Sound, *Buffer [, Size [, Flags]]) - Load a sound found a the specified memory address.
+CatchSprite (#Sprite, MemoryID [, Mode]) - Catch a sprite from memory in BMP format.
+CatchXML (#XML, *Address, Size [, Flags [, Encoding]]) - Parse XML from memory
+CGIBuffer () - Get the CGI web content buffer pointer.
+CGICookieName (Index) - Get the specified CGI cookie name.
+CGICookieValue (Name$) - Get the specified CGI cookie value.
+CGIParameterData (Name$ [, Index]]) - Get the specified CGI parameter data.
+CGIParameterDataSize (Name$ [, Index]]) - Get the specified CGI parameter data size.
+CGIParameterName (Index) - Get the specified CGI parameter name.
+CGIParameterType (Name$ [, Index]]) - Get the specified CGI parameter type.
+CGIParameterValue (Name$ [, Index]) - Get the specified CGI parameter value.
+CGIVariable (VariableName$) - Get the specified CGI variable content.
+ChangeCurrentElement (List(), *NewElement) - Changes the current element of the specified list to the given new element.
+ChangeGamma (RedIntensity, GreenIntensity, BlueIntensity) - Change the Gamma for the current screen.
+ChangeSysTrayIcon (#SysTrayIcon, ImageID) - Change a specified icon in the SysTray area.
+CheckBoxGadget (#Gadget, x, y, Width, Height, Text$ [, Flags]) - Create a checkbox gadget in the GadgetList.
+CheckBoxGadget3D (#Gadget3D, x, y, Width, Height, Text$) - Create a checkbox gadget in the GadgetList.
+CheckDatabaseNull (#Database, Column) - Returns #True if the specified column contains NULL.
+CheckFilename (Filename$) - Check if the filename is valid.
+CheckFTPConnection (#Ftp) - Check if the FTP server is still responding.
+CheckObjectVisibility (#Camera, ObjectID) - Check if the object is currently visible on the specified camera.
+ChildXMLNode (Node [, n]) - Get the nth child of the given XML node (default is the 1st child)
+Chr (ASCII) - Returns the character associated with the given ASCII value.
+Circle (x, y, Radius [, Color]) - Draw a filled circle on the current output
+CircularGradient (x, y, Radius) - Use a circular gradient when gradient drawing is enabled.
+ClearBillboards (#BillboardGroup) - Remove and destroy all the billboards of the #BillboardGroup.
+ClearClipboard () - Clear the clipboard of its content.
+ClearConsole () - Clear the whole console content.
+ClearDebugOutput () - Clear the content of the debug output window.
+ClearGadgetItems (#Gadget) - Clear all the items of the specified #Gadget.
+ClearGadgetItems3D (#Gadget3D) - Clear all the items of the specified #Gadget3D.
+ClearJSONElements (*JSONValue) - Clear the elements of a JSON array
+ClearJSONMembers (*JSONValue) - Clear the members of a JSON object
+ClearList (List()) - Clears all the elements in this list and releases their memory.
+ClearMap (Map()) - Clears all the elements in this map and releases their memory.
+ClearScreen (Color) - Clear the whole screen with the specified RGB color.
+ClearSpline (#Spline) - Clear the #Spine.
+ClearStructure (*Structure, Structure) - Clear the specified *Structure.
+ClipOutput (x, y, Width, Height) - Restrict drawing output to a clipping rectangle
+ClipPath ([Flags]) - Add the vector drawing path to the output clipping
+ClipSprite (#Sprite, x, y, Width, Height) - Add a clip zone to the specified sprite.
+CloseConsole () - Close the current console
+CloseCryptRandom () - Close the cryptographic random number generator.
+CloseDatabase (#Database) - Close the specified database.
+CloseDebugOutput () - Close the debug output window.
+CloseFile (#File) - Close the specified file.
+CloseFTP (#Ftp) - Close the specified client connection and send a notification to the server.
+CloseGadgetList () - Terminates the current GadgetList creation and go back to the previous GadgetList.
+CloseGadgetList3D () - Terminates the current GadgetList creation and go back to the previous GadgetList.
+CloseHelp () - Close a previously opened Help window.
+CloseLibrary (#Library) - Close the specified library
+CloseNetworkConnection (Connection) - Close the specified client connection and send a notification to the server.
+CloseNetworkServer (#Server) - Shutdown the specified server.
+ClosePack (#Pack) - Close specified pack.
+ClosePath () - Close the currente vector drawing path by connecting start & end with a straight line
+ClosePreferences () - Close the currently opened preference file.
+CloseProgram (Program) - Close the interaction with the specified program
+CloseScreen () - Close the current screen (Either windowed or full screen mode).
+CloseSerialPort (#SerialPort) - Close the specified #SerialPort.
+CloseSubMenu () - Close the actual sub menu and come back to the previous one.
+CloseWindow (#Window) - Close the specified window.
+CloseWindow3D (#Window3D) - Close the specified window.
+ColorRequester ([Color]) - Open the standard requester to choose a color.
+ComboBoxGadget (#Gadget, x, y, Width, Height [, Flags]) - Create a combobox gadget in the current GadgetList.
+ComboBoxGadget3D (#Gadget3D, x, y, Width, Height [, Flags]) - Create a combobox gadget in the current GadgetList.
+CompareMemory (SourceMemory, DestinationMemory, Length) - Compares two memory areas and returns 1 if its equal or 0 if it doesn't match.
+CompareMemoryString (*String1, *String2 [, Mode [, Length [, Flags]]]) - Returns 0 if *String1 equals *String2, -1 or 1 if *String1 is below or above than *String2.
+ComposeJSON (#JSON [, Flags]) - Compose a JSON data into a string
+ComposeXML (#XML [, Flags]) - Compose an XML tree into a string
+CompositorEffectParameter (#Effect, TechniqueID, PassID, EffectName$, DataType, *Data)
+CompressMemory (*Buffer, Size, *Output, OutputSize [, PluginID [, Level]]) - Compress the content of the *Buffer into *Output.
+ComputerName () - Returns the name of the computer
+ComputeSpline (#Spline, Time) - Compute the #Spline at the given time.
+ConeTwistJoint (#Joint, EntityID, FxA, FyA, FzA [, EntityID2, FxB, FyB, FzB]) - Create a cone twist joint.
+ConicalGradient (x, y, Angle.f) - Use a conical gradient when gradient drawing is enabled.
+ConnectionID (Connection) - Returns the unique system identifier of the connection.
+ConsoleColor (CharacterColor, BackgroundColor) - Change the colors used by the text display.
+ConsoleCursor (Height) - Change the cursor display.
+ConsoleError (Message$) - Write a message to the standard error output
+ConsoleLocate (x, y) - Move the cursor to the given position, in character.
+ConsoleTitle (Title$) - Change the console title to the new given one.
+ContainerGadget (#Gadget, x, y, Width, Height [, Flags]) - Create a gadget container in the current GadgetList.
+ContainerGadget3D (#Gadget3D, x, y, Width, Height) - Create a gadget container in the current GadgetList.
+ConvertCoordinateX (x.d, y.d [, Source, Target]) - Convert a point between coordinate systems
+ConvertCoordinateY (x.d, y.d [, Source, Target]) - Convert a point between coordinate systems
+ConvertLocalToWorldPosition (ObjectID, x, y, z) - Convert local position of the object into world coordinate.
+ConvertWorldToLocalPosition (ObjectID, x, y, z) - Convert world position of the object into local coordinate.
+CopyArray (SourceArray(), DestinationArray()) - Copy all the elements from the array to the destination array to have two identical arrays.
+CopyDebugOutput () - Copy the content of the debug output window into the clipboard.
+CopyDirectory (SourceDirectory$, DestinationDirectory$, Pattern$ [, Flags]) - Copy the source file to the destination.
+CopyEntity (#Entity, #NewEntity) - Copy the specified #Entity on the #NewEntity.
+CopyFile (SourceFileName$, DestinationFileName$) - Copy the source file to the destination.
+CopyImage (#Image1, #Image2) - Create a new #Image2 identical to the source #Image1.
+CopyLight (#Light, #NewLight) - Copy the specified #Light on the #NewLight.
+CopyList (List(), DestinationList()) - Copy all the elements from the list to the destination list to have two identical lists.
+CopyMap (Map(), DestinationMap()) - Copy all the elements from the map to the destination map to have two identical map.
+CopyMaterial (#Material, #NewMaterial) - Copy the specified #Material on the #NewMaterial.
+CopyMemory (SourceMemory, DestinationMemory, Length) - Copy a memory area from 'SourceMemory' to 'DestinationMemory'.
+CopyMemoryString (*String [, DestinationMemory]) - Copy the *String to destination memory address or after the last one.
+CopyMesh (#Mesh, #NewMesh) - Copy the specified #Mesh on the #NewMesh.
+CopySprite (#Sprite1, #Sprite2 [, Mode]) - Copy the #Sprite1 to #Sprite2.
+CopyStructure (*Source, *Destination, Structure) - Copy the *Source structure to the *Destination structure.
+CopyTexture (#Texture, #NewTexture) - Copy the specified #Texture on the #NewTexture.
+CopyXMLNode (Node, ParentNode [, PreviousNode]) - Copy the XML node to a new location (or different XML tree)
+Cos (Angle) - Returns the cosinus of the specified angle, in radian.
+CosH (Angle) - Returns the hyperbolic cosine of the specified angle.
+CountBillboards (#BillboardGroup) - Count the billboards number contained in the #BillboardGroup.
+CountCGICookies () - Get the number of cookies.
+CountCGIParameters () - Get the number of cookies.
+CountCPUs ([Type]) - Returns the number of processors available.
+CountGadgetItems (#Gadget) - Count all the items of the specified #Gadget.
+CountGadgetItems3D (#Gadget3D) - Count all the items of the specified #Gadget3D.
+CountLibraryFunctions (#Library) - Count the total number of functions available in the #Library
+CountMaterialLayers (#Material) - Returns the number of textures layers the #Material contains.
+CountProgramParameters () - Get the number of parameters passed to this program
+CountRegularExpressionGroups (#RegularExpression) - Return the number of capturing groups in the regular expression.
+CountSplinePoints (#Spline) - Return the number of point in the #Spine.
+CountString (String$, StringToCount$) - Count the number of occurence of a string
+CPUName () - Returns the name of the CPU
+CreateBillboardGroup (#BillboardGroup, MaterialID, DefaultBillboardWidth, DefaultBillboardHeight, [x, y, z [, VisibilityMask [, Type]]]) - Creates a new #BillboardGroup.
+CreateCamera (#Camera, x, y, Width, Height [, VisibilityMask]) - Create a new #Camera. All the dimensions are in pourcents.
+CreateCapsule (#Mesh, Radius.f, Height.f [, NbRings, NbSegments, NbHeightSegments]) - Create a new capsule mesh.
+CreateCompositorEffect (#Effect, CameraID, EffectName$)
+CreateCone (#Mesh, Radius.f, Height.f [, NbBaseSegments, NbHeightSegments]) - Create a new cone mesh.
+CreateCube (#Mesh, Size) - Create a new cube mesh.
+CreateCubeMapTexture (#Texture, Width, Height, TextureName$ [, BackColor]) - Create a new cube map #Texture.
+CreateCylinder (#Mesh, Radius.f, Height.f [, NbBaseSegments, NbHeightSegments, CloseTop]) - Create a new cylinder mesh.
+CreateDialog (#Dialog) - Creates a new dialog.
+CreateDirectory (DirectoryName$) - Create a new directory.
+CreateEntity (#Entity [, MeshID, MaterialID [, x, y, z [, PickMask [, VisibilityMask]]]]) - Create a new #Entity based on the specified Mesh and Material at the given position.
+CreateEntityBody (#Entity, Type [, Mass [, Restitution, Friction [, SizeX, SizeY, SizeZ [, AxisX, AxisY, AxisZ]]]]) - Create a new body for the #Entity.
+CreateFile (#File, FileName$ [, Flags]) - Create an empty file.
+CreateFTPDirectory (#Ftp, Directory$) - Create a new directory on the FTP server.
+CreateIcoSphere (#Mesh, Radius.f [, Iterations]) - Create a new icosphere mesh.
+CreateImage (#Image, Width, Height [, Depth [, BackColor]]) - Create an empty #Image which can be used to do rendering on it.
+CreateImageMenu (#Menu, WindowID [, Flags]) - Creates a new empty menu with images support.
+CreateJSON (#JSON [, Flags]) - Create new JSON data with a value of type #PB_JSON_Null
+CreateLensFlareEffect (#Effect, CameraID, NodeID, BurstSize, HaloSize, HaloMaterialID, CircleMaterialID, BurstMaterialID) - Create a new lens flare #Effect.
+CreateLight (#Light, Color [, x, y, z [, Flags]]) - Create a new #Light.
+CreateLine3D (#Mesh, x, y, z, Color, x2, y2, z2, Color2)
+CreateMail (#Mail, From$, Subject$ [, Encoding]) - Create a new mail.
+CreateMaterial (#Material, TextureID) - Create a new #Material based on the specified Texture.
+CreateMenu (#Menu, WindowID) - Creates a new empty menu.
+CreateMesh (#Mesh [, Type [, Mode]]) - Create a new empty #Mesh.
+CreateMutex () - Create a new mutex syncronisation object.
+CreateNetworkServer (ServerID, Port [, Type [, BindedIP$]]) - Create a new network server on the local computer at the specified port.
+CreateNode (#Node [, x, y, z]) - Create a new #Node.
+CreateNodeAnimation (#NodeAnimation, NodeID, Length, Interpolation, RotationInterpolation) - Create a new #NodeAnimation.
+CreateNodeAnimationKeyFrame (#NodeAnimation, Time, x, y, z) - Create a new keyframe for the #NodeAnimation.
+CreatePack (#Pack, Filename$ [, PluginID [, Level]]) - Creates a new empty pack file.
+CreateParticleEmitter (#ParticleEmitter, Width, Height, Depth, Type [, x, y, z]) - Create a new #ParticleEmitter at the given position.
+CreatePlane (#Mesh, TileSizeX.f, TileSizeZ.f, TileCountX, TileCountZ, TextureRepeatCountX.f, TextureRepeatCountZ.f) - Create a new plane mesh.
+CreatePopupImageMenu (#Menu [, Flags]) - Creates a new empty popup menu with images support.
+CreatePopupMenu (#Menu) - Creates a new empty popup menu.
+CreatePreferences (Filename$ [, Flags]) - Creates a new empty preference file.
+CreateRegularExpression (#RegularExpression, Pattern$ [, Flags]) - Create a new regular expression.
+CreateRenderTexture (#Texture, CameraID, Width, Height [, Flags [, RenderTextureName$]]) - Create a new render #Texture.
+CreateRibbonEffect (#Effect, MaterialID, NbChains, NbElements, Length)
+CreateSemaphore ([InitialCount]) - Create a new semaphore syncronisation object.
+CreateSphere (#Mesh, Radius.f [, NbSegments, Rings]) - Create a new sphere mesh.
+CreateSpline (#Spline) - Create a new empty #Spline
+CreateSprite (#Sprite, Width, Height [, Mode]) - Create a new blank sprite.
+CreateStaticGeometry (#StaticGeometry, Width, Height, Length, EnableShadows)
+CreateStatusBar (#StatusBar, WindowID) - Create and add an empty StatusBar to the specified WindowID.
+CreateTerrain (#Terrain, Size, WorldSize, Scale, NbLayers, Filename$, Extension$) - Create a new #Terrain.
+CreateTerrainBody (#Terrain, Restitution, Friction) - Add a static physic body to the #Terrain.
+CreateText3D (#Text3D, Caption$ [, Font$, Scale, Color])
+CreateTexture (#Texture, Width, Height [, Name$]) - Create a new blank #Texture.
+CreateThread (@Procedure(), Parameter) - Create a new thread running in the application background.
+CreateToolBar (#ToolBar, WindowID [, Flags]) - Create an empty toolbar identified by the number '#ToolBar'.
+CreateTorus (#Mesh, Radius.f, SectionRadius.f [, NbSectionSegments, NbCircleSegments]) - Create a new torus mesh.
+CreateTube (#Mesh, OuterRadius.f, InnerRadius.f, Height.f [, NbBaseSegments, NbHeightSegments]) - Create a new tube mesh.
+CreateVehicle (#Entity) - Create a new vehicle entity.
+CreateVehicleBody (#Entity, Mass.f, Restitution.f, Friction.f [, SuspensionStiffness.f, SuspensionCompression.f, SuspensionDamping.f, MaxSuspensionCompression.f, Friction.f]) - Create a body for a vehicle.
+CreateVertexAnimation (#Mesh, Animation$, Length) - Create a new vertex animation for the #mesh.
+CreateVertexPoseKeyFrame (#Mesh, Animation$, Track, Time) - Create a new keyframe to the #Mesh track.
+CreateVertexTrack (#Mesh, Animation$, Index) - Create a new track to the #Mesh animation.
+CreateWater (#Camera, x, y, z, Transparency, Flags) - Create a water plane at the given position
+CreateXML (#XML [, Encoding]) - Create a new empty XML tree
+CreateXMLNode (ParentNode, Name$ [, PreviousNode [, Type]]) - Create a new node inside the XML tree
+CryptRandom (Maximum) - Get a number from the cryptographic random number generator.
+CryptRandomData (*Buffer, Length) - Fill a buffer with data from the cryptographic random number generator.
+CustomDashPath (Width.d, Array.d() [, Flags [, StartOffset.d]]) - Draw a dashed line with custom dash lengths along the vector drawing path
+CustomFilterCallback (@Callback()) - Set a callback for the #PB_2DDrawing_CustomFilter mode.
+CustomGradient (@Callback()) - Use a callback procedure to define the gradient if gradient drawing is enabled.
+DashPath (Width.d, Length.d [, Flags [, StartOffset.d]]) - Draw an evenly dashed line along the vector drawing path
+DatabaseColumnIndex (#Database, ColumnName$) - Returns the zero-based index of the specified column name.
+DatabaseColumnName (#Database, Column) - Returns the name of the specified column.
+DatabaseColumns (#Database) - Returns the numbers of columns (fields) in the specified opened database.
+DatabaseColumnSize (#Database, Column) - Returns the type of the specified column.
+DatabaseColumnType (#Database, Column) - Returns the type of the specified column.
+DatabaseDriverDescription () - Returns the description of the current databaser driver.
+DatabaseDriverName () - Returns the name of the current databaser driver.
+DatabaseError () - Returns last error (if any) in human readable form.
+DatabaseID (#Database) - Returns the database handle for direct access with the related API.
+DatabaseQuery (#Database, Request$ [, Flags]) - Executes the SQL Request$ on the specified database.
+DatabaseUpdate (#Database, Request$) - Executes the SQL Request$ on the specified database (update mode).
+Date ([Year, Month, Day, Hour, Minute, Second]) - Returns the number of seconds ellapsed since the 1st January 1970
+DateGadget (#Gadget, x, y, Width, Height [, Mask$ [, Date [, Flags]]]) - Create a Date/Time selector Gadget
+Day (Date) - Returns the day value of the specified date (between 1 and 31).
+DayOfWeek (Date) - Returns the day value in the week of the specified date (0=Sunday, 6=Saturday).
+DayOfYear (Date) - Returns the number of days ellapsed since the beginning of the year of the specified date (betwenn 1 and 366).
+DebuggerError (Message$) - Stop execution and show a debugger error
+DebuggerWarning (Message$) - Show a debugger warning
+DefaultPrinter () - Use the default printer to print.
+DefineTerrainTile (#Terrain, TileX, TileY, HeightMap$, FlipX, FlipY) - Defines a new #Terrain tile.
+Degree (Angle) - Converts the given angle from radian to degree.
+Delay (Time) - Waits the specified time (in milliseconds)
+DeleteDirectory (SourceDirectory$, Pattern$ [, Flags]) - Delete the directory.
+DeleteElement (List() [, Flags]) - Remove the current element from the list.
+DeleteFile (FileName$ [, Flags]) - Delete the specified file.
+DeleteFTPDirectory (#Ftp, Directory$) - Delete a directory on the FTP server.
+DeleteFTPFile (#Ftp, Filename$) - Delete a file on the FTP server.
+DeleteMapElement (Map() [, Key$]) - Remove the current element from the map.
+DeleteXMLNode (Node) - Delete the given XML node and all its childs from its XML tree
+DESFingerprint (Password$, Key$) - Returns the 13 characters DES (Unix Crypt: Salt2) hash code.
+DesktopDepth (#Desktop) - Returns the depth (bits per pixels) of the specified desktop.
+DesktopFrequency (#Desktop) - Returns the frenquency (in Hz) of the specified desktop.
+DesktopHeight (#Desktop) - Returns the height (in pixels) of the specified desktop.
+DesktopMouseX () - Returns the absolute x mouse position.
+DesktopMouseY () - Returns the absolute y mouse position.
+DesktopName (#Desktop) - Returns the system name of the specified desktop, if any.
+DesktopWidth (#Desktop) - Returns the width (in pixels) of the specified desktop.
+DesktopX (#Desktop) - Returns X coordinate of the upper left desktop corner.
+DesktopY (#Desktop) - Returns Y coordinate of the upper left desktop corner.
+DetachEntityObject (#Entity, ObjectID) - Detach the object from the #Entity.
+DetachNodeObject (#Node, ObjectID) - Detach the object of the #Node.
+DetachRibbonEffect (#Effect, NodeID) - Detach the ribbon #Effect from the node.
+DialogError (#Dialog) - Returns the error occured in the #Dialog creation.
+DialogGadget (#Dialog, Name$) - Returns the specified #Gadget associated with the dialog.
+DialogID (#Dialog) - Returns the unique ID which identifies the dialog in the operating system.
+DialogWindow (#Dialog) - Returns the #Window associated with the dialog.
+DirectoryEntryAttributes (#Directory) - Return the attributes of the current entry in the directory.
+DirectoryEntryDate (#Directory, Type) - Return the modified/created/accessed date of the current entry in the directory.
+DirectoryEntryName (#Directory) - Return the name of the current entry in the directory.
+DirectoryEntrySize (#Directory) - Return the size of the current entry in the directory.
+DirectoryEntryType (#Directory) - Return the type of the current entry in the directory.
+DisableEntityBody (#Entity, Disable) - Disable the #Entity body, so the physics are ignored.
+DisableGadget (#Gadget, State) - Disable or enable a gadget.
+DisableGadget3D (#Gadget3D, State) - Disable or enable a gadget.
+DisableLightShadows (#Light, Disable)
+DisableMaterialLighting (#Material, Disable) - Disable the dynamic lighting on the #Material.
+DisableMenuItem (#Menu, MenuItem, State) - Disable or enable a menu item.
+DisableParticleEmitter (#ParticleEmitter, State) - Disable or enable a particle emitter.
+DisableToolBarButton (#ToolBar, ButtonID, State) - Disable or enable the given toolbar button (1=Disable, 0=Enable).
+DisableWindow (#Window, State) - Disable all user input to the window.
+DisableWindow3D (#Window3D, State) - Disable all user input to the window.
+DisplayPopupMenu (#Menu, WindowID() [, x, y]) - Display a previously created #PopupMenu.
+DisplaySprite (#Sprite, x, y) - Display the #Sprite at the specified position on the current sprite buffer.
+DisplayTransparentSprite (#Sprite, x, y [, Intensity [, Color]]) - Display the #Sprite at the specified position on the current screen.
+DotPath (Width.d, Distance.d [, Flags [, StartOffset.d]]) - Draw a dotted line along the vector drawing path
+DoubleClickTime () - Returns the systen setting for the double-click time in milliseconds.
+DragFiles (Files$ [, Actions]) - Start a Drag and Drop operation with a list of Files.
+DragImage (ImageID [, Actions]) - Start a Drag and Drop operation with the given Image.
+DragOSFormats (Formats(), Count [, Actions]) - Start a Drag and Drop operation with multiple clipboard formats.
+DragPrivate (Type [, Actions]) - Start a Drag and Drop operation within the current program only with the given private type.
+DragText (Text$ [, Actions]) - Start a Drag and Drop operation with the given Text.
+DrawAlphaImage (ImageID, x, y [, Alpha]) - Display the image on the current output, using the alpha information.
+DrawImage (ImageID, x, y [, Width, Height]) - Display the image on the current output. On the fly resize is possible.
+DrawingBuffer () - Returns the current drawing memory buffer.
+DrawingBufferPitch () - Returns the number of bytes need for a full line.
+DrawingBufferPixelFormat () - Returns the pixel format of the current drawing buffer.
+DrawingFont (FontID()) - Sets the current font to given FontID.
+DrawingMode (Mode) - Change the drawing mode for graphic and text output
+DrawRotatedText (x, y, Text$, Angle.f [, Color]) - Display the given string at the given angle.
+DrawText (x, y, Text$ [, FrontColor [, BackColor]]) - Display the given string on the current output.
+DrawVectorImage (ImageID [, Alpha [, Width.d, Height.d]]) - Draw an image to the vector output
+DrawVectorParagraph (Text$, Width.d, Height.d [, Flags]) - Draw a paragraph of text inside a bounding box
+DrawVectorText (Text$) - Draw text directly to the vector drawing output
+EditorGadget (#Gadget, x, y, Width, Height [, Flags]) - Create an Editor gadget in the current GadgetList.
+EditorGadget3D (#Gadget3D, x, y, Width, Height [, Flags]) - Create an Editor gadget in the current GadgetList.
+EjectAudioCD (State) - Eject (open) or close the current CD-Drive.
+ElapsedMilliseconds () - Returns the number of milliseconds elapsed since the computer start.
+Ellipse (x, y, RadiusX, RadiusY [, Color]) - Draw a filled ellipse on the current output.
+EllipticalGradient (x, y, RadiusX, RadiusY) - Use an elliptical gradient when gradient drawing is enabled.
+EnableGadgetDrop (#Gadget, Format, Actions [, PrivateType]) - Enable the Gadget as a Drag and Drop target for the given Format.
+EnableGraphicalConsole (State) - Enable or disable the graphical console.
+EnableHingeJointAngularMotor (#Joint, Enable, TargetVelocity, MaxMotorImpulse) - Enable the angular motor on the hinge #Joint.
+EnableManualEntityBoneControl (#Entity, Bone$, State, InheritOrientation) - Enable the #Entity bone manual control.
+EnableWindowDrop (#Window, Format, Actions [, PrivateType]) - Enable the Window as a Drag and Drop target for the given Format.
+EnableWorldCollisions (Enable) - Enable the world collisions
+EnableWorldPhysics (Enable) - Enable the world physics
+EncodeImage (#Image [, Format [, Flags [, Depth]]]) - Encode the specified image into memory.
+EndVectorLayer () - End a transparent layer for vector drawing
+Engine3DStatus (Type) - Get the state of the 3D engine.
+EntityAngularFactor (#Entity, x, y, z) - Change the angular factor of the #Entity.
+EntityAnimationBlendMode (#Entity, Mode) - Change the entity blend mode.
+EntityAnimationStatus (#Entity, Animation$) - Return the specified #Entity animation status.
+EntityBonePitch (#Entity, Bone$) - Return the pitch of the bone, relative to the #Entity.
+EntityBoneRoll (#Entity, Bone$) - Return the roll of the bone, relative to the #Entity.
+EntityBoneX (#Entity, Bone$ [, OffsetX, OffsetY, OffsetZ]) - Return the x position of the bone, relative to the #Entity.
+EntityBoneY (#Entity, Bone$ [, OffsetX, OffsetY, OffsetZ]) - Return the y position of the bone, relative to the #Entity.
+EntityBoneYaw (#Entity, Bone$) - Return the yaw of the bone, relative to the #Entity.
+EntityBoneZ (#Entity, Bone$ [, OffsetX, OffsetY, OffsetZ]) - Return the z position of the bone, relative to the #Entity.
+EntityBoundingBox (#Entity, Flags) - Return the position of the #Entity bounding box.
+EntityCollide (#Entity, #Entity2) - Test if the entities are colliding.
+EntityCubeMapTexture (#Texture, #Entity) - Apply the cube map #Texture to the #Entity.
+EntityCustomParameter (#Entity, SubEntityIndex, ParameterIndex, Value1, Value2, Value3, Value4) - Set a custom parameter to the #Entity shader script.
+EntityFixedYawAxis (#Entity, Mode [, VectorX, VectorY, VectorZ]) - Change the way the yaw axis is managed.
+EntityID (#Entity) - Return the unique #Entity system identifier.
+EntityLinearFactor (#Entity, x, y, z) - Change the linear factor of the #Entity.
+EntityLookAt (#Entity, x, y, z [, DirectionX, DirectionY, DirectionZ]) - Change the #Entity orientation to look at the specified point.
+EntityMesh (#Entity, MeshID) - Change the #Entity mesh with the new one.
+EntityParentNode (#Entity) - Return the parent #Entity node.
+EntityPitch (#Entity [, Mode]) - Return the pitch of the #Entity.
+EntityRenderMode (#Entity, Mode) - Change the way the #Entity will be rendered.
+EntityRoll (#Entity [, Mode]) - Return the roll of the #Entity.
+EntityVelocity (#Entity, x, y, z) - Change the linear velocity of the #Entity.
+EntityX (#Entity [, Mode]) - Return the x position of the #Entity.
+EntityY (#Entity [, Mode]) - Return the y position of the #Entity.
+EntityYaw (#Entity [, Mode]) - Return the yaw of the #Entity.
+EntityZ (#Entity [, Mode]) - Return the z position of the #Entity.
+EnvironmentVariableName () - Get the name of the currently examined environment variable
+EnvironmentVariableValue () - Get the value of the currently examined environment variable
+Eof (#File) - Returns not null if the end of file has been reached. 0 Else.
+ErrorAddress () - get the Code address at which the error happened
+ErrorCode () - Returns the current error code
+ErrorFile () - Returns the source filename in which the current error occured
+ErrorLine () - Returns the line number at which the current error occured
+ErrorMessage ([ErrorNumber]) - Returns a string message for the current error or the given error number
+ErrorRegister (Register) - get the content of a register at the time of the error
+ErrorTargetAddress () - get the Memory address for a memory access error.
+EscapeString (String [, Flags]) - Returns the escaped string.
+Event () - Returns the current event.
+EventClient () - Server side: allow to know which client has sent the data.
+EventData () - Returns the data associated to the event.
+EventDropAction () - Return the action that is to be taken with the dropped data.
+EventDropBuffer () - Return the raw memory buffer of the data received from a Drag and Drop event.
+EventDropFiles () - Return the Filenames received from a Drag and Drop event.
+EventDropImage (#Image [, Depth]) - Create a new Image from the data received from a Drag and Drop event.
+EventDropPrivate () - Return the type that was specified when starting a private Drag and Drop operation.
+EventDropSize () - Return the size of the buffer of data received from a Drag and Drop event.
+EventDropText () - Return the text received from a Drag and Drop event.
+EventDropType () - Return the type of format that was received from the Drag and Drop event.
+EventDropX () - Return the X position where the drop event took place in the gadget/window.
+EventDropY () - Return the Y position where the drop event took place in the gadget/window.
+EventGadget () - Returns the gadget number (#Gagdet) which triggered the event.
+EventGadget3D () - Returns which gadget has been pushed (return the #Gadget3D number).
+EventlParam () - Returns the l-Param from the Message. (Windows only!)
+EventMenu () - Returns the menu item (#MenuItem) which triggered the event .
+EventServer () - Server side: allow to know on which server the data has been recieved.
+EventTimer () - Returns the timer identifier which triggered the event.
+EventType () - After a WindowEvent() or WaitWindowEvent() command, use this function to determine of which type the event is.
+EventType3D () - After a WindowEvent3D() command, use this function to determine of which type the event is.
+EventWindow () - Returns on which window (#Window) the event occured.
+EventWindow3D () - Returns on which window the event has occured (return the #Window3D number).
+EventwParam () - Returns the w-Param from the Message. (Windows only!)
+ExamineAssembly (*Address [, *EndAddress]) - Start disassembling code at the given address
+ExamineDatabaseDrivers () - Examines the installed database drivers available on the system.
+ExamineDesktops () - Retrieves informations about user's desktops and returns the number of desktops.
+ExamineDirectory (#Directory, DirectoryName$, Pattern$) - Start to examine the specified directory for future listing.
+ExamineEnvironmentVariables () - Start examining the environment block
+ExamineFTPDirectory (#Ftp) - Examine the current directory on the FTP server.
+ExamineIPAddresses ([Format]) - Start to examine the host current IPs.
+ExamineJoystick (#Joystick) - Examine the current state of the #Joystick
+ExamineJSONMembers (*JSONValue) - Examine the members of a JSON object
+ExamineKeyboard () - Update the keyboard state.
+ExamineLibraryFunctions (#Library) - Start to examine the functions contained in the #Library
+ExamineMouse () - Update the mouse state.
+ExaminePack (#Pack) - Examine the pack content.
+ExaminePreferenceGroups () - Start examining the groups in the preference file.
+ExaminePreferenceKeys () - Start examining the keys in the current group of the preference file.
+ExamineRegularExpression (#RegularExpression, String$) - Examine each match of the regular expression individually.
+ExamineScreenModes () - Examines all the available screen mode.
+ExamineWorldCollisions (Contacts) - Start to examine the occured collisions in the world.
+ExamineXMLAttributes (Node) - Examine the attribute list of the given XML node
+Exp (Exponent) - Returns the e^Exponent.
+ExplorerComboGadget (#Gadget, x, y, Width, Height, Directory$ [, Flags]) - Create a File/Directory Combo Gadget
+ExplorerListGadget (#Gadget, x, y, Width, Height, Directory$ [, Flags]) - Create a File/Directory List Gadget
+ExplorerTreeGadget (#Gadget, x, y, Width, Height, Directory$ [, Flags]) - Create a File/Directory Tree
+ExportJSON (#JSON, *Buffer, Size [, Flags]) - Export JSON data to a memory buffer
+ExportJSONSize (#JSON [, Flags]) - Get the size that JSON data needs for the ExportJSON() function
+ExportXML (#XML, *Address, Size [, Flags]) - Export a XML tree to a memory buffer
+ExportXMLSize (#XML [, Flags]) - Get the number of bytes required to export a XML tree
+ExtractJSONArray (*JSONValue, Array()) - Extract a JSON value into the specified Array()
+ExtractJSONList (*JSONValue, List()) - Extract a JSON value into the specified List()
+ExtractJSONMap (*JSONValue, Map()) - Extract a JSON value into the specified Map()
+ExtractJSONStructure (*JSONValue, *Buffer, Structure) - Extract a JSON value into the specified structure
+ExtractRegularExpression (#RegularExpression, String$, Array$()) - Extract strings according to the regular expression into an array.
+ExtractXMLArray (Node, Array() [, Flags]) - Extract an XML node into the specified Array()
+ExtractXMLList (Node, List() [, Flags]) - Extract an XML node into the specified List()
+ExtractXMLMap (Node, Map() [, Flags]) - Extract an XML node into the specified Map()
+ExtractXMLStructure (Node, *Buffer, Structure [, Flags]) - Extract an XML node into the specified structure
+FetchEntityMaterial (#Entity, #Material, [, SubEntity]) - Fetch the #Entity material
+FetchOrientation (ObjectID [, Mode]) - Fetch the orientation for the specified object (use GetX(), GetY(), GetZ() and GetW() to get the values).
+FileBuffersSize (#File, Size) - Change the size of the buffers for the specified file.
+FileFingerprint (Filename$ , Plugin [, Bits [, Offset [, Length]]]) - Returns the fingerprint of the file.
+FileID (#File) - Returns the unique ID which identifies the file in the operating system.
+FileSeek (#File, NewPosition [, Mode]) - Change the read/write pointer position of the specified file.
+FileSize (FileName$) - Return the size of the specified file.
+FillArea (x, y, OutlineColor [, FillColor]) - Fill a shape with the specified color.
+FillMemory (Memory, Size [, Value [, Type]]) - Fill a memory area with the specified value.
+FillPath ([Flags]) - Fill the area defined by the vector drawing path
+FillVectorOutput () - Fill the entire vector drawing output with the drawing source
+FindMapElement (Map(), Key$) - Find the specified element in the map.
+FindString (String$, StringToFind$ [, StartPosition [, Mode]]) - Returns the Position of StringToFind$.
+Fingerprint (*Buffer, Size, Plugin [, Bits]) - Returns the fingerprint of the specified buffer.
+FinishCipher (#Cipher) - Free all the resources allocated by the #Cipher.
+FinishDatabaseQuery (#Database) - Finish a database query and release associated memory.
+FinishDirectory (#Directory) - Finish the examine of the directory.
+FinishFastCGIRequest () - Finish the current FastCGI request.
+FinishFingerprint (#Fingerprint) - Returns the calculated fingerprint string and frees all resources.
+FinishFTPDirectory (#Ftp) - Free the data allocated with ExamineFTPDirectory.
+FinishHTTP (HttpConnection) - Release the resources of the specified HTTP connection.
+FinishMesh (Type)
+FirstDatabaseRow (#Database) - Retrieves information about the first database row.
+FirstElement (List()) - Changes the current list element to the first list element.
+FirstWorldCollisionEntity () - First entity of the current collision.
+FlipBuffers () - Flip the back and front buffer on the current screen.
+FlipCoordinatesX (AxisX.d [, System]) - Flip the X coordinates of the vector drawing coordinate system along an axis
+FlipCoordinatesY (AxisY.d [, System]) - Flip the Y coordinates of the vector drawing coordinate system along an axis
+FlushFileBuffers (#File) - Forces the write of the internal file buffer to the disk.
+FlushPreferenceBuffers () - Write the current preferences to disk.
+Fog (Color, Intensity, StartDistance, EndDistance) - Display a fog effect
+FontID (#Font) - Returns the unique ID which identifies the font in the operating system.
+FontRequester (FontName$, FontSize, Flags [, Color, [Style]]) - Open the standard requester to choose a font.
+FormatDate (Mask$, Date) - Returns a string representation of the Date, according to the specified Mask$.
+FormatNumber (Number.d [, NbDecimals [, DecimalPoint$ [, ThousandSeperator$]]]) - Returns the formated string
+FormatXML (#XML, Flags [, IndentStep]) - Clean up the XML for a better look
+FrameGadget (#Gadget, x, y, Width, Height, Text$ [, Flags]) - Creates a frame gadget in the current GadgetList.
+FrameGadget3D (#Gadget3D, x, y, Width, Height, Text$) - Creates a Frame3D gadget in the current GadgetList.
+FreeArray (Array()) - Free the array. 'Dim' has to be called to use it again.
+FreeBillboardGroup (#BillboardGroup) - Free the specified #BillboardGroup and all its billboards.
+FreeCamera (#Camera) - Free the specified #Camera.
+FreeDialog (#Dialog) - Frees the specified dialog.
+FreeEffect (#Effect) - Free the specified #Effect.
+FreeEntity (#Entity) - Free the specified #Entity.
+FreeEntityBody (#Entity) - Free the body associated with the #Entity.
+FreeEntityJoints (#Entity) - Free all joints associated with the #Entity.
+FreeFont (#Font) - Close the given Font.
+FreeGadget (#Gadget) - Free (remove) the #Gadget.
+FreeGadget3D (#Gadget3D) - Free (remove) the #Gadget3D.
+FreeImage (#Image) - Free the image and release its associated memory.
+FreeIP (IP) - Free the IPv6.
+FreeJoint (#Joint)
+FreeJSON (#JSON) - Free JSON data
+FreeLight (#Light) - Free the specified #Light.
+FreeList (List()) - Free the list. 'NewList' has to be called to use it again.
+FreeMail (#Mail) - Frees the previously created mail.
+FreeMap (Map()) - Free the map. 'NewMap' has to be called to use it again.
+FreeMaterial (#Material) - Free the specified #Material.
+FreeMemory (Memory) - Free the specified memory buffer.
+FreeMenu (#Menu) - Remove the specified menu from memory.
+FreeMesh (#Mesh) - Free the specified #Mesh.
+FreeMovie (#Movie) - Free the specified #Movie and remove it from memory.
+FreeMusic (#Music) - Stop and remove the specified module previously loaded with the LoadMusic() command from memory.
+FreeMutex (Mutex) - Free the mutex object.
+FreeNode (#Node) - Free the specified #Node.
+FreeNodeAnimation (#NodeAnimation) - Free the specified #NodeAnimation.
+FreeParticleEmitter (#ParticleEmitter) - Free the specified #ParticleEmitter.
+FreeRegularExpression (#RegularExpression) - Free the specified #RegularExpression
+FreeSemaphore (Semaphore) - Free the semaphore object.
+FreeSound (#Sound) - Stop and remove a sound from memory.
+FreeSound3D (#Sound3D) - Stop and remove a sound from memory.
+FreeSpline (#Spline) - Free the #Spline.
+FreeSprite (#Sprite) - Remove the specified sprite from memory.
+FreeStaticGeometry (#StaticGeometry) - Free the specified #StaticGeometry.
+FreeStatusBar (#StatusBar) - Free the given status bar.
+FreeStructure (*Structure)
+FreeTerrain (#Terrain) - Free the #Terrain.
+FreeTerrainBody (#Terrain) - Free the body associated with the #Terrain.
+FreeText3D (#Text3D) - Free the specified #Text3D.
+FreeTexture (#Texture) - Free the specified #Texture.
+FreeToolBar (#ToolBar) - Free the specified #Toolbar.
+FreeWater (#Camera) - Free the water plane.
+FreeXML (#XML) - Free a XML tree
+FrontColor (Color) - Set the default color for graphic functions and text display.
+FTPDirectoryEntryAttributes (#Ftp) - Return the attributes of the current entry in the last FTP listing.
+FTPDirectoryEntryDate (#Ftp) - Return the modified date of the current entry in the last FTP listing.
+FTPDirectoryEntryName (#Ftp) - Return the name of the current entry in the last FTP listing.
+FTPDirectoryEntryRaw (#Ftp) - Return the raw line of the current entry in the last FTP listing.
+FTPDirectoryEntrySize (#Ftp) - Return the size of the current entry in the last FTP listing.
+FTPDirectoryEntryType (#Ftp) - Return the type of the current entry in the last FTP listing.
+FTPProgress (#Ftp) - Return the progress of the current file transfer.
+GadgetHeight (#Gadget [, Mode]) - Return the height, in pixel, of the #Gadget.
+GadgetHeight3D (#Gadget3D) - Return the height, in pixel, of the #Gadget3D.
+GadgetID (#Gadget) - Return the ID of the #Gadget.
+GadgetID3D (#Gadget3D) - Return the ID of the #Gadget3D.
+GadgetItemID (#Gadget, Item) - Returns the system ID of the specified gadget item.
+GadgetToolTip (#Gadget, Text$) - Associate the specified Text$ to the #Gadget.
+GadgetToolTip3D (#Gadget, Text$) - Associate the specified Text$ to the #Gadget3D.
+GadgetType (#Gadget) - Returns the type of the specified #Gadget
+GadgetType3D (#Gadget3D) - Returns the type of the specified #Gadget3D
+GadgetWidth (#Gadget [, Mode]) - Return the width, in pixel, of the #Gadget.
+GadgetWidth3D (#Gadget3D) - Return the width, in pixel, of the #Gadget3D.
+GadgetX (#Gadget [, Flags]) - Return the X position, in pixel, of the #Gadget.
+GadgetX3D (#Gadget3D) - Return the X position, in pixel, of the #Gadget3D.
+GadgetY (#Gadget [, Flags]) - Return the Y position, in pixel, of the #Gadget.
+GadgetY3D (#Gadget3D) - Return the Y position, in pixel, of the #Gadget3D.
+GenericJoint (#Joint, EntityID, FxA, FyA, FzA, EntityID2, FxB, FyB, FzB) - Create a generic joint.
+GetActiveGadget () - Get the Gadget that has the focus.
+GetActiveGadget3D () - Get the Gadget that has the focus.
+GetActiveWindow () - Returns the currently active window. (The one with the focus)
+GetActiveWindow3D () - Returns the currently active window. (The one with the focus)
+GetClientIP (Connection) - Returns the IP of the specified client.
+GetClientPort (Connection) - Returns the Port of the specified client.
+GetClipboardImage (#Image [, Depth]) - Get an image from the clipboard (if any).
+GetClipboardText () - Return the last text pasted in the clipboard.
+GetCurrentDirectory () - Returns the path of the current directory.
+GetDatabaseBlob (#Database, Column, *Buffer, BufferLength) - Returns the content of the specified column in the specified buffer.
+GetDatabaseDouble (#Database, Column) - Returns the content of the specified column as a double number.
+GetDatabaseFloat (#Database, Column) - Returns the content of the specified column as a float number.
+GetDatabaseLong (#Database, Column) - Returns the content of the specified column as a standard number.
+GetDatabaseQuad (#Database, Column) - Returns the content of the specified column as a quad number.
+GetDatabaseString (#Database, Column) - Returns the content of the specified column as a string.
+GetEntityAnimationLength (#Entity, Animation$) - Get the #Entity animation length.
+GetEntityAnimationTime (#Entity, Animation$) - Get the current #Entity animation time.
+GetEntityAnimationWeight (#Entity, Animation$) - Get the #Entity animation weight.
+GetEntityAttribute (#Entity, Attribute) - Get the #Entity attribute value
+GetEntityCollisionGroup (#Entity) - Get the entity collision group.
+GetEntityCollisionMask (#Entity) - Get the entity collision mask.
+GetEnvironmentVariable (Name$) - Return the content of the environment variable
+GetExtensionPart (FullPathName$) - Retrieves the extension part of a full path.
+GetFileAttributes (FileName$) - Returns the attributes of the specified file.
+GetFileDate (FileName$, DateType) - Returns the modified/created/accessed date of the specified file.
+GetFilePart (FullPathName$ [, Flags]) - Retrieves the file part of a full path.
+GetFTPDirectory (#Ftp) - Return the current directory.
+GetFunction (#Library, FunctionName$) - Checks if a function exists in the #Library.
+GetFunctionEntry (#Library, EntryNumber) - Checks if a function exists at the specified entry number
+GetGadgetAttribute (#Gadget, Attribute) - Return the specified #Gadget attribute value.
+GetGadgetAttribute3D (#Gadget3D, Attribute) - Return the specified #Gadget3D attribute value.
+GetGadgetColor (#Gadget, ColorType) - Get the currently set color of the Gadget
+GetGadgetData (#Gadget) - Returns the value previously stored for this Gadget
+GetGadgetData3D (#Gadget3D) - Returns the value previously stored for this Gadget
+GetGadgetFont (#Gadget) - Get the FontID associated with the specified gadget.
+GetGadgetItemAttribute (#Gadget, Item, Attribute [, Column]) - Return the specified #Gadget item attribute value.
+GetGadgetItemColor (#Gadget, Item, ColorType [, Column]) - Get the currently set color of the Gadget item
+GetGadgetItemData (#Gadget, Item) - Returns the value previously stored with this gadget item.
+GetGadgetItemData3D (#Gadget3D, Item) - Returns the value previously stored with this gadget item.
+GetGadgetItemState (#Gadget, Position) - Return the #Gadget item state.
+GetGadgetItemState3D (#Gadget3D, Position) - Return the #Gadget3D item state.
+GetGadgetItemText (#Gadget, Position [, Column]) - Return the text content of the specified #Gadget item.
+GetGadgetItemText3D (#Gadget3D, Position [, Column]) - Return the text content of the specified #Gadget3D item.
+GetGadgetState (#Gadget) - Return the gadget current state.
+GetGadgetState3D (#Gadget3D) - Return the gadget current state.
+GetGadgetText (#Gadget) - Return the gadget text content of the specified #Gadget.
+GetGadgetText3D (#Gadget3D) - Return the gadget text content of the specified #Gadget3D.
+GetHomeDirectory () - Returns the full path of the currently logged user directory.
+GetHTTPHeader (URL$ [, Flags [, UserAgent$]]) - Get the HTTP headers
+GetImageFrame (#Image) - Gets the current image frame.
+GetImageFrameDelay (#Image) - Returns the current frame delay in milliseconds.
+GetJointAttribute (#Joint, Attribute)
+GetJSONBoolean (*JSONValue) - Return the JSON value as a boolean
+GetJSONDouble (*JSONValue) - Return the JSON value as a double
+GetJSONElement (*JSONValue, Index) - Return an element in a JSON array
+GetJSONFloat (*JSONValue) - Return the JSON value as a float
+GetJSONInteger (*JSONValue) - Return the JSON value as an integer
+GetJSONMember (*JSONValue, Key$) - Return a member of a JSON object
+GetJSONQuad (*JSONValue) - Return the JSON value as an quad
+GetJSONString (*JSONValue) - Return the JSON value as a string
+GetLightColor (#Light, Type) - Get the #Light color value.
+GetMailAttribute (#Mail, Attribute) - Returns the specified #Mail attribute
+GetMailBody (#Mail) - Returns the mail body.
+GetMaterialAttribute (#Material, Attribute [, Layer]) - Get the specified #Material attribute.
+GetMaterialColor (#Material, Type) - Get the specified #Material color.
+GetMenuItemState (#Menu, MenuItem) - Retreive the current menu item state.
+GetMenuItemText (#Menu, MenuItem) - Retreive the current menu item text.
+GetMenuTitleText (#Menu, Index) - Retreive the current menu title text.
+GetMeshData (#Mesh, SubMesh, DataArray(), Flags, FirstIndex, LastIndex)
+GetMusicPosition (#Music) - Returns the current pattern position of the playing module.
+GetMusicRow (#Music) - Returns the row position in the pattern currently played.
+GetNodeAnimationKeyFramePitch (#NodeAnimation, KeyFrame) - Get the keyframe pitch for the #NodeAnimation.
+GetNodeAnimationKeyFrameRoll (#NodeAnimation, KeyFrame) - Get the z keyframe roll for the #NodeAnimation.
+GetNodeAnimationKeyFrameTime (#NodeAnimation, KeyFrame) - Get the keyframe time for the #NodeAnimation.
+GetNodeAnimationKeyFrameX (#NodeAnimation, KeyFrame) - Get the x keyframe position for the #NodeAnimation.
+GetNodeAnimationKeyFrameY (#NodeAnimation, KeyFrame) - Get the y keyframe position for the #NodeAnimation.
+GetNodeAnimationKeyFrameYaw (#NodeAnimation, KeyFrame) - Get the y keyframe yaw for the #NodeAnimation.
+GetNodeAnimationKeyFrameZ (#NodeAnimation, KeyFrame) - Get the z keyframe position for the #NodeAnimation.
+GetNodeAnimationLength (#NodeAnimation) - Get the #NodeAnimation length.
+GetNodeAnimationTime (#NodeAnimation) - Get the current #NodeAnimation time.
+GetNodeAnimationWeight (#NodeAnimation) - Get the #NodeAnimation weight.
+GetOriginX () - Get the x coordinate of the drawing origin
+GetOriginY () - Get the y coordinate of the drawing origin
+GetPathPart (FullPathName$) - Retrieves the path part of a full path.
+GetRuntimeDouble (Name) - Return the runtime double item value.
+GetRuntimeInteger (Name) - Return the runtime integer item value.
+GetRuntimeString (Name) - Return the runtime string item value.
+GetScriptMaterial (#Material, Name$) - Get a material defined in scripts files.
+GetScriptParticleEmitter (#ParticleEmitter, Name$) - Get a particule emitter defined in scripts files.
+GetScriptTexture (#Texture, Name$) - Get the specified #Texture as defined in the script file.
+GetSerialPortStatus (#SerialPort, Attributes) - Return the specified status.
+GetSoundFrequency (#Sound [, Channel]) - Get the current #Sound frequency.
+GetSoundPosition (#Sound [, Mode [, Channel]]) - Get the current playing #Sound position.
+GetTemporaryDirectory () - Returns the full path of the temporary directory.
+GetTerrainTileHeightAtPoint (#Terrain, TileX, TileY, x, y) - Get the height of the #Terrain tile at the specified position.
+GetTerrainTileLayerBlend (#Terrain, TileX, TileY, Layer, x, y) - Get the #Terrain tile layer blend value.
+GetToolBarButtonState (#ToolBar, ButtonID) - Get the state of the specified button
+GetURLPart (URL$, Parameter$) - Get the specific part of an URL.
+GetUserDirectory (DirectoryType) - Returns the path of the specified user directory.
+GetVehicleAttribute (#Entity, Attribute, Wheel) - Get a vehicule attribute.
+GetW () - Get the 'w' value of the last call.
+GetWindowColor (#Window) - Get the background color of the window.
+GetWindowData (#Window) - Returns the value previously stored for the window
+GetWindowState (#Window) - Get the minimized/maximized state of the window.
+GetWindowTitle (#Window) - Gets the current #Window title.
+GetWindowTitle3D (#Window3D) - Gets the current #Window3D title.
+GetX () - Get the 'x' value of the last call.
+GetXMLAttribute (Node, Attribute$) - Get the value of the given attribute of the XML node
+GetXMLEncoding (#XML) - Get the encoding used in the parsed XML data
+GetXMLNodeName (Node) - Get the (tag-)name of the given XML node
+GetXMLNodeOffset (Node) - Get the number of characters of text between this node and the previous one in the tree
+GetXMLNodeText (Node) - Get the text content of the given XML node
+GetXMLStandalone (#XML) - Get the standalone mode of the XML document
+GetY () - Get the 'y' value of the last call.
+GetZ () - Get the 'z' value of the last call.
+GrabDrawingImage (#Image, x, y, Width, Height) - Create a new #Image with the content of the given drawing output area.
+GrabImage (#Image1, #Image2, x, y, Width, Height) - Create a new #Image2 with the selected area on the source #Image1.
+GrabSprite (#Sprite, x, y, Width, Height [, Mode]) - Grab the screen content at the area x,y,Width,Height, and create a new #Sprite.
+GradientColor (Position.f, Color) - Set a color for the drawing gradient.
+Green (Color) - Returns the green component of the given color
+Hex (Number [, Type]) - Converts a numeric number into a string, in hexadecimal format.
+HideBillboardGroup (#BillboardGroup, Display) - Hide or show the #BillboardGroup and all its billboards.
+HideEffect (#Effect, State)
+HideEntity (#Entity, Hide) - Hide or show the specified #Entity.
+HideGadget (#Gadget, State) - Hide or show a gadget.
+HideGadget3D (#Gadget3D, State) - Hide or show a gadget.
+HideLight (#Light, State) - Hides or shows the specified #Light.
+HideMenu (#Menu, State) - Hide or display the specified menu.
+HideParticleEmitter (#ParticleEmitter, Hide) - Hide or show the specified #ParticleEmitter.
+HideWindow (#Window, State [, Flags]) - Hides or show the specified #Window
+HideWindow3D (#Window3D, State) - Hides or show the specified #Window3D.
+HingeJoint (#Joint, EntityID, PivotX, PivotY, PivotZ, AxisX, AxisY, AxisZ, EntityID2, PivotX2, PivotY2, PivotZ2, AxisX2, AxisY2, AxisZ2)
+HingeJointMotorTarget (#Joint, Angle, Velocity) - Sets the motor target on the hinge #Joint.
+Hostname () - Returns the computer hostname.
+Hour (Date) - Returns the hour value of the specified date (between 0 and 23).
+HTTPProgress (HttpConnection) - Get the progress on the specified HTTP connection.
+HTTPProxy (URL$ [, User$, Password$]) - Set a proxy to use for HTTP commands.
+HyperLinkGadget (#Gadget, x, y, Width, Height, Text$, Color [, Flags]) - Creates an HyperLink gadget in the current GadgetList.
+ImageDepth (#Image [, Flags]) - Returns the depth of the image.
+ImageFormat (#Image) - Returns the original format of the image.
+ImageFrameCount (#Image) - Returns the number of frames in the image.
+ImageGadget (#Gadget, x, y, Width, Height, ImageID [, Flags]) - Create an Image gadget in the current GadgetList.
+ImageGadget3D (#Gadget3D, x, y, Width, Height, TextureID [, Flags]) - Create an Image gadget in the current GadgetList.
+ImageHeight (#Image) - Returns the height, in pixel, of the image.
+ImageID (#Image) - Returns the ImageID of the image.
+ImageOutput (#Image) - Returns the OutputID of the image to perform 2D rendering operation on it.
+ImageVectorOutput (#Image [, Unit]) - Prepares the image for 2D vector graphic operations.
+ImageWidth (#Image) - Returns the width, in pixel, the image
+Infinity () - Returns the float value for positive infinity.
+InitAudioCD () - Initialize all CD-Audio ressources.
+InitCGI ([MaxRequestSize]) - Init the CGI library.
+InitEngine3D ([Flags [, LibraryName$]]) - Initialises the 3D environment for later use.
+InitFastCGI (LocalPort) - Init the FastCGI support.
+InitializeStructure (*Structure, Structure) - Initialize the specified *Structure.
+InitJoystick () - Initialize the joystick environment for later use.
+InitKeyboard () - Initialize the keyboard environment for later use.
+InitMouse () - Initialize the Mouse environment for later use.
+InitMovie () - Initialize the Movie environment for later use.
+InitNetwork () - Initialize the network environment.
+InitScintilla ([LibraryName$]) - Initialize the scintilla library
+InitSound () - Initialize the sound environment. If it returns 0 then no sound can be played on this computer,
+InitSprite () - Init all the sprite environment for later use.
+Inkey () - Return a two characters string if a key is pressed during the call of Inkey().
+Input () - Allows to catch a whole character line.
+InputEvent3D (MouseX, MouseY, LeftMouseButton [, Text$, SpecialKey]) - Send event to the GUI system.
+InputRequester (Title$, Message$, DefaultString$ [, Flags]) - Open an input requester.
+InsertElement (List()) - Inserts a new empty element before the current element.
+InsertJSONArray (*JSONValue, Array()) - Insert the specified Array() into the JSON value
+InsertJSONList (*JSONValue, List()) - Insert the specified List() into the JSON value
+InsertJSONMap (*JSONValue, Map()) - Insert the specified Map() into the JSON value
+InsertJSONStructure (*JSONValue, *Buffer, Structure) - Insert the specified structure data into the JSON value
+InsertString (String$, StringToInsert$, Position) - Insert a string at the given position
+InsertXMLArray (ParentNode, Array() [, PreviousNode]) - Insert the specified Array() into the XML node
+InsertXMLList (ParentNode, List() [, PreviousNode]) - Insert the specified List() into the XML node
+InsertXMLMap (ParentNode, Map() [, PreviousNode]) - Insert the specified Map() into the XML node
+InsertXMLStructure (ParentNode, *Buffer, Structure [, PreviousNode]) - Insert the specified structure data into the XML node
+InstructionAddress () - Get the address of the current decoded instruction
+InstructionString () - Get a string representation of the current decoded instruction
+Int (Float) - Returns the integer part of the specified value.
+IntQ (Float) - Returns the integer part of the specified value as a quad.
+IPAddressField (IPAddress, Field [, Format]) - Returns the IP Address field value.
+IPAddressGadget (#Gadget, x, y, Width, Height) - Create an IP Address gadget in the current GadgetList.
+IPString (IPAddress [, Format]) - Returns the string representation of the given IP address.
+IsBillboardGroup (#BillboardGroup) - Tests if the given '#BillboardGroup' is an initialized BillboardGroup object.
+IsCamera (#Camera) - Tests if the given '#Camera' is an initialized camera object.
+IsCipher (#Cipher) - Tests if the given '#Cipher' is an initialized cipher object.
+IsDatabase (#Database) - Tests if the given '#Database' is an initialized database object.
+IsDialog (#Dialog) - Tests if the given dialog is initialized.
+IsDirectory (#Directory) - Tests if the given '#Directory' is an initialized directory object.
+IsEffect (#Effect) - Tests if the given '#Effect' is an initialized effect object.
+IsEntity (#Entity) - Tests if the given '#Entity' is an initialized entity object.
+IsFile (#File) - Tests if the given '#File' is an initialized file object.
+IsFingerprint (#Fingerprint) - Tests if the given '#Fingerprint' is an initialized fingerprint object.
+IsFont (#Font) - Tests if the given '#Font' is an initialized font object.
+IsFTP (#Ftp) - Tests if the given '#Ftp' is an initialized FTP object.
+IsGadget (#Gadget) - Tests if the given '#Gadget' is an initialized gadget object.
+IsGadget3D (#Gadget3D) - Tests if the given '#Gadget3D' is an initialized gadget object.
+IsImage (#Image) - Tests if the given '#Image' is an initialized image object.
+IsInfinity (Number) - Returns nonzero if the given Number represents positive or negative infinity.
+IsInsidePath (x.d, y.d [, CoordinateSystem]) - Tests whether the given point is inside the area of the current path
+IsInsideStroke (x.d, y.d, Width.d [, Flags [, CoordinateSystem]]) - Tests whether the given point is inside the area stroked by the current path
+IsJoint (#Joint) - Tests if the given '#Joint' is an initialized joint object.
+IsJSON (#JSON) - Check if #JSON represents valid JSON data
+IsLibrary (#Library) - Tests if the given '#Library' is an initialized library object.
+IsLight (#Light) - Tests if the given '#Light' is an initialized light object.
+IsMail (#Mail) - Tests if the given '#Mail' is an initialized mail object.
+IsMaterial (#Material) - Tests if the given '#Material' is an initialized material object.
+IsMenu (#Menu) - Tests if the given '#Menu' is an initialized menu object.
+IsMesh (#Mesh) - Tests if the given '#Mesh' is an initialized mesh object.
+IsMovie (#Movie) - Tests if the given '#Movie' is an initialized movie object.
+IsMusic (#Music) - Tests if the given '#Music' is an initialized module object.
+IsNAN (Number) - Returns nonzero if the given Number is the special "Not a Number" value.
+IsNode (#Node) - Tests if the given '#Node' is an initialized node object.
+IsParticleEmitter (#ParticleEmitter) - Tests if the given '#ParticleEmitter' is an initialized ParticleEmitter object.
+IsPathEmpty () - Returns true if the current vector drawing path is empty
+IsProgram (Program) - Check if the specified program was created by RunProgram
+IsRegularExpression (#RegularExpression) - Tests if the given '#RegularExpression' is an initialized regular expression object.
+IsRuntime (Name) - Check if the specified item is available at runtime.
+IsScreenActive () - If the return is 0, then the screen is no more active, else the screen is active.
+IsSerialPort (#SerialPort) - Test if the given '#SerialPort' is an initialized SerialPort object.
+IsSound (#Sound) - Tests if the given '#Sound' is an initialized sound object.
+IsSound3D (#Sound3D) - Tests if the given '#Sound3D' is an initialized sound object.
+IsSprite (#Sprite) - Tests if the given '#Sprite' is an initialized sprite object.
+IsStaticGeometry (#StaticGeometry) - Tests if the given '#StaticGeometry' is an initialized effect object.
+IsStatusBar (#StatusBar) - Tests if the given '#StatusBar' is an initialized statusbar object.
+IsSysTrayIcon (#SysTrayIcon) - Tests if the given '#SysTrayIcon' is an initialized systray icon object.
+IsText3D (#Text3D) - Tests if the given '#Text3D' is an initialized text3d object.
+IsTexture (#Texture) - Tests if the given '#Texture' is an initialized texture object.
+IsThread (Thread) - Check if the thread exists.
+IsToolBar (#ToolBar) - Tests if the given '#ToolBar' is an initialized toolbar object.
+IsWindow (#Window) - Tests if the given '#Window' is an initialized window object.
+IsWindow3D (#Window3D) - Tests if the given '#Window3D' is an initialized window object.
+IsXML (#XML) - Check if #XML represents a valid XML object
+JoystickAxisX (#Joystick [, Pad [, Mode]]) - Returns the X axis state
+JoystickAxisY (#Joystick [, Pad [, Mode]]) - Returns the Y axis state
+JoystickAxisZ (#Joystick [, Pad [, Mode]]) - Returns the Z axis state
+JoystickButton (#Joystick, ButtonNumber) - Returns 1 if the specified button is pressed.
+JoystickName (#Joystick) - Returns the joystick name
+JSONArraySize (*JSONValue) - Return the number elements in a JSON array
+JSONErrorLine () - Get the input line of the most recent JSON parsing error
+JSONErrorMessage () - Get a string description of the most recent JSON parsing error
+JSONErrorPosition () - Get the input position of the most recent JSON parsing error
+JSONMemberKey (*JSONValue) - Get the key of the current examined member in the JSON object
+JSONMemberValue (*JSONValue) - Get the value of the current examined member in the JSON object
+JSONObjectSize (*JSONValue) - Return the number of members in a JSON object
+JSONType (*JSONValue) - Return the type of a JSON value
+JSONValue (#JSON) - Return the main value of JSON data
+KeyboardInkey () - Returns the last ASCII key code which has been pressed.
+KeyboardMode (Mode) - Changes the way the keyboard keys are interpretated.
+KeyboardPushed (KeyID) - Returns 1 if the specified key is currently pushed.
+KeyboardReleased (KeyID) - Returns 1 if the specified key has been pressed (pushed and released).
+KillProgram (Program) - Terminate the specified program
+KillThread (Thread) - Kill the thread. Warning, this is a very dangerous function.
+LastElement (List()) - Changes the current list element to the last list element.
+LCase (String$) - Returns the original string converted into lower case characters.
+Left (String$, Length) - Returns the first 'Length' number of characters from the left side of the string.
+Len (String$) - Returns the Character length of the string.
+LensFlareEffectColor (#Effect, ColorType, Color) - Change the color of the specified lens flare part.
+LibraryFunctionAddress () - Get the function address which is being examined
+LibraryFunctionName () - Get the function name which is being examined
+LibraryID (#Library) - Returns the specified #LibraryID
+LightAttenuation (#Light, Range, Attenuation) - Change the #Light attenuation.
+LightDirection (#Light, x, y, z) - Change the #Light direction.
+LightDirectionX (#Light [, Mode]) - Return the x direction of the #Light.
+LightDirectionY (#Light [, Mode]) - Return the y direction of the #Light.
+LightDirectionZ (#Light [, Mode]) - Return the z direction of the #Light.
+LightID (#Light) - Return the unique #Light ID.
+LightLookAt (#Light, x, y, z)
+LightPitch (#Light [, Mode]) - Return the pitch of the #Light.
+LightRoll (#Light [, Mode]) - Return the roll of the #Light.
+LightX (#Light [, Mode]) - Return the x position of the #Light.
+LightY (#Light [, Mode]) - Return the y position of the #Light.
+LightYaw (#Light [, Mode]) - Return the yaw of the #Light.
+LightZ (#Light [, Mode]) - Return the z position of the #Light.
+Line (x, y, Width, Height [, Color]) - Draw a line of given dimension on the current output.
+LinearGradient (x1, y1, x2, y2) - Use a linear gradient when gradient drawing is enabled.
+LineXY (x1, y1, x2, y2 [, Color]) - Draw a line of given dimension on the current output.
+ListIconGadget (#Gadget, x, y, Width, Height, FirstColumnTitle$, FirstColumnWidth [, Flags]) - Create a ListIcon gadget in the current GadgetList.
+ListIndex (List()) - Find out the position of the current element in the list. First Element is 0.
+ListSize (List()) - Counts how many elements there are in the list.
+ListViewGadget (#Gadget, x, y, Width, Height [, Flags]) - Create a ListView gadget in the current GadgetList.
+ListViewGadget3D (#Gadget3D, x, y, Width, Height [, Flags]) - Create a ListView gadget in the current GadgetList.
+LoadFont (#Font, Name$, Height [,Style]) - Tries to open the specified font.
+LoadImage (#Image, FileName$ [, Flags]) - Load the specified image.
+LoadJSON (#JSON, FileName$ [, Flags]) - Load JSON data from a file
+LoadMesh (#Mesh, Filename$) - Load a new #Mesh.
+LoadMovie (#Movie, FileName$) - Try to open and prepare a movie for later playback.
+LoadMusic (#Music, "FileName") - Load the specified module into memory.
+LoadSound (#Sound, FileName$ [, Flags]) - Load the specified sound into memory.
+LoadSound3D (#Sound3D, FileName$ [, Flags]) - Load the specified sound into memory.
+LoadSprite (#Sprite, FileName$ [, Mode]) - Load the specified sprite into the memory for immediate use.
+LoadTexture (#Texture, Filename$) - Load the specified #Texture.
+LoadWorld (FileName$) - Load a whole world and initialize it.
+LoadXML (#XML, FileName$ [, Encoding]) - Load a XML file and parse it
+Loc (#File) - Returns the actual pointer position of the specified file.
+LockMutex (Mutex) - Wait for ownership of the mutex object.
+Lof (#File) - Returns the length of the specified file.
+Log (Value) - Returns the Log of the value.
+Log10 (x) - Returns the Log in base 10 of the value.
+LSet (String$, Length [, Character]) - Pads a string to the left, and adds 'space' characters to fit the specified length.
+LTrim (String$ [, Character$]) - Removes all the 'space' or given characters located at the beginning of a string.
+MailProgress (#Mail) - Returns the current progress of a mail being sent.
+MainXMLNode (#XML) - Get the main node of the XML tree
+MakeIPAddress (Field0, Field1, Field2, Field3 [, Field4, Field5, Field6, Field7]) - Return the value for the specifed IP.
+MapKey (Map()) - Returns the key of the current map element.
+MapSize (Map()) - Returns the number of elements in the map.
+MatchRegularExpression (#RegularExpression, String$) - Tests if a string match the regular expression.
+MaterialAnimation (#Material, TextureName$, Frame, Time) - Set an animated texture for the material.
+MaterialBlendingMode (#Material, Mode) - Change the #Material blending mode.
+MaterialCullingMode (#Material, Mode) - Change the #Material culling mode.
+MaterialFilteringMode (#Material, Mode [, MaxAnisotropy]) - Change the texture filtering mode for the #Material.
+MaterialFog (#Material, Color, Intensity, StartDistance, EndDistance) - Display a fog effect on the material.
+MaterialID (#Material) - Return the unique #Material ID.
+MaterialShadingMode (#Material, Mode) - Change the shading mode for the #Material.
+MaterialShininess (#Material, Shininess) - Change the #Material shininess.
+MDIGadget (#Gadget, x, y, Width, Height, SubMenu, FirstMenuItem [, Flags]) - Create a MDI client area
+MemorySize (Memory) - Return the size of the specified memory block.
+MemoryStatus (StatusType) - Returns information about the available memory in the computer.
+MemoryStringLength (*String [, Flags]) - Calculate the length of a memory string.
+MenuBar () - Creates a separator bar in the current menu.
+MenuHeight () - Returns the menu bar height, in pixels.
+MenuID (#Menu) - Returns the unique ID which identifies the menu in the operating system.
+MenuItem (MenuItemID, Text$ [, ImageID]) - Creates a new item entry for the menu.
+MenuTitle (Title$) - Creates a new title entry for the menu.
+MergeLists (List(), DestinationList() [, Location]) - Move all elements from List() to DestinationList().
+MeshFace (Vertex1, Vertex2, Vertex3)
+MeshID (#Mesh) - Return the unique #Mesh ID.
+MeshIndex (Index)
+MeshIndexCount (#Mesh [, SubMesh])
+MeshPoseCount (#Mesh) - Return the mesh pose count.
+MeshPoseName (#Mesh, PoseIndex) - Return the mesh pose name.
+MeshRadius (#Mesh)
+MeshVertexColor (Color)
+MeshVertexCount (#Mesh [, SubMesh])
+MeshVertexNormal (x, y, z)
+MeshVertexPosition (x, y, z)
+MeshVertexTangent (x, y, z)
+MeshVertexTextureCoordinate (u, v)
+MessageRequester (Title$, Text$ [, Flags]) - Open a blocking requester to display some informations.
+Mid (String$, StartPos [, Length]) - Extract a string at the specified position from the given 'String$'.
+Minute (Date) - Returns the minute value of the specified date (between 0 and 59).
+Mod (Number, Divisor) - Returns the remainder of Number/Divisor.
+Month (Date) - Returns the month value of the specified date (between 1 and 12).
+MouseButton (ButtonNumber) - Returns 0 if the specified button is not pressed, else the button is pressed.
+MouseDeltaX () - Returns the mouse X movement (in pixel) since the last call of this function.
+MouseDeltaY () - Returns the mouse Y movement (in pixel) since the last call of this function.
+MouseLocate (x, y) - Changes the mouse X,Y position to the new specified one.
+MousePick (#Camera, x, y [, PickMask]) - Returns the first #Entity at the given position
+MouseRayCast (#Camera, x, y, PickMask) - Returns if a ray has encountered an object
+MouseWheel () - Returns the number of positions since the last call.
+MouseX () - Returns the actual mouse X position (in pixel) on the current screen.
+MouseY () - Returns the actual mouse X position (in pixel) on the current screen.
+MoveBillboard (#Billboard, #BillboardGroup, x, y, z) - Move the #Billboard relatives to its previous location.
+MoveBillboardGroup (#BillboardGroup, x, y, z [, Mode]) - Move the #BillboardGroup relatives to its previous location.
+MoveCamera (#Camera, x, y, z [, Mode]) - Move the #Camera relative to its previous position.
+MoveElement (List(), Location [, *RelativeElement]) - Move the current element to a different position in the list.
+MoveEntity (#Entity, x, y, z [, Mode]) - Move the #Entity relative to its previous position.
+MoveEntityBone (#Entity, Bone$, x, y, z , Mode) - Move the #Entity bone relative to its previous position.
+MoveLight (#Light, x, y, z [, Mode]) - Move the #Light.
+MoveMemory (SourceMemory, DestinationMemory, Length) - Move a memory area from 'SourceMemory' to 'DestinationMemory'.
+MoveNode (#Node, x, y, z [, Mode]) - Move the #Node.
+MoveParticleEmitter (#ParticleEmitter, x, y, z [, Mode]) - Move the #ParticleEmitter relative to its previous position.
+MovePathCursor (x.d, y.d [, Flags]) - Move the vector drawing cursor without adding a line
+MoveText3D (#Text3D, x, y, z [, Mode]) - Move the #Text3D.
+MoveXMLNode (Node, ParentNode [, PreviousNode]) - Move the XML node to a new location (or different XML tree)
+MovieAudio (#Movie, Volume, Balance) - Control the audio stream of the movie.
+MovieHeight (#Movie) - Returns the height (in pixel) of the movie.
+MovieInfo (#Movie, Flags) - Returns an additionnal information about the movie.
+MovieLength (#Movie) - Returns the length (in frames) of the movie.
+MovieSeek (#Movie, Frame) - Change the movie position to the given frame.
+MovieStatus (#Movie) - Get the status of the movie (-1: paused, 0: stopped, >0: playing).
+MovieWidth (#Movie) - Returns the width (in pixel) of the movie.
+MusicVolume (#Music, Volume) - Change the current module volume in realtime
+NaN () - Returns the spechial "Not a Number" value.
+NetworkClientEvent (Connection) - Check if an event occured on a client.
+NetworkServerEvent ([ServerID]) - Check if an event occured on a server.
+NewPrinterPage () - Start a new page.
+NewVectorPage () - Begin a new page in the vector drawing output
+NextDatabaseDriver () - Retrieves information about the next available database driver.
+NextDatabaseRow (#Database) - Retrieves information about the next database row.
+NextDirectoryEntry (#Directory) - Go to the next directory entry
+NextElement (List()) - Moves from the current element to the next element in the list.
+NextEnvironmentVariable () - Examine the next variable in the environment block
+NextFTPDirectoryEntry (#Ftp) - Go to the next FTP directory entry
+NextInstruction () - Disassemble the next instruction
+NextIPAddress () - Retrieve the next host IP address.
+NextJSONMember (*JSONValue) - Get the next member in the examined JSON object
+NextLibraryFunction () - Go to the next function in the library being examined.
+NextMapElement (Map()) - Moves from the current element to the next element in the map.
+NextPackEntry (#Pack) - Next pack entry.
+NextPreferenceGroup () - Go to the next group after a call to ExaminePreferenceGroups().
+NextPreferenceKey () - Go to the next key after a call to ExaminePreferenceKeys().
+NextRegularExpressionMatch (#RegularExpression) - Move to the next match of the regular expression
+NextScreenMode () - Get the next screen mode information.
+NextSelectedFileName () - Get the next selected filename.
+NextWorldCollision () - The next world collision
+NextXMLAttribute (Node) - Get the next attribute in the examined XML node
+NextXMLNode (Node) - Get the next XML node on the same level as the given node
+NodeAnimationStatus (#NodeAnimation) - Return the specified #NodeAnimation status.
+NodeFixedYawAxis (#Node, Mode [, VectorX, VectorY, VectorZ]) - Change the way the yaw axis is managed.
+NodeID (#Node) - Return the unique #Node system identifier.
+NodeLookAt (#Node, x, y, z [, DirectionX, DirectionY, DirectionZ) - Change the #Node orientation to look at the specified point.
+NodePitch (#Node [, Mode]) - Return the pitch of the #Node.
+NodeRoll (#Node [, Mode]) - Return the roll of the #Node.
+NodeX (#Node [, Mode]) - Return the x position of the #Node.
+NodeY (#Node [, Mode]) - Return the y position of the #Node.
+NodeYaw (#Node [, Mode]) - Return the yaw of the #Node.
+NodeZ (#Node [, Mode]) - Return the z position of the #Node.
+NormalizeMesh (#Mesh [, SubMesh])
+NormalX () - Returns the last pick normal X value.
+NormalY () - Returns the last pick normal Y value.
+NormalZ () - Returns the last pick normal Z value.
+OnErrorCall (@ErrorHandler()) - Call the given error handler if an error occurs
+OnErrorDefault () - Uninstall any error handler so the default OS action is taken on further errors
+OnErrorExit () - Exit the program if an error occurs
+OnErrorGoto (?LabelAddress) - Continue execution at the given label if an error occurs
+OpenConsole ([Title$]) - Open a console window.
+OpenCryptRandom () - Open the cryptographic random number generator.
+OpenDatabase (#Database, DatabaseName$, User$, Password$ [, Plugin]) - Opens the specified database.
+OpenDatabaseRequester (#Database [, Plugin]) - Opens the standard Windows ODBC requester to choose which database to open.
+OpenFile (#File, FileName$ [, Flags]) - Open the designed file or create it if it doesn't exists.
+OpenFileRequester (Title$, DefaultFile$, Pattern$, PatternPosition [, Flags]) - Open the standard requester which allow to choose a file.
+OpenFTP (#Ftp, ServerName$, User$, Password$ [, Passive [, Port]]) - Try to open a connection on the specified server.
+OpenGadgetList (#Gadget [, GadgetItem]) - Makes the Gadget the current gadget list.
+OpenGadgetList3D (#Gadget3D [, GadgetItem]) - Makes the Gadget the current gadget list.
+OpenGLGadget (#Gadget, x, y, Width, Height [, Flags]) - Create an OpenGL gadget in the current GadgetList.
+OpenHelp (Filename$, Topic$) - Opens a new Help window.
+OpenLibrary (#Library, Filename$) - Open a new library (DLL)
+OpenNetworkConnection (ServerName$, Port [, Type [, TimeOut [, LocalIP$ [, LocalPort]]]]) - Try to open a connection on the specified server.
+OpenPack (#Pack, Filename$ [, PluginID]) - Open a pack file.
+OpenPreferences (Filename$ [, Flags]) - Open and load a preference file.
+OpenScreen (Width, Height, Depth, Title$ [, FlipMode [, RefreshRate]]) - Open a new screen according to the specified 'Width', 'Height' and 'Depth'.
+OpenSerialPort (#SerialPort, SerialPortName$, Bauds, Parity, Data, Stop, HandshakeMode, InputBufferSize, OutputBufferSize) - Open a serial port for use.
+OpenSubMenu (Text$ [, ImageID]) - Creates an empty sub-menu entry in the current menu.
+OpenWindow (#Window, x, y, InnerWidth, InnerHeight, Title$ [, Flags [, ParentID]]) - Opens a new window according to the specified parameters.
+OpenWindow3D (#Window3D, x, y, width, height, Title$ [, Flags]) - Opens a new window according to the specified parameters.
+OpenWindowedScreen (WindowID(), x, y, Width, Height [, AutoStretch, RightOffset, BottomOffset [, FlipMode]])
+OpenXMLDialog (#Dialog, #Xml, Name$ [, x, y [, Width, Height [, ParentID]]]) - Creates a dialog from an XML object.
+OptionGadget (#Gadget, x, y, Width, Height, Text$) - Creates a Option gadget in the current GadgetList.
+OptionGadget3D (#Gadget3D, x, y, Width, Height, Text$) - Creates a Option gadget in the current GadgetList.
+OSVersion () - Retrieve the OS version number.
+OutputDepth () - Get the depth of the current drawing output.
+OutputHeight () - Get the height of the current drawing output.
+OutputWidth () - Get the width of the current drawing output.
+PackEntryName (#Pack) - Returns the current pack entry name.
+PackEntrySize (#Pack [, Mode]) - Returns the current pack entry size.
+PackEntryType (#Pack) - Returns the current pack entry type.
+PanelGadget (#Gadget, x, y, Width, Height) - Creates a Panel gadget in the current GadgetList.
+PanelGadget3D (#Gadget3D, x, y, Width, Height) - Creates a Panel gadget in the current GadgetList.
+ParentXMLNode (Node) - Get the parent of the given XML node
+Parse3DScripts () - Parse all the scripts founds in the declared path or archives
+ParseDate (Mask$, Date$) - Transform a string date into a regular date value, to be used with other date functions.
+ParseJSON (#JSON, Input$ [, Flags]) - Parse JSON data from a string
+ParseXML (#XML, Input$) - Parse XML from a string. The XML must be encoded in PB string format
+ParticleAcceleration (#ParticleEmitter, x, y, z) - Change the particles acceleration.
+ParticleColorFader (#ParticleEmitter, RedRate, GreenRate, BlueRate, AlphaRate) - Change the particles color fader rate.
+ParticleColorRange (#ParticleEmitter, StartColor, EndColor) - Change the particles color range.
+ParticleEmissionRate (#ParticleEmitter, Rate) - Change the #ParticleEmitter emission rate (particles per seconds).
+ParticleEmitterAngle (#ParticleEmitter, Angle) - Change the particles angle.
+ParticleEmitterDirection (#ParticleEmitter, x, y, z) - Change the #ParticleEmitter direction.
+ParticleEmitterID (#ParticleEmitter) - Returns the unique ID which identifies the particle emitter in the operating system.
+ParticleEmitterX (#ParticleEmitter [, Mode]) - Return the x position of the #ParticleEmitter.
+ParticleEmitterY (#ParticleEmitter [, Mode]) - Return the y position of the #ParticleEmitter.
+ParticleEmitterZ (#ParticleEmitter [, Mode]) - Return the z position of the #ParticleEmitter.
+ParticleMaterial (#ParticleEmitter, MaterialID) - Change the #ParticleEmitter material with the new one.
+ParticleSize (#ParticleEmitter, Width, Height) - Change the particles dimensions.
+ParticleSpeedFactor (#ParticleEmitter, SpeedFactor) - Change the particles speed factor.
+ParticleTimeToLive (#ParticleEmitter, MininumTime, MaximumTime) - Change the particles time to live.
+ParticleVelocity (#ParticleEmitter, Mode, Value) - Change the particles velocity.
+PathBoundsHeight () - Get the height of the bounding box of the current path
+PathBoundsWidth () - Get the width of the bounding box of the current path
+PathBoundsX () - Get the X coordinate of the bounding box of the current path
+PathBoundsY () - Get the Y coordinate of the bounding box of the current path
+PathCursorX () - Get the current X coordinate of the path cursor
+PathCursorY () - Get the current Y coordinate of the path cursor
+PathLength () - Get the length of the path
+PathPointAngle (Distance.d) - Get the angle of the path at the given distance from the start
+PathPointX (Distance.d) - Get the X coordinate of the path point at the given distance from the start
+PathPointY (Distance.d) - Get the Y coordinate of the path point at the given distance from the start
+PathRequester (Title$, InitialPath$) - Open the standard path requester which allow to select a path.
+PathSegments () - Get a description of the current path as a string
+PauseAudioCD () - Pause the AudioCD playback.
+PauseMovie (#Movie) - Pause the movie playback.
+PauseSound (#Sound [, Channel]) - Pause the specified sound (if it was playing).
+PauseThread (Thread) - Pause the thread execution.
+PeekA (Memory) - Reads an ascii character (1 byte) from the specified memory address.
+PeekB (*MemoryBuffer) - Read a byte number from the address.
+PeekC (Memory) - Reads a character (1 bytes in ascii, 2 bytes in unicodee) from the specified memory address.
+PeekD (Memory) - Reads a double (8 bytes) from the specified memory address.
+PeekF (*MemoryBuffer) - Read a float (4 bytes) from the specified memory address.
+PeekI (Memory) - Reads an integer (8 bytes) from the specified memory address.
+PeekL (*MemoryBuffer) - Read a long (4 bytes) number from the specified memory address.
+PeekQ (Memory) - Reads a quad (8 bytes) from the specified memory address.
+PeekS (Memory [, Length [, Format]]) - Read a null terminated string at the specified memory address.
+PeekU (Memory) - Reads an unicode character (2 bytes) from the specified memory address.
+PeekW (*MemoryBuffer) - Read a word (2 bytes) number from the specified memory address.
+PickX () - Returns the last pick X position
+PickY () - Returns the last pick Y position
+PickZ () - Returns the last pick Z position
+Pitch (ObjectID, Value.f, Mode) - Pitch the specifed object.
+PlayAudioCD (StartTrack, EndTrack) - Start to play the CD-Audio from 'StartTrack' until the end of 'EndTrack'.
+PlayMovie (#Movie, WindowID) - Start to play a movie previously loaded with LoadMovie() on the specified window.
+PlayMusic (#Music) - Start to play the specified module previously loaded with the LoadMusic() command.
+PlaySound (#Sound [, Flags [, Volume]]) - Start to play the #Sound.
+PlaySound3D (#Sound3D [, Flags]) - Start to play the #Sound3D.
+Plot (x, y [, Color]) - Draw a plot at the given coordinates in the current output.
+Point (x, y) - Return the color used at the coordinates (x,y) in the current output.
+PointJoint (#Joint, EntityID, PivotX, PivotY, PivotZ [, EntityID2, PivotX2, PivotY2, PivotZ2])
+PointPick (#Camera, x, y) - Get the direction of the given point
+PokeA (*MemoryBuffer, Ascii.a) - Write an ascii character (1 byte) to the specified memory address.
+PokeB (*MemoryBuffer, Number) - Write a byte number to the specified memory address.
+PokeC (*MemoryBuffer, Character.c) - Write a character (1 byte in ascii, 2 bytes in unicode) to the specified memory address.
+PokeD (*MemoryBuffer, Double.d) - Write a double (8 bytes) to the specified memory address.
+PokeF (*MemoryBuffer, Number.f) - Write a float (4 bytes) to the specified memory address.
+PokeI (*MemoryBuffer, Number) - Write an integer (8 bytes) to the specified memory address.
+PokeL (*MemoryBuffer, Number) - Write a long (4 bytes) number to the specified memory address.
+PokeQ (*MemoryBuffer, Quad.q) - Write a quad (8 bytes) to the specified memory address.
+PokeS (*MemoryBuffer, Text$ [, Length [, Flags]]) - Write a string (including the ending '0') to the specified memory address.
+PokeU (*MemoryBuffer, Unicode.U) - Write an unicode character (2 bytes) to the specified memory address.
+PokeW (*MemoryBuffer, Number) - Write a word (2 bytes) number to the specified memory address.
+PopListPosition (List()) - Restores the current list position
+PopMapPosition (Map()) - Restores the current map position
+PostEvent (Event [, Window, Object [, Type [, Data]]]) - Post an event to the event queue.
+Pow (Number, Exponent) - Returns the Number^Power.
+PreferenceComment (Comment$) - Add a comment to the current preference file.
+PreferenceGroup (GroupName$) - Search or create the group in the preference file.
+PreferenceGroupName () - Get the name of the currently examined preference group.
+PreferenceKeyName () - Get the name of the currently examined preference key.
+PreferenceKeyValue () - Get the value of the currently examined preference key as a string.
+PreviousDatabaseRow (#Database) - Retrieves information about the previous database row.
+PreviousElement (List()) - Moves from the current element to the previous element in the list.
+PreviousXMLNode (Node) - Get the previous XML node on the same level as the given node
+Print (Text$) - Display the Text$ in the console.
+PrinterOutput () - Return the printer drawing area, to be used with the 2DDrawing commands.
+PrinterPageHeight ()  - Return the Heigt of the drawing area, in pixel.
+PrinterPageWidth () - Return the witdh of the drawing area, in pixel.
+PrinterVectorOutput ([Unit]) - Return the printer drawing area for vector drawing output.
+PrintN (Text$) - Display the Text$ in the console and add a line return.
+PrintRequester () - Open a print requester, necessary to print.
+ProgramExitCode (Program) - Get the exitcode of the specified program
+ProgramFilename () - Get the full path and filename of the executable of this program
+ProgramID (Program) - Returns the global Process ID for the running program
+ProgramParameter ([Index]) - Get the next passed program parameter, or the parameter at Index
+ProgramRunning (Program) - Check if the specified program is still running
+ProgressBarGadget (#Gadget, x, y, Width, Height, Minimum, Maximum [, Flags]) - Creates a ProgressBar gadget in the current gadgetList.
+ProgressBarGadget3D (#Gadget3D, x, y, Width, Height, Minimum, Maximum) - Creates a ProgressBar gadget in the current gadgetList.
+PurifierGranularity (GlobalGranularity, LocalGranularity, StringGranularity, DymamicGranularity) - Change the Purifier check granularities
+PushListPosition (List()) - Saves the current list position for later use
+PushMapPosition (Map()) - Saves the current map position for later use
+Radian (Angle) - Converts the given angle from degree to radian.
+RaiseError (ErrorNumber) - Raise the given error and call the error handler or exit
+Random (Maximum [, Minimum]) - Return a random number between 0 (unless 'Minimum' is specified) and the 'Maximum' value.
+RandomData (*Buffer, Length) - Fill the buffer with bytes from the random number generator.
+RandomizeArray (Array() [, Start, End]) - Reorder the items of the specified array in a random order.
+RandomizeList (List() [, Start, End]) - Reorder the items of the specified list in a random order.
+RandomSeed (Seed) - Reinitialize the random seed, with the specified value.
+RawKey () - Return the last rawkey, after the last Inkey() call.
+RayCast (x, y, z, DestinationX, DestinationY, DestinationZ, PickMask) - Returns #True if the ray has crossed an object.
+RayCollide (x, y, z, DestinationX, DestinationY, DestinationZ [, CollisionGroup, CollisionMask]) - Check if the given ray collide with an object
+RayPick (x, y, z, DestinationX, DestinationY, DestinationZ [, PickMask]) - Returns the first #Entity crossed by the ray.
+ReadAsciiCharacter (#File) - Read one ascii character from the specified file.
+ReadByte (#File) - Read one byte from the specified file.
+ReadCGI () - Read the CGI web content.
+ReadCharacter (#File [, Format]) - Read a character from the specified file.
+ReadConsoleData (*Buffer, Size) - Read data from the console input
+ReadData (#File, *Buffer, Size) - Read content from the file in the buffer.
+ReadDouble (#File) - Read a double (8 bytes) from the specified file.
+ReadFile (#File, FileName$ [, Flags]) - Open an existing file for read only operations.
+ReadFloat (#File) - Read a float (4 bytes) from the specified file.
+ReadInteger (#File) - Read an integer from the specified file.
+ReadLong (#File) - Read a long (4 bytes) from the specified file.
+ReadPreferenceDouble (Key$, DefaultValue) - Read the double value associated to the keyword.
+ReadPreferenceFloat (Key$, DefaultValue) - Read the value associated to the keyword.
+ReadPreferenceInteger (Key$, DefaultValue) - Read the value associated to the keyword.
+ReadPreferenceLong (Key$, DefaultValue) - Read the value associated to the keyword.
+ReadPreferenceQuad (Key$, DefaultValue) - Read the quad value associated to the keyword.
+ReadPreferenceString (Key$, DefaultValue$) - Read the value associated to the keyword.
+ReadProgramData (Program, *Buffer, Size) - Read output of the program into a buffer
+ReadProgramError (Program [, Format]) - Read a line from the standard error output of the program
+ReadProgramString (Program [, Format]) - Read a line from the standard output of the program
+ReadQuad (#File) - Read a quad (8 bytes) from the specified file.
+ReadSerialPortData (#SerialPort, *Buffer, Length) - Read an arbitrary amount of data from the #SerialPort.
+ReadString (#File [, Flags [, Length]]) - Read a string from the specified file.
+ReadStringFormat (#File) - Try to detect the String format in the file from a BOM. (Byte Order Mark)
+ReadUnicodeCharacter (#File) - Read one unicode character from the specified file.
+ReadWord (#File) - Read a word (2 bytes) from the specified file.
+ReAllocateMemory (Memory, Size [, Flags]) - ReAllocates a contiguous memory area according to the specified size.
+ReceiveFTPFile (#Ftp, RemoteFilename$, Filename$ [, Asynchronous]) - Receive a file from a FTP Server.
+ReceiveHTTPFile (URL$, Filename$ [, Flags [, UserAgent$]]) - Download a file from an URL.
+ReceiveHTTPMemory (URL$ [, Flags [, UserAgent$]]) - Download a file from an URL to a memory buffer.
+ReceiveNetworkData (ClientID, *DataBuffer, DataBufferLength) - Receive a raw data from the specified client.
+Red (Color) - Returns the red component of the given color
+RefreshDialog (#Dialog) - Recalculate the dialog dimension and adjust it if necessary.
+RegisterFontFile (FileName$) - Registers a font file for use by the application.
+RegularExpressionError () - Return the last regular expression error.
+RegularExpressionGroup (#RegularExpression, Group) - Get the content of a matching group.
+RegularExpressionGroupLength (#RegularExpression, Group) - Get the length of a matching group.
+RegularExpressionGroupPosition (#RegularExpression, Group) - Get the position of a matching group within the current match.
+RegularExpressionMatchLength (#RegularExpression) - Get the length of the current regular expression match.
+RegularExpressionMatchPosition (#RegularExpression) - Get the position in the string of the current regular expression match.
+RegularExpressionMatchString (#RegularExpression) - Get the matching string from the current regular expression match.
+RegularExpressionNamedGroup (#RegularExpression, GroupName$) - Get the content of a matching named group.
+RegularExpressionNamedGroupLength (#RegularExpression, GroupName$) - Get the length of a matching named group.
+RegularExpressionNamedGroupPosition (#RegularExpression, GroupName$) - Get the position of a matching named group within the current match.
+ReleaseMouse (State) - Releases or acquires the exclusive mouse access.
+ReloadMaterial (MaterialName$, Filename$, ParseScript) - Reload the specified material.
+RemoveBillboard (#Billboard, #BillboardGroup) - Remove the specified #Billboard.
+RemoveEnvironmentVariable (Name$) - Remove the given variable from the environment
+RemoveGadgetColumn (#Gadget, Column) - Remove a column to the specified #Gadget.
+RemoveGadgetItem (#Gadget, Position) - Remove an item of the specified #Gadget at the given Position.
+RemoveGadgetItem3D (#Gadget3D, Position) - Remove an item of the specified #Gadget3D at the given Position.
+RemoveImageFrame (#Image, Index) - Remove a frame from the image.
+RemoveJSONElement (*JSONValue, Index) - Remove an element from a JSON array
+RemoveJSONMember (*JSONValue, Key$) - Remove a member from a JSON object
+RemoveKeyboardShortcut (#Window, Key) - Remove a keyboard shortcut from the specified #Window.
+RemoveMailRecipient (#Mail [, Address$ [, Flags]]) - Remove a recipient to the speicifed #Mail.
+RemoveMaterialLayer (#Material) - Remove the top most texture layer.
+RemovePreferenceGroup (GroupName$) - Remove the group and all keys from the file.
+RemovePreferenceKey (Name$) - Remove the specified key from the current group.
+RemoveString (String$, RemoveString$ [, Mode [, StartPosition [, NbOccurences]]]) - Finds occurrences of 'StringToRemove$' into the given 'String$' and removes them.
+RemoveSysTrayIcon (#SysTrayIcon) - Remove the icon from the Systray area.
+RemoveWindowTimer (#Window, Timer) - Remove the timer event from the window.
+RemoveXMLAttribute (Node, Attribute$) - Remove the attribute entry from the XML node
+RenameFile (OldFileName$, NewFileName$) - Rename the old file to the new file.
+RenameFTPFile (#Ftp, Filename$, NewFilename$) - Rename or move a file on the FTP server.
+RenderWorld ([ElapsedPhysicTime]) - Renders the 3D world on the screen.
+ReplaceRegularExpression (#RegularExpression, String$, ReplaceString$) - Replace some strings according to the regular expression.
+ReplaceString (String$, StringToFind$, StringToReplace$ [, Mode [, StartPosition [, NbOccurences]]]) - Replaces occurrences of 'StringToFind$' with 'StringToReplace$' in the given 'String$'.
+ResetCoordinates ([System]) - Reset the vector drawing coordinate system to the default
+ResetGradientColors () - Clear all colors from the drawing gradient and reset it to BackColor->FrontColor.
+ResetList (List()) - Resets the current list element to be before the first element.
+ResetMap (Map()) - Resets the current map element before the first element.
+ResetMaterial (ObjectType) - Reload the materials for all the specified objects.
+ResetPath () - Clear the current vector drawing path
+ResetProfiler () - Reset the line counts of the profiler.
+ResetStructure (*Structure, Structure) - Reset the specified *Structure.
+ResizeBillboard (#Billboard, #BillboardGroup, Width, Height) - Change the #Billboard dimensions.
+ResizeCamera (#Camera, x, y, Width, Height) - Resize the #Camera. All the dimensions are in pourcents.
+ResizeGadget (#Gadget, x, y, Width, Height) - Resize the specified #Gadget at the given position and dimension.
+ResizeGadget3D (#Gadget3D, x, y, Width, Height) - Resize the specified #Gadget3D at the given position and dimension.
+ResizeImage (#Image, Width, Height [, Mode]) - Resize the image to the given dimension.
+ResizeJSONElements (*JSONValue, Size) - Resize a JSON array
+ResizeMovie (#Movie, x, y, Width, Height) - Resize and move the movie display area on the movie window.
+ResizeParticleEmitter (#ParticleEmitter, x, y, z) - Resize the #ParticleEmitter.
+ResizeWindow (#Window, x, y, Width, Height) - Resize the specified window to the given dimensions.
+ResizeWindow3D (#Window3D, x, y, Width, Height) - Resize the specified window to the given dimensions.
+ResolveXMLAttributeName (Node, Attribute$ [, Separator$]) - Resolves all namespaces for the given node attribute
+ResolveXMLNodeName (Node [, Separator$]) - Resolves all namespaces for the given node and returns a full node name
+RestoreVectorState () - Restore the vector drawing state to the saved state
+ResumeAudioCD () - Resume the AudioCD playback
+ResumeMovie (#Movie) - Starts again to play the movie, after a PauseMovie() command.
+ResumeSound (#Sound [, Channel]) - Resume the play of the specified sound (if it was paused).
+ResumeThread (Thread) - Resume the thread execution.
+ReverseString (String$) - Reverse all the characters of the string.
+RGB (Red, Green, Blue) - Returns the 24 bits color corresponding to the given RGB parameters.
+RGBA (Red, Green, Blue, Alpha) - Returns the 32 bits color corresponding to the given RGBA parameters.
+RibbonEffectColor (#Effect, ChainIndex, Color, FadeoutColor)
+RibbonEffectWidth (#Effect, ChainIndex, Width, FadeoutWidth)
+Right (String$, Length) - Returns the last 'Length' number of characters from the right side of the string.
+Roll (ObjectID, Value.f, Mode) - Roll the specifed object.
+RootXMLNode (#XML) - Get the root-node of the XML tree
+RotateBillboardGroup (#BillboardGroup, x, y, z [, Mode]) - Rotate the #BillboardGroup.
+RotateCamera (#Camera, x, y, z [, Mode]) - Rotate the #Camera.
+RotateCoordinates (x.d, y.d, Angle.d [, System]) - Rotate the vector drawing coordinate system
+RotateEntity (#Entity, x, y, z [, Mode]) - Rotate the #Entity.
+RotateEntityBone (#Entity, Bone$, x, y, z , Mode) - Rotate the #Entity bone.
+RotateLight (#Light, x, y, z [, Mode]) - Rotate the #Light.
+RotateMaterial (#Material, Angle, Mode [, Layer]) - Rotate the #Material texture.
+RotateNode (#Node, x, y, z [, Mode]) - Rotate the #Node.
+RotateSprite (#Sprite, Angle, Mode) - Rotate the sprite. Angle varies from 0 to 360.
+Round (Number, Mode) - Rounds the specified float number according to the given mode.
+RoundBox (x, y, Width, Height, RoundX, RoundY [, Color]) - Draw a box with rounded edges on the current output.
+RSet (String$, Length [, Character]) - Pads a string to the right, and adds 'space' characters to fit the specified length.
+RTrim (String$ [, Character$]) - Removes all the 'space' or given characters located at the end of a string.
+RunProgram (ProgramName$ [, Parameter$, WorkingDirectory$ [, Flags [, SenderProgram]]]) - Launch an external program.
+SaveDebugOutput (Filename$) - Save the content of the debug output window to a file.
+SaveFileRequester (Title$, DefaultFile$, Pattern$, PatternPosition) - Open the standard requester which allow to save a file.
+SaveImage (#Image, FileName$ [, Format [, Flags [, Depth]]]) - Save the specified image.
+SaveJSON (#JSON, FileName$ [, Flags]) - Save JSON data to a file
+SaveMesh (#Mesh, Filename$)
+SaveRenderTexture (#Texture, Filename$) - Save the specified #Texture.
+SaveSprite (#Sprite, Filename$ [, Format [, Flags]]) - Save a #Sprite on file in various image format.
+SaveTerrain (#Terrain, ModifiedOnly) - Save the #Terrain on disk.
+SaveVectorState () - Save the current vector drawing state
+SaveXML (#XML, FileName$ [, Flags]) - Save a XML tree to a file
+ScaleCoordinates (ScaleX.d, ScaleY.d [, System]) - Scale the vector drawing coordinate system
+ScaleEntity (#Entity, x, y, z [, Mode]) - Scale the #Entity.
+ScaleMaterial (#Material, x, y [, Layer]) - Scale the #Material texture.
+ScaleNode (#Node, x, y, z [, Mode]) - Scale the #Node.
+ScaleText3D (#Text3D, x, y, z [, Mode]) - Scale the #Text3D.
+ScintillaGadget (#Gadget, x, y, Width, Height, Callback) - Create Scintilla Gadget
+ScintillaSendMessage (#Gadget, Message [, Param [, lParam]]) - Scintilla Send Message
+ScreenDepth () - Get the screen depth.
+ScreenHeight () - Get the screen height.
+ScreenID ()
+ScreenModeDepth () - Get the screen mode depth.
+ScreenModeHeight () - Get the screen mode height.
+ScreenModeRefreshRate () - Get the screen mode refreshrate.
+ScreenModeWidth () - Get the screen mode width.
+ScreenOutput () - Returns the OutputID of the currently used screen to perform 2D rendering operation on it.
+ScreenWidth () - Get the screen width.
+ScrollAreaGadget (#Gadget, x, y, Width, Height, ScrollAreaWidth, ScrollAreaHeight [, ScrollStep [, Flags]]) - Create a ScrollArea gadget in the current GadgetList.
+ScrollAreaGadget3D (#Gadget3D, x, y, Width, Height, ScrollAreaWidth, ScrollAreaHeight, ScrollStep) - Create a ScrollArea gadget in the current GadgetList.
+ScrollBarGadget (#Gadget, x, y, Width, Height, Min, Max, PageLength [, Flags]) - Create a ScrollBar gadget in the current GadgetList.
+ScrollBarGadget3D (#Gadget3D, x, y, Width, Height, Min, Max, PageLength [, Flags]) - Create a ScrollBar gadget in the current GadgetList.
+ScrollMaterial (#Material, x, y, Mode [, Layer]) - Scroll the #Material texture.
+Second (Date) - Returns the second value of the specified date (between 0 and 59).
+SecondWorldCollisionEntity () - Second entity of the current collision.
+SelectedFilePattern () - Returns the selected pattern index choosen with OpenFileRequester() or SaveFileRequester().
+SelectedFontColor () - Returns the RGB color of the font chosen by the user with the FontRequester() command.
+SelectedFontName () - Returns the name of the font chosen by the user with the FontRequester() command.
+SelectedFontSize () - Returns the size of the font chosen by the user with the FontRequester() command.
+SelectedFontStyle () - Returns the style of the font chosen by the user with the FontRequester() command.
+SelectElement (List(), Position) - Change the current list element to the element at the specified position.
+SendFTPFile (#Ftp, Filename$, RemoteFilename$ [, Asynchronous]) - Send a file to a FTP Server.
+SendMail (#Mail, Smtp$ [, Port [, Flags [, User$, Password$]]]) - Send the mail.
+SendNetworkData (ClientID, *MemoryBuffer, Length) - Send raw data to the specified client.
+SendNetworkString (ClientID, String$ [, Format]) - Send a string to the specified client.
+SerialPortError (#SerialPort) - Return the current error on the #SerialPort, if any.
+SerialPortID (#SerialPort) - Return the unique ID which identifies the SerialPort in the operating system.
+SerialPortTimeouts (#SerialPort, RIT, RTTC, RTTM, WTTC, WTTM) - Change the default timeouts.
+ServerID (#Server) - Return the server system identifier.
+SetActiveGadget (#Gadget) - Set the focus on the specified Gadget
+SetActiveGadget3D (#Gadget3D) - Set the focus on the specified Gadget
+SetActiveWindow (#Window) - Activate the specified window, this means than focus has been put on this window.
+SetActiveWindow3D (#Window3D) - Activate the specified window, this means than focus has been put on this window.
+SetClipboardImage (#Image) - Set the specified #Image in the clipboard
+SetClipboardText (Text$) - Pastes the specified Text$ into the clipboard.
+SetCurrentDirectory (Path$) - Change the path of the current directory to the specified one.
+SetDatabaseBlob (#Database, StatementIndex, *Buffer, BufferLength) - Set a blob as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseDouble (#Database, StatementIndex, Value.d) - Set a double as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseFloat (#Database, StatementIndex, Value.f) - Set a float as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseLong (#Database, StatementIndex, Value) - Set a number as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseNull (#Database, StatementIndex) - Set a NULL value as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseQuad (#Database, StatementIndex, Value.q) - Set a quad number as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDatabaseString (#Database, StatementIndex, Value$) - Set a string as a bind variable for the next DatabaseQuery() or DatabaseUpdate()
+SetDragCallback (@ProcedureName()) - Set a callback to provide feedback while draging.
+SetDropCallback (@ProcedureName()) - Set a callback to provide feedback while dropping.
+SetEntityAnimationLength (#Entity, Animation$, Length) - Set the #Entity animation length.
+SetEntityAnimationTime (#Entity, Animation$, Time) - Set the current #Entity animation time.
+SetEntityAnimationWeight (#Entity, Animation$, Weight) - Set the #Entity animation weight.
+SetEntityAttribute (#Entity, Attribute, Value) - Set an #Entity attribute value.
+SetEntityCollisionFilter (#Entity, Group, Mask) - Set the entity collision group and mask.
+SetEntityMaterial (#Entity, MaterialID [, SubEntity]) - Set the #Entity material.
+SetEnvironmentVariable (Name$, Value$) - Assign the given Value$ to the environment variable
+SetFileAttributes (FileName$, Attributes) - Changes the attributes of the specified file.
+SetFileDate (FileName$, Type, Date) - Changes the modified/created/accessed date of the specified file.
+SetFrameRate (FrameRate) - Set the frame rate (in frames per second) for the current screen.
+SetFTPDirectory (#Ftp, Directory$) - Change the current directory.
+SetGadgetAttribute (#Gadget, Attribute, Value) - Change the specified #Gadget attribute.
+SetGadgetAttribute3D (#Gadget3D, Attribute, Value) - Change the specified #Gadget3D attribute.
+SetGadgetColor (#Gadget, ColorType, Color) - Change a color in the Gadget
+SetGadgetData (#Gadget, Value) - Stores a value for the Gadget.
+SetGadgetData3D (#Gadget3D, Value) - Stores a value for the Gadget.
+SetGadgetFont (#Gadget, FontID()) - Change the font which will be used by newly created gadgets.
+SetGadgetItemAttribute (#Gadget, Item, Attribute, Value [, Column]) - Change the specified #Gadget item attribute.
+SetGadgetItemColor (#Gadget, Item, ColorType, Color [, Column]) - Change a color in the Gadget item
+SetGadgetItemData (#Gadget, Item, Value) - Stores a Long value with this Gadget item
+SetGadgetItemData3D (#Gadget3D, Item, Value) - Stores a Long value with this Gadget item
+SetGadgetItemImage (#Gadget, Item, ImageID) - Change the image of the speicified gadget item.
+SetGadgetItemState (#Gadget, Position, State) - Change the #Gadget item state.
+SetGadgetItemState3D (#Gadget3D, Position, State) - Change the #Gadget3D item state.
+SetGadgetItemText (#Gadget, Position, Text$ [, Column]) - Change the #Gadget item text content.
+SetGadgetItemText3D (#Gadget3D, Position, Text$ [, Column]) - Change the #Gadget3D item text content.
+SetGadgetState (#Gadget, State) - Change the #Gadget current state.
+SetGadgetState3D (#Gadget3D, State) - Change the #Gadget3D current state.
+SetGadgetText (#Gadget, Text$) - Change the gadget text content of the specified #Gadget.
+SetGadgetText3D (#Gadget3D, Text$) - Change the gadget text content of the specified #Gadget3D.
+SetGUITheme3D (ThemeName$, FontName$) - Sets the 3D GUI theme.
+SetImageFrame (#Image, Frame) - Changes the current image frame.
+SetImageFrameDelay (#Image, Delay) - Sets the current frame delay in milliseconds.
+SetJointAttribute (#Joint, Attribute, Value [, Index])
+SetJSONArray (*JSONValue) - Set a JSON value to contain an (empty) array
+SetJSONBoolean (*JSONValue, Value) - Set a JSON value to contain a boolean
+SetJSONDouble (*JSONValue, Value.d) - Set a JSON value to contain a double
+SetJSONFloat (*JSONValue, Value.f) - Set a JSON value to contain a float
+SetJSONInteger (*JSONValue, Value) - Set a JSON value to contain an integer
+SetJSONNull (*JSONValue) - Set a JSON value to contain a null
+SetJSONObject (*JSONValue) - Set a JSON value to contain an (empty) object
+SetJSONQuad (*JSONValue, Value.q) - Set a JSON value to contain a quad
+SetJSONString (*JSONValue, String$) - Set a JSON value to contain a string
+SetLightColor (#Light, Type, Color) - Change the #Light color value.
+SetMailAttribute (#Mail, Attribute, Value$) - Change the specified #Mail attribute
+SetMailBody (#Mail, Body$) - Changes the mail body.
+SetMaterialAttribute (#Material, Attribute, Value [, Layer]) - Get the specified #Material attribute.
+SetMaterialColor (#Material, Type, Color) - Change the specified #Material color.
+SetMenuItemState (#Menu, MenuItem, State) - Change the specified #Menu item state.
+SetMenuItemText (#Menu, MenuItem, Text$) - Change the specified #Menu item text.
+SetMenuTitleText (#Menu, Index, Text$) - Change the specified #Menu title text.
+SetMeshData (#Mesh, SubMesh, DataArray(), Flags, FirstIndex, LastIndex)
+SetMeshMaterial (#Mesh, MaterialID [, SubMesh])
+SetMusicPosition (#Music, Position) - Change the current pattern position of the playing module to the new one.
+SetNodeAnimationKeyFramePosition (#NodeAnimation, KeyFrame, x, y, z) - Set the keyframe position for the #NodeAnimation.
+SetNodeAnimationKeyFrameRotation (#NodeAnimation, KeyFrame, x, y, z [, w, Mode]) - Set the keyframe position for the #NodeAnimation.
+SetNodeAnimationKeyFrameScale (#NodeAnimation, KeyFrame, x, y, z) - Set the keyframe scale for the #NodeAnimation.
+SetNodeAnimationLength (#NodeAnimation, Length) - Set the #NodeAnimation length.
+SetNodeAnimationTime (#NodeAnimation, Time) - Set the current #NodeAnimation time.
+SetNodeAnimationWeight (#NodeAnimation, Weight) - Set the #NodeAnimation weight.
+SetOrientation (ObjectID, x, y, z, w) - Sets the orientation for the specified object.
+SetOrigin (x, y) - Set the coordinate origin for drawing operations
+SetRenderQueue (ObjectID, Queue [, Priority]) - Change the object order render.
+SetRuntimeDouble (Name, Value) - Change the runtime item value.
+SetRuntimeInteger (Name, Value) - Change the runtime item value.
+SetRuntimeString (Name, String$) - Change the runtime item string.
+SetSerialPortStatus (#SerialPort, Attribute, Value) - Change the #SerialPort status.
+SetSoundFrequency (#Sound, Frequency [, Channel]) - Set the new frequency for the #Sound. Values are from 1000 to 100000 hz.
+SetSoundPosition (#Sound, Position [, Mode [, Channel]]) - Set the current playing position for the #Sound.
+SetTerrainTileHeightAtPoint (#Terrain, TileX, TileY, x, y, Height) - Set the height of the #Terrain tile at the specified position.
+SetTerrainTileLayerBlend (#Terrain, TileX, TileY, Layer, x, y, Value) - Set the #Terrain tile layer blend value.
+SetToolBarButtonState (#ToolBar, ButtonID, State) - Change the state of the specified button
+SetupTerrains (LigthID, CompositeMapDistance, Flags) - Setup the default options for all terrains.
+SetURLPart (URL$, Parameter$, Value$) - Set the specific part of an URL.
+SetVehicleAttribute (#Entity, Attribute, Value.f [, Wheel]) - Set a vehicule attribute.
+SetWindowCallback (@ProcedureName() [, #Window]) - Associates a callback to handle the events of the current window.
+SetWindowColor (#Window, Color) - Set the background color of the window.
+SetWindowData (#Window, Value) - Stores a value for the window
+SetWindowState (#Window, State) - Set the minimized/maximized state of the window.
+SetWindowTitle (#Window, Title$) - Changes the current #Window title.
+SetWindowTitle3D (#Window3D, Title$) - Changes the current #Window3D title.
+SetXMLAttribute (Node, Attribute$, Value$) - Set the value of the given attribute of the XML node (creates the attribute if needed)
+SetXMLEncoding (#XML, Encoding) - Set the encoding used to export/save the XML tree
+SetXMLNodeName (Node, Name$) - Set the (tag-)name of the given XML node
+SetXMLNodeOffset (Node, Offset) - Set the number of characters of text between this node and the previous one in the tree
+SetXMLNodeText (Node, Text$) - Set the text content of the given XML node
+SetXMLStandalone (#XML, Standalone) - Set the standalone mode of the XML document
+ShortcutGadget (#Gadget, x, y, Width, Height, Shortcut) - Creates a Gadget to select a keyboard shortcut in the current GadgetList.
+ShowAssemblyViewer () - Show the assembly viewer window.
+ShowCallstack () - Show the callstack window.
+ShowDebugOutput () - Open the debug output window.
+ShowGUI (Intensity, ShowMouseCursor [, #Camera, Enable]) - Shows or hides the GUI
+ShowLibraryViewer ([Library$ [, Object]]) - Show the library viewer, optionally displaying an object from a library.
+ShowMemoryViewer ([*Buffer, Length]) - Show the memory viewer, with an optional memory buffer to display.
+ShowProfiler () - Show the profiler window.
+ShowVariableViewer () - Show the variable viewer window.
+ShowWatchlist () - Show the waicthlist window.
+Sign (Number) - Returns 1, 0 or -1 depending on the sign of the given number.
+SignalSemaphore (Semaphore) - Signal the semaphore object once (increment the count by 1).
+Sin (Angle) - Returns the sinus of the specified angle, in radian.
+SinH (Angle) - Returns the hyperbolic sine of the specified angle.
+SkewCoordinates (AngleX.d, AngleY.d [, System]) - Skew the vector drawing coordinate system
+SkyBox (Filename$ [, FogColor, FogIntensity, FogStartDistance, FogEndDistance]) - Creates a 6 faces textured cube to simulate a closed world.
+SkyDome (Filename$, Curve [, FogColor, FogIntensity, FogStartDistance, FogEndDistance]) - Creates an artificial sky dome.
+SliderJoint (#Joint, EntityID, FxA, FyA, FzA, EntityID2, FxB, FyB, FzB) - Create a slider joint.
+SmartWindowRefresh (#Window, State) - Activate or deactivate the smart window refresh.
+SortArray (Array(), Options [, Start, End]) - Sort the specified array according to the given options and range.
+SortList (List(), Options [, Start, End]) - Sort the specified list according to the given options and range.
+SortStructuredArray (Array(), Options, Offset, Type [, Start, End]) - Sort the specified array according to the given options and range.
+SortStructuredList (List(), Options, Offset, Type [, Start, End]) - Sort the specified list according to the given options and range.
+SoundCone3D (#Sound3D, InnerCone, OuterCode, OuterGain) - Specify the sound cone
+SoundID3D (#Sound3D) - Returns the unique systeme identifiant for the sound.
+SoundLength (#Sound [, Mode]) - Returns the length of the #Sound.
+SoundListenerLocate (x, y, z) - Change the sound listener position in the world.
+SoundPan (#Sound, Pan [, Channel]) - Set the new pan for the #Sound. Values are from -100 to 100.
+SoundRange3D (#Sound3D, Minimum, Maximum) - Set the range for the #Sound3D.
+SoundStatus (#Sound [, Channel]) - Get the specified #Sound status.
+SoundVolume (#Sound, Volume [, Channel]) - Set the new volume for the #Sound. Values are from 0 to 100.
+SoundVolume3D (#Sound3D, Volume) - Set the new volume for the #Sound3D. Values are from 0 to 100.
+Space (Length) - Create an empty string of the given 'Length' filled with 'space' characters.
+SpinGadget (#Gadget, x, y, Width, Height, Minimum, Maximum [, Flags]) - Create a Spin gadget in the current GadgetList.
+SpinGadget3D (#Gadget3D, x, y, Width, Height, Minimum, Maximum) - Create a Spin gadget in the current GadgetList.
+SplinePointX (#Spline, Index) - Return the x position of the #Spline point.
+SplinePointY (#Spline, Index) - Return the y position of the #Spline point.
+SplinePointZ (#Spline, Index) - Return the z position of the #Spline point.
+SplineX (#Spline) - Return the x position of the #Spline.
+SplineY (#Spline) - Return the y position of the #Spline.
+SplineZ (#Spline) - Return the z position of the #Spline.
+SplitList (List(), DestinationList() [, KeepCurrent]) - Split List() into List() and DestinationList().
+SplitterGadget (#Gadget, x, y, Width, Height, #Gadget1, #Gadget2 [, Flags]) - Create a Splitter gadget in the current GadgetList.
+SpotLightRange (#Light, InnerAngle, OutterAngle [, FallOff])
+SpriteBlendingMode (SourceOperation, DestinationOperation) - Changes the realtime blending mode
+SpriteCollision (#Sprite1, x1, y1, #Sprite2, x2, y2) - Test if the two sprites are overlapped.
+SpriteDepth (#Sprite) - Return the depth of the specified sprite.
+SpriteHeight (#Sprite) - Return the height in pixel of the specified sprite.
+SpriteID (#Sprite) - Returns the unique ID which identifies the sprite in the operating system.
+SpriteOutput (#Sprite) - Return the output to the sprite, to be used with StartDrawing()
+SpritePixelCollision (#Sprite1, x1, y1, #Sprite2, x2, y2) - Test if the two sprites are overlapped.
+SpriteQuality (Quality) - Set the level of rendering. 0=Lowest quality, 1=Bilinear filtering
+SpriteWidth (#Sprite) - Return the width in pixel of the specified sprite.
+Sqr (Value) - Returns the square root of the specified number.
+StartAESCipher (#Cipher, *Key, KeyBits, *InitializationVector, Mode) - Create a new streaming cipher.
+StartDrawing (Output) - Change the current drawing output to the specified output.
+StartEntityAnimation (#Entity, Animation$ [, Flags]) - Start the specified #Entity animation.
+StartFingerprint (#Fingerprint, Plugin [, Bits]) - Start a step by step fingerprint calculation.
+StartNodeAnimation (#NodeAnimation [, Flags]) - Start the specified #NodeAnimation.
+StartPrinting (JobName$) - Initialize the printer and start a new print job.
+StartProfiler () - Start the profiler.
+StartVectorDrawing (Output) - Start vector drawing on the specified output
+StatusBarHeight (#StatusBar) - Returns the height of the statusbar.
+StatusBarID (#StatusBar) - Returns the unique ID which identifies the statusbar in the operating system.
+StatusBarImage (#StatusBar, Field, ImageID [, Appearance]) - Set an image to display in the specified statusbar field.
+StatusBarProgress (#StatusBar, Field, Value [, Appearance [, Min, Max]]) - Set the specified 'Field' to display a progressbar.
+StatusBarText (#StatusBar, Field, Text$ [, Appearance]) - Change the text of the specified 'Field' in the given '#StatusBar'.
+StickyWindow (#Window, State) - Make the window stay in front of all other windows.
+StopAudioCD () - Stop the current CD-Audio playback.
+StopDrawing () - Must be called after a StartDrawing(), when all graphics operations are finished.
+StopEntityAnimation (#Entity, Animation$) - Stop the specified #Entity animation.
+StopMovie (#Movie) - Stop to play the movie.
+StopMusic (#Music) - Stop the current module (if it was playing).
+StopNodeAnimation (#NodeAnimation) - Stop the specified #NodeAnimation.
+StopPrinting () - Finish the print session and send all the data to the printer.
+StopProfiler () - Stop the profiler.
+StopSound (#Sound [, Channel]) - Stop the specified sound (if it was playing).
+StopSound3D (#Sound3D) - Stop the specified sound (if it was playing).
+StopVectorDrawing () - Stop vector drawing on the current output
+Str (Value) - Convert a signed integer number into a string.
+StrD (Value [, NbDecimals]) - Convert a double number into a string.
+StrF (Value [, NbDecimals]) - Convert a float number into a string.
+StringByteLength (String$ [, Format]) - Get the length in bytes needed to store the string in the given format.
+StringField (String$, Index, Separator$) - Returns the string field at the specified index.
+StringFingerprint (String, Plugin [, Bits [, Format]]) - Returns the fingerprint of the specified string.
+StringGadget (#Gadget, x, y, Width, Height, Content$ [, Flags]) - Creates a String gadget in the current GadgetList.
+StringGadget3D (#Gadget3D, x, y, Width, Height, Content$ [, Flags]) - Creates a String gadget in the current GadgetList.
+StrokePath (Width.d [, Flags]) - Draw a line along the vector drawing path
+StrU (Value [, Type]) - Convert a value into unsigned form.
+SubMeshCount (#Mesh)
+Sun (x, y, z, Color) - Changes the sun attributes.
+SwapElements (List(), *FirstElement, *SecondElement) - Swap the position of the specified elements.
+SwitchCamera (#Camera, #NewCamera) - Change the active #Camera with the #NewCamera.
+SysTrayIconToolTip (#SysTrayIcon, Text$) - Associate a tooltip text to the specified icon.
+Tan (Angle) - Returns the tangent of the specified angle, in radian.
+Bool (Expression) - Test the expression and return #True or #False.
+Defined (Name, Type) - Returns 1 if the object is defined, or 0 if not.
+OffsetOf (Structure\Field) - Returns the offset of the specified structure field.
+SizeOf (Structure) - Returns the size of the given structure.
+TanH (Angle) - Returns the hyperbolic tangent of the specified angle.
+TerrainHeight (#Terrain, x, z) - Return the height of the #Terrain at the specified coordinates.
+TerrainLocate (#Terrain, x, y, z) - Change the #Terrain location.
+TerrainMousePick (#Terrain, CameraID, x, y) - Perform a mouse picking on the #Terrain.
+TerrainRenderMode (#Terrain, Flags) - Change the #Terrain render mode.
+TerrainTileHeightAtPosition (#Terrain, TileX, TileY, Layer, x, y) - Return the height of the #Terrain tile.
+TerrainTileLayerMapSize (#Terrain, TileX, TileY) - Return the #Terrain tile layer map size.
+TerrainTilePointX (#Terrain, TileX, TileY, x, y, z) - Return the x position in the #Terrain tile of the point.
+TerrainTilePointY (#Terrain, TileX, TileY, x, y, z) - Return the y position in the #Terrain tile of the point.
+TerrainTileSize (#Terrain, TileX, TileY) - Return the size of the #Terrain tile.
+Text3DAlignment (#Text3D, Alignment)
+Text3DCaption (#Text3D, Caption$)
+Text3DColor (#Text3D, Color)
+Text3DID (#Text3D) - Return the unique #Text3D ID.
+Text3DX (#Text3D) - Return the x position of the #Text3D.
+Text3DY (#Text3D) - Return the y position of the #Text3D.
+Text3DZ (#Text3D) - Return the z position of the #Text3D.
+TextGadget (#Gadget, x, y, Width, Height, Text$ [, Flags]) - Creates a Text gadget in the current GadgetList.
+TextGadget3D (#Gadget3D, x, y, Width, Height, Text$) - Creates a Text gadget in the current GadgetList.
+TextHeight (Text$) - Return the height (in pixel) of the given string in the current output using the current font.
+TextureHeight (#Texture) - Returns the height in pixel of the #Texture.
+TextureID (#Texture) - Returns the #Texture unique ID.
+TextureOutput (#Texture) - Returns the OutputID of the #Texture to perform 2D rendering operation on it.
+TextureWidth (#Texture) - Returns the width in pixel of the #Texture.
+TextWidth (Text$) - Return the length (in pixel) of the given string in the current output using the current font.
+ThreadID (Thread) - Get the OS handle for the thread.
+ThreadPriority (Thread, Priority) - Change the thread priority and returns the old priority.
+ToolBarButtonText (#ToolBar, ButtonID, Text$) - Changes the toolbar button text$.
+ToolBarHeight (#ToolBar) - Returns the height of the specified #ToolBar.
+ToolBarID (#ToolBar) - Returns the unique ID which identifies the toolbar in the operating system.
+ToolBarImageButton (#ButtonID, ImageID [, Mode [, Text$]]) - Add an image button to the toolbar being constructed.
+ToolBarSeparator () - Add a vertical separator to toolbar being constructed.
+ToolBarStandardButton (#ButtonID, #ButtonIcon [, Mode [, Text$]]) - Add a standard button to the toolbar being constructed.
+ToolBarToolTip (#ToolBar, ButtonID, Text$) - Associates the specified Text$ to the current ToolBar #ButtonID.
+TrackBarGadget (#Gadget, x, y, Width, Height, Minimum, Maximum [, Flags]) - Create a TrackBar gadget in the current GadgetList.
+TransformMesh (#Mesh, x, y, z, ScaleX, ScaleY, ScaleZ, RotateX, RotateY, RotateZ [, SubMesh])
+TransformSprite (#Sprite, x1, y1 [, z1], x2, y2 [, z2], x3, y3 [, z3], x4, y4 [, z4]) - Transform the sprite to the new given dimensions.
+TranslateCoordinates (x.d, y.d [, System]) - Move the origin of the vector drawing coordinate system
+TransparentSpriteColor (#Sprite, Color) - Change the sprite transparent color (when displayed with DisplayTransparentSprite).
+TreeGadget (#Gadget, x, y, Width, Height [, Flags]) - Create a Tree gadget in the current GadgetList.
+TreeGadget3D (#Gadget3D, x, y, Width, Height [, Flags]) - Create a Tree gadget in the current GadgetList.
+Trim (String$ [, Character$]) - Removes all the 'space' or given characters located at the beginning and at the end of a string.
+TruncateFile (#File) - End the file at the current position and cut all following data.
+TryLockMutex (Mutex) - Try to get ownership of the mutex object. Returns 0 if unsucessfull.
+TrySemaphore (Semaphore) - Decrement the semaphore count only if it is above 0, else return 0.
+TypeOf (Object) - Returns the type of the given object.
+Subsystem (Name) - Check if a subsystem is in use.
+UCase (String$) - Returns the original string converted into upper case characters.
+UnbindEvent (Event, @Callback() [, Window [, Object [, EventType]]]) - Unbind an event callback.
+UnbindGadgetEvent (#Gadget, @Callback() [, EventType]) - Unbind a gadget event callback.
+UnbindMenuEvent (#Menu, MenuItem, @Callback()) - Unbind a menu item event callback.
+UnclipOutput () - Remove any clipping from the drawing output
+UncompressMemory (*Buffer, Size, *Output, OutputSize [, PluginID]) - Uncompress the content of the *Buffer into *Output.
+UncompressPackFile (#Pack, Filename$ [, PackedFilename$]) - Uncompress the current or the specified filename in the archive to the specified file.
+UncompressPackMemory (#Pack, *Buffer, Size [, PackedFilename$]) - Uncompress the current or the specified filename in the archive to memory.
+UnescapeString (String [, Flags]) - Returns the unescaped string.
+UnlockMutex (Mutex) - Release ownership of the mutex object
+UpdateEntityAnimation (#Entity, Animation$) - Update the specified #Entity animation.
+UpdateMesh (#Mesh, Index)
+UpdateMeshBoundingBox (#Mesh)
+UpdateRenderTexture (#Texture) - Update the #Texture content with the camera view.
+UpdateSplinePoint (#Spline, Index, x, y, z) - Update the specified #Spline point.
+UpdateTerrain (#Terrain) - Update the whole #Terrain.
+UpdateTerrainTileLayerBlend (#Terrain, TileX, TileY, Layer) - Update the #Terrain tile blend value.
+UpdateVertexPoseReference (#Mesh, Animation$, Track, Index, PoseIndex, Influence) - Update a new vertex pose reference to the #Mesh track.
+URLDecoder (URL$ [, Format]) - Returns the decoded URL$.
+URLEncoder (URL$ [, Format]) - Returns the URL$ encoded to HTTP format.
+UseAudioCD (AudioCDDrive) - Change the current AudioCD drive.
+UseBriefLZPacker () - Add BriefLZ support to the packer commandset.
+UseCRC32Fingerprint () - Add CRC32 fingerprint support to the cipher commandset.
+UseFLACSoundDecoder () - Enables the FLAC support for CatchSound(), LoadSound().
+UseGadgetList (WindowID) - Make the specified WindowID the current gadget list to add gadgets on it.
+UseGIFImageDecoder () - Enables GIF support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UseJCALG1Packer () - Add JCALG1 decompression support to the packer commandset.
+UseJPEG2000ImageDecoder () - Enables the JPEG 2000 support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UseJPEG2000ImageEncoder () - Enables the JPEG 2000 support for SaveImage() and SaveSprite().
+UseJPEGImageDecoder () - Enables the JPEG support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UseJPEGImageEncoder () - Enables the JPEG support for SaveImage() and SaveSprite().
+UseLZMAPacker () - Add LZMA support to the packer commandset.
+UseMD5Fingerprint () - Add MD5 fingerprint support to the cipher commandset.
+UseODBCDatabase () - Add ODBC support to the database commandset.
+UseOGGSoundDecoder () - Enables the OGG support for CatchSound(), LoadSound().
+UsePNGImageDecoder () - Enables the PNG support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UsePNGImageEncoder () - Enables the PNG support for SaveImage() and SaveSprite().
+UsePostgreSQLDatabase () - Add PostgreSQL support to the database commandset.
+UserName () - Returns the name of the currently logged in user
+UseSHA1Fingerprint () - Add SHA-1 fingerprint support to the cipher commandset.
+UseSHA2Fingerprint () - Add SHA-2 fingerprint support to the cipher commandset.
+UseSHA3Fingerprint () - Add SHA-3 fingerprint support to the cipher commandset.
+UseSQLiteDatabase () - Add SQLite support to the database commandset.
+UseTARPacker () - Add TAR support to the packer commandset.
+UseTGAImageDecoder () - Enables the TGA support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UseTIFFImageDecoder () - Enables the TIFF support for CatchImage(), LoadImage(), CatchSprite() and LoadSprite().
+UseZipPacker () - Add ZIP support to the packer commandset.
+UTF8 (String$) - Create an UTF8 string buffer.
+Val (String$) - Transform a string into a numeric value.
+ValD (String$) - Convert a String into a double number.
+ValF (String$) - Convert a String into a float number.
+VectorFont (FontID [, Size.d]) - Set the font to use for vector drawing
+VectorOutputHeight () - Returns the height of the current vector output
+VectorOutputWidth () - Returns the width of the current vector output
+VectorParagraphHeight (Text$, Width.d, Height.d) - Calculate the height of a text paragraph for vector drawing
+VectorResolutionX () - Returns horizontal resolution (in DPI) of the vector drawing output
+VectorResolutionY () - Returns vertical resolution (in DPI) of the vector drawing output
+VectorSourceCircularGradient (x.d, y.d, Radius.d, [CenterX.d, CenterY.d]) - Set a circular gradient for vector drawing
+VectorSourceColor (Color) - Set the color for vector drawing
+VectorSourceGradientColor (Color, Position.d) - Add a color to the vector drawing gradient
+VectorSourceImage (ImageID [, Alpha [, Width.d, Height.d [, Flags]]]) - Set an image as the vector drawing source
+VectorSourceLinearGradient (x1.d, y1.d, x2.d, y2.d) - Set a linear gradient for vector drawing
+VectorTextHeight (Text$ [, Flags]) - Calculate the text height for vector drawing
+VectorTextWidth (Text$ [, Flags]) - Calculate the text width for vector drawing
+VectorUnit () - Returns the unit of measurement used by the vector drawing output
+VertexPoseReferenceCount (#Mesh, Animation$, Track, Index) - Return the vertex pose reference size of the specified #Mesh track.
+WaitFastCGIRequest () - Wait for FastCGI request to process.
+WaitProgram (Program [, Timeout]) - Wait for the specified program to end
+WaitSemaphore (Semaphore) - Wait for the semaphore object once (decrement the count by 1).
+WaitThread (Thread [, Timeout]) - Wait until the thread ends.
+WaitWindowEvent ([Timeout]) - Waits until an event has occurs on any of the opened windows.
+WaterColor (#Camera, Color) - Create a water plane at the given position
+WaterHeight (#Camera, x, y) - Get the Y position of the water at the given coordinates
+WebGadget (#Gadget, x, y, Width, Height, URL$) - Create a Web gadget in the current GadgetList.
+WindowBounds (#Window, MinimumWidth, MinimumHeight, MaximumWidth, MaximumHeight) - Set the #Window bounds.
+WindowEvent () - Check if an event has occured on any of the opened windows.
+WindowEvent3D () - Check if an event has occured on any of the opened windows.
+WindowHeight (#Window [, Flags]) - Returns the height, in pixels, of the specified window.
+WindowHeight3D (#Window3D) - Returns the height, in pixels, of the specified window.
+WindowID (#Window) - Returns the unique ID which identifies the window in the operating system.
+WindowID3D (#Window3D) - Returns the unique ID which identifies the window in the operating system.
+WindowMouseX (#Window) - Returns the mouse position relative to the left of the specified window.
+WindowMouseY (#Window) - Returns the mouse position relative to the top of the specified window.
+WindowOutput (#Window) - Returns the OutputID of the specified window to perform 2D rendering operation on it.
+WindowVectorOutput (#Window [, Unit]) - Returns the OutputID of the specified window to vector drawing on it.
+WindowWidth (#Window [, Flags]) - Return the width, in pixels, of the specified window.
+WindowWidth3D (#Window3D) - Return the width, in pixels, of the specified window.
+WindowX (#Window [, Mode]) - Returns the left position, in pixels, of the specified window.
+WindowX3D (#Window3D) - Returns the left position, in pixels, of the specified window.
+WindowY (#Window [, Mode]) - Returns the top position, in pixels, of the specified window.
+WindowY3D (#Window3D) - Returns the top position, in pixels, of the specified window.
+WorldCollisionAppliedImpulse () - Get applied impulse vector of the current collison.
+WorldCollisionContact () - Get the contact vector of the current collison.
+WorldCollisionNormal () - Get the normal vector of the current collison.
+WorldDebug (Mode) - Change the debug mode for the whole world.
+WorldGravity (Gravity) - Change the gravity in the world.
+WorldShadows (ShadowType [, Distance [, Color [, TextureSize]]]) - Change the shadow handling in this world.
+WriteAsciiCharacter (#File, Number) - Write an ascii character to the specified file.
+WriteByte (#File, Number) - Write a byte sized number to the specified file.
+WriteCGIData (*Buffer, Size) - Write binary data to CGI output.
+WriteCGIFile (Filename$) - Write a whole file to CGI output.
+WriteCGIHeader (Name$, Value$ [, Flags]) - Add a new header to the answer.
+WriteCGIString (String$ [, Encoding]) - Write a string to the CGI output.
+WriteCGIStringN (String$ [, Encoding]) - Write a string to the CGI output including a carriage return.
+WriteCharacter (#File, Number [, Format]) - Write a character to the specified file.
+WriteConsoleData (*Buffer, Size) - Write data to the console output
+WriteData (#File, *Buffer, Size) - Write the content of the specified memory buffer to the specified file.
+WriteDouble (#File, Number) - Write a double number to the specified file.
+WriteFloat (#File, Number) - Write a float number to the specified file.
+WriteInteger (#File, Number) - Write an integer to the specified file.
+WriteLong (#File, Number) - Write a long number to the specified file.
+WritePreferenceDouble (Key$, Value) - Write the keyword and its associated double value.
+WritePreferenceFloat (Key$, Value) - Write the keyword and its associated value.
+WritePreferenceInteger (Key$, Value) - Write the keyword and its associated value.
+WritePreferenceLong (Key$, Value) - Write the keyword and its associated value.
+WritePreferenceQuad (Key$, Value) - Write the keyword and its associated quad value.
+WritePreferenceString (Key$, Value$) - Write the keyword and its associated value.
+WriteProgramData (Program, *Buffer, Size) - Write data to the standard input of the program
+WriteProgramString (Program, String$ [, Format]) - Write the string to the standard input of the program
+WriteProgramStringN (Program, String$ [, Format]) - Write the string to the standard input of the program including a newline
+WriteQuad (#File, Number) - Write a quad number to the specified file.
+WriteSerialPortData (#SerialPort, *Buffer, Length) - Write an arbitrary amount of data to the #SerialPort.
+WriteSerialPortString (#SerialPort, String$ [, Format]) - Write a string to the #SerialPort.
+WriteString (#File, Text$ [, Format]) - Write a string to the specified file.
+WriteStringFormat (#File, Format) - Write a BOM (Byte Order Mark) to identify the string format used in the file.
+WriteStringN (#File, Text$ [, Format]) - Write a string to the specified file and add the 'end of line' character.
+WriteUnicodeCharacter (#File, Number) - Write an unicode character to the specified file.
+WriteWord (#File, Number) - Write a word number to the specified file.
+XMLAttributeName (Node) - Get the name of the current examined attribute in the XML node
+XMLAttributeValue (Node) - Get the value of the current examined attribute in the XML node
+XMLChildCount (Node) - Get the number of children that the given XML node has
+XMLError (#XML) - Get a string description for an error during XML parsing
+XMLErrorLine (#XML) - Get the input line where a parsing error occoured
+XMLErrorPosition (#XML) - Get the input column where a parsing error occoured
+XMLNodeFromID (#XML, ID$) - Get a node in the XML tree from its ID-tag
+XMLNodeFromPath (ParentNode, Path$) - Get a node in the XML tree from a path string
+XMLNodePath (Node [, ParentNode]) - Get the path string that represents the given XML node in the document (or relative to ParentNode)
+XMLNodeType (Node) - Get the type of the given XML node
+XMLStatus (#XML) - Get the status (or error code) of the XML parsing
+Yaw (ObjectID, Value.f, Mode) - Yaw the specifed object.
+Year (Date) - Returns the year value of the specified date (between 1970 and 2034).
+ZoomSprite (#Sprite, Width, Height) - Zoom the sprite to the new given dimensions.

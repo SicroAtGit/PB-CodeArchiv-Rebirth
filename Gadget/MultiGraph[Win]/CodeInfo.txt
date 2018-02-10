@@ -1,0 +1,5 @@
+;   Description: LineGraph and oscilloscope
+;            OS: Windows
+; English-Forum:
+;  French-Forum:
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?f=8&t=26795
