@@ -53,8 +53,6 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
   If Right(Path$, 1) <> Slash$
     Path$ + Slash$
   EndIf
-  
-  FileExtensions$ = "," + FileExtensions$ + ","
 
   Directory = ExamineDirectory(#PB_Any, Path$, "*")
   If Directory
@@ -67,12 +65,12 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
         Case #PB_DirectoryEntry_File
 
           If Mode & #ListDirectoryEntries_Mode_ListFiles
-            If FileExtensions$ <> ",,"
+            If FileExtensions$ <> ""
               EntryExtension$ = GetExtensionPart(EntryName$)
               If EntryExtension$ = ""
                 Continue
               EndIf
-              If Not FindString(FileExtensions$, "," + EntryExtension$ + ",")
+              If Not FindString("," + FileExtensions$ + ",", "," + EntryExtension$ + ",")
                 Continue
               EndIf
             EndIf
@@ -89,7 +87,6 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
             If EnableRecursiveScan
               ListDirectoryEntries(Path$ + EntryName$, Callback, FileExtensions$, EnableRecursiveScan, Mode)
             EndIf
-
           EndIf
 
       EndSelect
