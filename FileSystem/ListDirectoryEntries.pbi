@@ -70,7 +70,7 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
               If EntryExtension$ = ""
                 Continue
               EndIf
-              If Not FindString("," + FileExtensions$ + ",", "," + EntryExtension$ + ",")
+              If Not FindString("," + FileExtensions$ + ",", "," + EntryExtension$ + ",", 1, #PB_String_NoCase)
                 Continue
               EndIf
             EndIf
