@@ -71,7 +71,7 @@ Macro ReAllocateMemory(Memory, Size, Flags=0)
 EndMacro
 
 Macro IsMemory(Memory)
-  MemoryAddresses(Str(Memory))
+  FindMapElement(MemoryAddresses(), Str(Memory))
 EndMacro
 
 Macro FreeMemory(Memory)
