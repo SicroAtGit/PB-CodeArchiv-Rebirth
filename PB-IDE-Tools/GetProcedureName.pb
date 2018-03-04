@@ -1,5 +1,5 @@
 ﻿;   Description: Find the name of the procedure of the current cursor position
-;     Parameter: "%TEMPFILE%"
+;     Parameter: "%TEMPFILE"
 ;            OS: Windows, Linux, Mac
 ; English-Forum: 
 ;  French-Forum: 
