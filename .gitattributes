@@ -1,0 +1,165 @@
+################################################################################
+# PureBasic-CodeArchive-Rebirth                                                #
+# https://github.com/SicroAtGit/PureBasic-CodeArchive-Rebirth                  #
+################################################################################
+
+# Set Git's default behaviour to text-files autodetection, in case users don't
+# have `core.autocrlf` set:
+* text=auto
+
+# ==============================================================================
+#                      File Extensions Setting: Text/Binary                     
+# ==============================================================================
+# Explicitly declare all used file extensions as either text or binary, and tell
+# Git how to handle line-endings normalization.
+
+## =================
+## SOURCE CODE FILES
+## =================
+
+## PureBASIC
+## ---------
+*.pb       text
+*.pbi      text
+*.pbp      text
+*.pbf      text
+*.cfg      text
+
+## ASM (Fasm/Yasm)
+## ---------------
+*.ASM      text
+*.asm      text
+*.INC      text
+*.inc      text
+
+## Shell scripts
+## -------------
+*.bat      text eol=crlf
+*.com      text eol=crlf
+*.sh       text eol=lf
+*.ps1      text eol=crlf
+
+## ==================
+## MISC. DATA FORMATS
+## ==================
+*.json     text
+*.xml      text
+*.xhtml    text
+*.yaml     text
+*.yml      text
+
+## =================
+## WEB-RELATED FILES
+## =================
+*.htm      text
+*.html     text
+*.css      text
+*.js       text
+
+## ===================
+## DOCUMENTATION FILES
+## ===================
+*.markdown   text
+*.md         text
+*.txt        text
+COPYING      text
+LICENSE      text
+
+## ============
+## CONFIG FILES
+## ============
+*.cnf          text
+*.conf         text
+*.config       text
+*.ini          text
+*.prefs        text
+.editorconfig  text
+.gitattributes text
+.gitconfig     text
+.gitignore     text
+.gitmodules    text
+
+## =================
+## COMPILERS' OUTPUT
+## =================
+
+## Executables
+## -----------
+*.exe   binary
+*.app   binary
+*.out   binary
+
+## Shared/Dynamic libraries
+## ------------------------
+*.a     binary
+*.dll   binary
+*.dylib binary
+*.lib   binary
+*.so    binary
+
+## Object files
+## ------------
+*.slo   binary
+*.lo    binary
+*.o     binary
+*.obj   binary
+
+## ========
+## ARCHIVES
+## ========
+*.7z    binary
+*.gz    binary
+*.jar   binary
+*.rar   binary
+*.tar   binary
+*.zip   binary
+
+## =====
+## FONTS
+## =====
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+## ========
+## GRAPHICS
+## ========
+*.ai    binary
+*.bmp   binary
+*.eps   binary
+*.gif   binary
+*.ico   binary
+*.jng   binary
+*.jp2   binary
+*.jpg   binary
+*.jpeg  binary
+*.jpx   binary
+*.jxr   binary
+*.pdf   binary
+*.png   binary
+*.psb   binary
+*.psd   binary
+*.svg   binary
+*.svgz  binary
+*.tif   binary
+*.tiff  binary
+*.wbmp  binary
+*.webp  binary
+
+# ==============================================================================
+#                                GitHub Linguist                                
+# ==============================================================================
+#  -- https://github.com/github/linguist
+#
+# Manually define/override some extension so that GitHub's Linguist library can
+# 1) Correctly gather statistics on source files, and
+# 2) Use proper syntax highlighting on GitHub's WebUI.
+
+## PureBASIC project files
+## ---------------------------
+*.cfg    linguist-generated=true
+*.pbf    linguist-language=PureBasic
+*.pbp    linguist-generated=true
+*.pbp    linguist-language=XML
