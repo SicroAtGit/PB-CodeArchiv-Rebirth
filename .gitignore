@@ -1,3 +1,8 @@
+################################################################################
+# PureBasic-CodeArchive-Rebirth                                                #
+# https://github.com/SicroAtGit/PureBasic-CodeArchive-Rebirth                  #
+################################################################################
+
 # Created by https://www.gitignore.io/api/windows,linux,macos,purebasic
 
 ### Linux ###
@@ -48,9 +53,9 @@ Temporary Items
 # PureBasic
 
 # Settings files (I think that this files shouldn't be ignored)
-#*.pb.cfg
-#*.pbi.cfg
-#project.cfg
+*.pb.cfg
+*.pbi.cfg
+project.cfg
 
 # Shared libraries
 *.so
