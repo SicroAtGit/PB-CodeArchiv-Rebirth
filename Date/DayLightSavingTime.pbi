@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2017 Sicro
+; Copyright (c) 2017-2018 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,9 @@ Procedure.i IsDayLightSavingTime()
       Protected.TIME_ZONE_INFORMATION lpTimeZoneInformation
       
       Select GetTimeZoneInformation_(@lpTimeZoneInformation)
-        Case 1 : ProcedureReturn #False
-        Case 2 : ProcedureReturn #True
-        Case 0 : ProcedureReturn -1
+        Case #TIME_ZONE_ID_STANDARD : ProcedureReturn #False
+        Case #TIME_ZONE_ID_DAYLIGHT : ProcedureReturn #True
+        Case #TIME_ZONE_ID_UNKNOWN  : ProcedureReturn -1
       EndSelect
       
     CompilerCase #PB_OS_Linux
