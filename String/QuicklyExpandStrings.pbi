@@ -50,7 +50,7 @@ Module QuicklyExpandStrings
       ProcedureReturn #False
     EndIf
     
-    *String\Memory = AllocateMemory(#Size_Megabyte)
+    *String\Memory = AllocateMemory(#Size_Megabyte, #PB_Memory_NoClear)
     If *String\Memory = 0
       FreeMemory(*String)
       ProcedureReturn #False
@@ -68,7 +68,7 @@ Module QuicklyExpandStrings
     EndIf
     
     If MemorySize(*String\Memory) <= (*String\DataLength + StringLength)
-      *NewMemory = ReAllocateMemory(*String\Memory, *String\DataLength + StringLength + #Size_Megabyte)
+      *NewMemory = ReAllocateMemory(*String\Memory, *String\DataLength + StringLength + #Size_Megabyte, #PB_Memory_NoClear)
       If *NewMemory = 0
         ProcedureReturn #False
       EndIf
