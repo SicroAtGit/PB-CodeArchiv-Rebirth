@@ -180,12 +180,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\ProductVersion", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\ProductVersion", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -209,12 +209,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\FileVersion", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\FileVersion", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -238,12 +238,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\ProductName", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\ProductName", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -267,12 +267,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\FileDescription", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\FileDescription", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -296,12 +296,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\Comments", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\Comments", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -325,12 +325,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\CompanyName", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\CompanyName", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -354,12 +354,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\InternalName", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\InternalName", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -383,12 +383,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\LegalCopyright", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\LegalCopyright", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -412,12 +412,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\LegalTrademarks", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\LegalTrademarks", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
@@ -441,12 +441,12 @@ Module FileInfo
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\OriginalFilename", @*Pointer, @PointerLen)
-        RetVal$ = Trim(PeekS(*Pointer))
+        RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
         If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\OriginalFilename", @*Pointer, @PointerLen)
-          RetVal$ = Trim(PeekS(*Pointer))
+          RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
     EndIf
