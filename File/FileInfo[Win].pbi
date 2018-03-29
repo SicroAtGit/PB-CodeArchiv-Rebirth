@@ -50,19 +50,25 @@ DeclareModule FileInfo
 EndDeclareModule
 
 Module FileInfo
-  Procedure$ GetFixedProductVersion(File$)
+  Procedure.i LocalizeFixedDataStructure(File$, *Buffer.Integer, *Pointer.Integer)
     Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer.VS_FIXEDFILEINFO
-    Protected   RetVal$
-
+    
     NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
+    If NeededBufferSize < 1: ProcedureReturn #False: EndIf
 
-    *Buffer = AllocateMemory(NeededBufferSize)
+    *Buffer\i = AllocateMemory(NeededBufferSize)
 
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\", @*Pointer, @PointerLen)
-    If *Pointer
+    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer\i)
+    VerQueryValue_(*Buffer\i, "\", @*Pointer\i, @PointerLen)
+    
+    ProcedureReturn #True
+  EndProcedure
+  
+  Procedure$ GetFixedProductVersion(File$)
+    Protected *Buffer, *Pointer.VS_FIXEDFILEINFO
+    Protected RetVal$
+    
+    If LocalizeFixedDataStructure(File$, @*Buffer, @*Pointer)
       RetVal$ = Str(*Pointer\dwProductVersionMS >> 16 & $FFFF) + "." +
                Str(*Pointer\dwProductVersionMS & $FFFF) + "." +
                Str(*Pointer\dwProductVersionLS >> 16 & $FFFF) + "." +
@@ -74,18 +80,10 @@ Module FileInfo
   EndProcedure
 
   Procedure$ GetFixedFileVersion(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer.VS_FIXEDFILEINFO
-    Protected   RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\", @*Pointer, @PointerLen)
-    If *Pointer
+    Protected *Buffer, *Pointer.VS_FIXEDFILEINFO
+    Protected RetVal$
+    
+    If LocalizeFixedDataStructure(File$, @*Buffer, @*Pointer)
       RetVal$ = Str(*Pointer\dwFileVersionMS >> 16 & $FFFF) + "." +
                Str(*Pointer\dwFileVersionMS & $FFFF) + "." +
                Str(*Pointer\dwFileVersionLS >> 16 & $FFFF) + "." +
@@ -97,18 +95,10 @@ Module FileInfo
   EndProcedure
 
   Procedure$ GetFixedFileType(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer.VS_FIXEDFILEINFO
-    Protected   RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\", @*Pointer, @PointerLen)
-    If *Pointer
+    Protected *Buffer, *Pointer.VS_FIXEDFILEINFO
+    Protected RetVal$
+    
+    If LocalizeFixedDataStructure(File$, @*Buffer, @*Pointer)
       Select *Pointer\dwFileType
         Case #VFT_APP
           RetVal$ = "Application"
@@ -165,7 +155,7 @@ Module FileInfo
     ProcedureReturn RetVal$
   EndProcedure
 
-  Procedure$ GetProductVersion(File$)
+  Procedure$ GetStringFileInfo(File$, Field$)
     Protected.i NeededBufferSize, PointerLen
     Protected   *Buffer, *Pointer
     Protected   TranslationCode$, RetVal$
@@ -179,12 +169,12 @@ Module FileInfo
     VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\ProductVersion", @*Pointer, @PointerLen)
+      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\" + Field$, @*Pointer, @PointerLen)
         RetVal$ = PeekS(*Pointer)
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\ProductVersion", @*Pointer, @PointerLen)
+        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\" + Field$, @*Pointer, @PointerLen)
           RetVal$ = PeekS(*Pointer)
         EndIf
       EndIf
@@ -192,267 +182,46 @@ Module FileInfo
     FreeMemory(*Buffer)
 
     ProcedureReturn Trim(RetVal$)
+  EndProcedure
+  
+  Procedure$ GetProductVersion(File$)
+    ProcedureReturn GetStringFileInfo(File$, "ProductVersion")
   EndProcedure
 
   Procedure$ GetFileVersion(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\FileVersion", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\FileVersion", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "FileVersion")
   EndProcedure
 
   Procedure$ GetProductName(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\ProductName", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\ProductName", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "ProductName")
   EndProcedure
 
   Procedure$ GetFileDescription(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\FileDescription", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\FileDescription", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "FileDescription")
   EndProcedure
 
   Procedure$ GetFileComments(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\Comments", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\Comments", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "Comments")
   EndProcedure
 
   Procedure$ GetFileCompanyName(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\CompanyName", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\CompanyName", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "CompanyName")
   EndProcedure
 
   Procedure$ GetFileInternalName(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\InternalName", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\InternalName", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "InternalName")
   EndProcedure
 
   Procedure$ GetFileLegalCopyright(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\LegalCopyright", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\LegalCopyright", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "LegalCopyright")
   EndProcedure
 
   Procedure$ GetFileLegalTrademarks(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\LegalTrademarks", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\LegalTrademarks", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "LegalTrademarks")
   EndProcedure
 
   Procedure$ GetFileOriginalFilename(File$)
-    Protected.i NeededBufferSize, PointerLen
-    Protected   *Buffer, *Pointer
-    Protected   TranslationCode$, RetVal$
-
-    NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
-    If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
-    *Buffer = AllocateMemory(NeededBufferSize)
-
-    GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
-    VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
-    If *Pointer
-      TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
-      If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\OriginalFilename", @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
-      Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\OriginalFilename", @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
-      EndIf
-    EndIf
-    FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    ProcedureReturn GetStringFileInfo(File$, "OriginalFilename")
   EndProcedure
 EndModule
 
