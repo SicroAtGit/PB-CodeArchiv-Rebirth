@@ -1,4 +1,4 @@
-# PureBasic-CodeArchive-Rebirth
+# PureBasic-CodeArchiv-Rebirth
 
 This code archive contains useful codes from the official forums of PureBasic
 and other sources and presents them in a categorized and quickly accessible
