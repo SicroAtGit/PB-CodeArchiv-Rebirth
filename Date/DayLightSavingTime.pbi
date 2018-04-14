@@ -46,7 +46,7 @@ Procedure.i IsDayLightSavingTime()
       ; https://linux.die.net/man/2/time
       ; https://linux.die.net/man/3/localtime
       
-      If Not Defined(tm, #PB_Structure)
+      CompilerIf Not Defined(tm, #PB_Structure)
         Structure tm Align #PB_Structure_AlignC
           tm_sec.l    ; 0 bis 59 oder bis 60 bei Schaltsekunde
           tm_min.l    ; 0 bis 59
@@ -68,7 +68,7 @@ Procedure.i IsDayLightSavingTime()
             *tm_zone64  ; Abkürzungsname der Zeitzone
           CompilerEndIf    
         EndStructure
-      EndIf
+      CompilerEndIf
       
       Protected.tm *CurrentTime = time_(0)
       Protected.tm *LocalTime   = localtime_(@*CurrentTime)
