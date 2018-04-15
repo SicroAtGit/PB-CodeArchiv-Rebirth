@@ -1,5 +1,4 @@
 ﻿;   Description: Find the name of the procedure of the current cursor position
-;     Parameter: "%TEMPFILE"
 ;            OS: Windows, Linux, Mac
 ; English-Forum: 
 ;  French-Forum: 
@@ -29,11 +28,9 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-; GetProcedureName
-
-; #################################################################
-; In den Werkzeug-Einstellungen als Argumente "%TEMPFILE" eintragen
-; #################################################################
+; Tool Settings:
+; - Arguments: "%TEMPFILE"
+; - Event:     Menu Or Shortcut
 
 EnableExplicit
 

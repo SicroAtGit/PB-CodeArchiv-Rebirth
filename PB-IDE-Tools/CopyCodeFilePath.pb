@@ -1,5 +1,4 @@
 ﻿;   Description: Copies the file path of the current code in the editor to the clipboard
-;     Parameter: "%FILE"
 ;            OS: Windows, Linux, Mac
 ; English-Forum: 
 ;  French-Forum: 
@@ -27,6 +26,10 @@
 ; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
+
+; Tool Settings:
+; - Arguments: "%FILE"
+; - Event:     Menu Or Shortcut
 
 Define CodeFilePath$ = ProgramParameter(0)
 
