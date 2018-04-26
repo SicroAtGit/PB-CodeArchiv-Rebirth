@@ -1,0 +1,5 @@
+;   Description: Creates a text file that contains all licenses of the third-party libraries used by the code
+;            OS: Windows, Linux, Mac
+; English-Forum: 
+;  French-Forum: 
+;  German-Forum: 

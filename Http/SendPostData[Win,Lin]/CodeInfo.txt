@@ -1,0 +1,5 @@
+;   Description: Open browser and send a POST data with the browser
+;            OS: Windows, Linux
+; English-Forum: 
+;  French-Forum: 
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?f=8&t=29328

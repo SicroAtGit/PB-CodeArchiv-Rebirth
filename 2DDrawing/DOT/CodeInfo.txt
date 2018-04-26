@@ -1,0 +1,5 @@
+;   Description: DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. 
+;            OS: Windows, Mac, Linux
+; English-Forum: 
+;  French-Forum: 
+;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?f=8&t=29191
