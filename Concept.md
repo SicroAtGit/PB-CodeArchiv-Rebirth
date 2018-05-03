@@ -1,6 +1,6 @@
-# Conecpt
+# Concept
 
-	Detailed informations about the PureBasic-CodeArchiv-Rebirth
+	Detailed information about the PureBasic-CodeArchiv-Rebirth
 
 ## Add new code to the archive
 
@@ -37,7 +37,7 @@
 			
 	- Storage location for the code file:
 
-			/Categorie/CodeName[Win,Lin,Mac].[pb|pbi]
+			/Category/CodeName[Win,Lin,Mac].[pb|pbi]
 			
 		Examples:
 		
@@ -53,11 +53,11 @@
 
 	- Storage location for the code files:
 	
-		- `/Categorie/CodeName[Win,Lin]/`
+		- `/Category/CodeName[Win,Lin]/`
 		
 			- This directory must contain:
 			
-				- `/Categorie/CodeName/CodeInfo.txt` --- Look at the template:
+				- `/Category/CodeName/CodeInfo.txt` --- Look at the template:
 				
 						;   Description:
 						;            OS: Windows, Linux, Mac
@@ -65,7 +65,7 @@
 						;  French-Forum:
 						;  German-Forum:
 				
-				- `/Categorie/CodeName/License.txt`
+				- `/Category/CodeName/License.txt`
 				
 				- Files belonging to the code (subdirectories of any depth are allowed)
 				
@@ -73,13 +73,13 @@
 
 ### [CodeCleaner](https://github.com/Seven365/PureBasic-CodeArchiv-Rebirth/blob/repo-dev/CodesCleaner.pb) (outdated)
 
-This tool is the first tool to run on new codes.
+This is the first tool to run on new code.
 
 - Removes the IDE options at the end of each code file (`.pb` and `.pbi`)
 
 ### [CodeChecker](https://github.com/Seven365/PureBasic-CodeArchiv-Rebirth/blob/repo-dev/CodesChecker.pb)  (outdated)
 
-This tool is the second tool that should be executed on new codes.
+This tool is the second tool that should be executed on new code.
 
 - Considers the following files: `.pb`, `.pbi` and `CodeInfo.txt`.
 	`License.txt` exists only since the recent rebuilding of the CodeArchive and is therefore not considered by the outdated tool.
@@ -136,7 +136,7 @@ This tool helps to keep the codes in the archive up-to-date without manually che
 
 4. This information is compared with the information in a cache file. If the cache file does not yet exist, it is simply compared with an empty string.
 	The name of the cache file is the SHA1 hash of the forum thread URL.
-	If the two information sources have different information, an entry is created in a todo list:
+	If the two information sources have different information, an entry is created in a ToDo list:
 
 		Path to the code file on the local computer
 		:::
@@ -145,11 +145,12 @@ This tool helps to keep the codes in the archive up-to-date without manually che
 		CountOfPosts: 199 posts
 
 	After that, the content in the cache file will be updated.
+
 5. After all this, the ToDo list is saved to the file `ToDo.txt` in the directory `#PB_Compiler_FilePath`.
 
 If there are no cache files, the tool evaluates all local codes outdated and the codes in the forums newer.
 
-## What is the workflow with Git and Github?
+## What is the workflow with Git and GitHub?
 
 The old workflow is described here: [Old `README.md` from the orphaned `repo-dev` branch](https://github.com/Seven365/PureBasic-CodeArchiv-Rebirth/tree/repo-dev) 
 
@@ -162,13 +163,14 @@ However, this workflow is no longer correct and must be revised, because no `nex
 	Commit title
 
 	Commit description
+
 The commit title and commit description should be separated by a blank line. This is the usual procedure for git and `git log --oneline` then correctly displays only the commit titles without the commit description.
 
 ##### Commit title
 
-The commit title shouldn't exceed 71 characters and should only consist of one line. Guides on the Internet recommend even fewer characters (52 for example), but I often feel that too little.
+The commit title shouldn't exceed 71 characters and should only consist of one line. Guides on the Internet recommend even fewer characters (52 for example), but I feel that this might be too little.
 
-Github still displays commit titles with a length of 71 characters. If the commit title consists of more than 71 characters, Github doesn't display the commit title completely, so that the `[...]` button must be clicked. Ideally, this button should only be clicked if the commit description is to be displayed.
+GitHub still displays commit titles with a length of 71 characters. If the commit title consists of more than 71 characters, GitHub doesn't display the commit title completely, so that the `[...]` button must be clicked. Ideally, this button should only be clicked if the commit description is to be displayed.
 
 Don't write the commit title in the past tense, but in the present tense:
 
@@ -192,7 +194,7 @@ Don't describe in the commit description what your commit changes --- this can b
 
 #### Branch model and integration to the `master` branch
 
-Since the recent rebuilding of the CodeArchive, merge commits aren't used, because the commits display at Github with merge commits looks unclean.
+Since the recent rebuilding of the CodeArchive, merge commits aren't used, because the commits display at GitHub with merge commits looks unclean.
 
 For changes, a branch based on the branch `master` is created locally each time. No commits are created directly in the `master` branch.
 
