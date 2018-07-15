@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2017 Sicro
+; Copyright (c) 2017-2018 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -151,75 +151,83 @@ Module FileInfo
       EndSelect
     EndIf
     FreeMemory(*Buffer)
-
+    
     ProcedureReturn RetVal$
   EndProcedure
-
+  
   Procedure$ GetStringFileInfo(File$, Field$)
     Protected.i NeededBufferSize, PointerLen
     Protected   *Buffer, *Pointer
     Protected   TranslationCode$, RetVal$
-
+    Protected NewList TranslationCode_Fallbacks$()
+    
+    AddElement(TranslationCode_Fallbacks$()) : TranslationCode_Fallbacks$() = "040904B0" ; US English + CP_UNICODE
+    AddElement(TranslationCode_Fallbacks$()) : TranslationCode_Fallbacks$() = "040904E4" ; US English + CP_USASCII
+    AddElement(TranslationCode_Fallbacks$()) : TranslationCode_Fallbacks$() = "04090000" ; US English + unknown codepage
+    
     NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
     If NeededBufferSize < 1: ProcedureReturn "": EndIf
-
+    
     *Buffer = AllocateMemory(NeededBufferSize)
-
+    
     GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer)
     VerQueryValue_(*Buffer, "\\VarFileInfo\\Translation", @*Pointer, @PointerLen)
     If *Pointer
       TranslationCode$ = RSet(Hex(PeekW(*Pointer)), 4, "0") + RSet(Hex(PeekW(*Pointer + 2)), 4, "0")
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\" + Field$, @*Pointer, @PointerLen)
-        RetVal$ = PeekS(*Pointer)
+        RetVal$ = Trim(PeekS(*Pointer))
       Else
         ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
         ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
-        If VerQueryValue_(*Buffer, "\\StringFileInfo\\040904E4\\" + Field$, @*Pointer, @PointerLen)
-          RetVal$ = PeekS(*Pointer)
-        EndIf
+        ForEach TranslationCode_Fallbacks$()
+          If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode_Fallbacks$() + "\\" + Field$, @*Pointer, @PointerLen)
+            RetVal$ = Trim(PeekS(*Pointer))
+            If RetVal$ <> "" : Break : EndIf
+          EndIf
+        Next
       EndIf
     EndIf
     FreeMemory(*Buffer)
-
-    ProcedureReturn Trim(RetVal$)
+    
+    ProcedureReturn RetVal$
   EndProcedure
   
   Procedure$ GetProductVersion(File$)
     ProcedureReturn GetStringFileInfo(File$, "ProductVersion")
   EndProcedure
-
+  
   Procedure$ GetFileVersion(File$)
     ProcedureReturn GetStringFileInfo(File$, "FileVersion")
   EndProcedure
-
+  
   Procedure$ GetProductName(File$)
     ProcedureReturn GetStringFileInfo(File$, "ProductName")
   EndProcedure
-
+  
   Procedure$ GetFileDescription(File$)
     ProcedureReturn GetStringFileInfo(File$, "FileDescription")
   EndProcedure
-
+  
   Procedure$ GetFileComments(File$)
     ProcedureReturn GetStringFileInfo(File$, "Comments")
   EndProcedure
-
+  
   Procedure$ GetFileCompanyName(File$)
     ProcedureReturn GetStringFileInfo(File$, "CompanyName")
   EndProcedure
-
+  
   Procedure$ GetFileInternalName(File$)
     ProcedureReturn GetStringFileInfo(File$, "InternalName")
   EndProcedure
-
+  
   Procedure$ GetFileLegalCopyright(File$)
     ProcedureReturn GetStringFileInfo(File$, "LegalCopyright")
   EndProcedure
-
+  
   Procedure$ GetFileLegalTrademarks(File$)
     ProcedureReturn GetStringFileInfo(File$, "LegalTrademarks")
   EndProcedure
-
+  
   Procedure$ GetFileOriginalFilename(File$)
     ProcedureReturn GetStringFileInfo(File$, "OriginalFilename")
   EndProcedure
