@@ -33,20 +33,21 @@ CompilerEndIf
 
 DeclareModule FileInfo
   EnableExplicit
-
-  Declare$ GetFixedProductVersion(File$)
-  Declare$ GetFixedFileVersion(File$)
-  Declare$ GetFixedFileType(File$)
-  Declare$ GetProductVersion(File$)
-  Declare$ GetFileVersion(File$)
-  Declare$ GetProductName(File$)
-  Declare$ GetFileDescription(File$)
-  Declare$ GetFileComments(File$)
-  Declare$ GetFileCompanyName(File$)
-  Declare$ GetFileInternalName(File$)
-  Declare$ GetFileLegalCopyright(File$)
-  Declare$ GetFileLegalTrademarks(File$)
-  Declare$ GetFileOriginalFilename(File$)
+  
+  Declare$  GetFixedProductVersion(File$)
+  Declare$  GetFixedFileVersion(File$)
+  Declare$  GetFixedFileType(File$)
+  Declare$  GetProductVersion(File$)
+  Declare$  GetFileVersion(File$)
+  Declare$  GetProductName(File$)
+  Declare$  GetFileDescription(File$)
+  Declare$  GetFileComments(File$)
+  Declare$  GetFileCompanyName(File$)
+  Declare$  GetFileInternalName(File$)
+  Declare$  GetFileLegalCopyright(File$)
+  Declare$  GetFileLegalTrademarks(File$)
+  Declare$  GetFileOriginalFilename(File$)
+  Declare.i GetFileBitSystem(File$)
 EndDeclareModule
 
 Module FileInfo
@@ -55,9 +56,9 @@ Module FileInfo
     
     NeededBufferSize = GetFileVersionInfoSize_(@File$, 0)
     If NeededBufferSize < 1: ProcedureReturn #False: EndIf
-
+    
     *Buffer\i = AllocateMemory(NeededBufferSize)
-
+    
     GetFileVersionInfo_(@File$, 0, NeededBufferSize, *Buffer\i)
     VerQueryValue_(*Buffer\i, "\", @*Pointer\i, @PointerLen)
     
@@ -70,30 +71,30 @@ Module FileInfo
     
     If LocalizeFixedDataStructure(File$, @*Buffer, @*Pointer)
       RetVal$ = Str(*Pointer\dwProductVersionMS >> 16 & $FFFF) + "." +
-               Str(*Pointer\dwProductVersionMS & $FFFF) + "." +
-               Str(*Pointer\dwProductVersionLS >> 16 & $FFFF) + "." +
-               Str(*Pointer\dwProductVersionLS & $FFFF)
+                Str(*Pointer\dwProductVersionMS & $FFFF) + "." +
+                Str(*Pointer\dwProductVersionLS >> 16 & $FFFF) + "." +
+                Str(*Pointer\dwProductVersionLS & $FFFF)
     EndIf
     FreeMemory(*Buffer)
-
+    
     ProcedureReturn RetVal$
   EndProcedure
-
+  
   Procedure$ GetFixedFileVersion(File$)
     Protected *Buffer, *Pointer.VS_FIXEDFILEINFO
     Protected RetVal$
     
     If LocalizeFixedDataStructure(File$, @*Buffer, @*Pointer)
       RetVal$ = Str(*Pointer\dwFileVersionMS >> 16 & $FFFF) + "." +
-               Str(*Pointer\dwFileVersionMS & $FFFF) + "." +
-               Str(*Pointer\dwFileVersionLS >> 16 & $FFFF) + "." +
-               Str(*Pointer\dwFileVersionLS & $FFFF)
+                Str(*Pointer\dwFileVersionMS & $FFFF) + "." +
+                Str(*Pointer\dwFileVersionLS >> 16 & $FFFF) + "." +
+                Str(*Pointer\dwFileVersionLS & $FFFF)
     EndIf
     FreeMemory(*Buffer)
-
+    
     ProcedureReturn RetVal$
   EndProcedure
-
+  
   Procedure$ GetFixedFileType(File$)
     Protected *Buffer, *Pointer.VS_FIXEDFILEINFO
     Protected RetVal$
@@ -126,8 +127,8 @@ Module FileInfo
               RetVal$ = "Sound Driver"
             Case #VFT2_DRV_SYSTEM
               RetVal$ = "System Driver"
-            ;Case #VFT2_DRV_VERSIONED_PRINTER
-             ; RetVal = "Versioned Printer Driver"
+              ;Case #VFT2_DRV_VERSIONED_PRINTER
+              ; RetVal = "Versioned Printer Driver"
             Case #VFT2_UNKNOWN
               RetVal$ = "Unkown by the system"
           EndSelect
@@ -231,6 +232,18 @@ Module FileInfo
   Procedure$ GetFileOriginalFilename(File$)
     ProcedureReturn GetStringFileInfo(File$, "OriginalFilename")
   EndProcedure
+  
+  Procedure.i GetFileBitSystem(File$)
+    #SCS_64BIT_BINARY = 6
+    Protected.l BinaryType
+    
+    GetBinaryType_(@File$, @BinaryType)
+    Select BinaryType
+      Case #SCS_32BIT_BINARY : ProcedureReturn 32
+      Case #SCS_64BIT_BINARY : ProcedureReturn 64
+      Case #SCS_WOW_BINARY   : ProcedureReturn 16
+    EndSelect
+  EndProcedure
 EndModule
 
 ;-Example
@@ -252,4 +265,5 @@ CompilerIf #PB_Compiler_IsMainFile
   Debug "FixedProductVersion:  " + FileInfo::GetFixedProductVersion(File$)
   Debug "ProductName:          " + FileInfo::GetProductName(File$)
   Debug "ProductVersion:       " + FileInfo::GetProductVersion(File$)
+  Debug "FileBitSystem:        " + FileInfo::GetFileBitSystem(File$)
 CompilerEndIf
