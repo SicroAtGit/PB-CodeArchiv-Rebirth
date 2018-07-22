@@ -178,8 +178,8 @@ Module FileInfo
       If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode$ + "\\" + Field$, @*Pointer, @PointerLen)
         RetVal$ = Trim(PeekS(*Pointer))
       Else
-        ; Manche Programme haben einen falschen TranslationCode, zu dem es kein Informationen-Block gibt.
-        ; Ich habe die Erfahrung gemacht, dass in diesem Fall immer ein Block mit diesem TranslationCode vorhanden ist:
+        ; Some programs have an incorrect translation code for which there is no information block.
+        ; I have made the experience that in this case there is always a block with one of these translation codes:
         ForEach TranslationCode_Fallbacks$()
           If VerQueryValue_(*Buffer, "\\StringFileInfo\\" + TranslationCode_Fallbacks$() + "\\" + Field$, @*Pointer, @PointerLen)
             RetVal$ = Trim(PeekS(*Pointer))
