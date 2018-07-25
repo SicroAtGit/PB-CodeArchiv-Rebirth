@@ -48,6 +48,7 @@ DeclareModule FileInfo
   Declare$  GetFileLegalTrademarks(File$)
   Declare$  GetFileOriginalFilename(File$)
   Declare.i GetFileBitSystem(File$)
+  Declare.i GetIcon(File$, IconSize, StretchIcon=#False)
 EndDeclareModule
 
 Module FileInfo
@@ -247,13 +248,118 @@ Module FileInfo
       Case #SCS_WOW_BINARY   : ProcedureReturn 16
     EndSelect
   EndProcedure
+  
+  DataSection
+    IID_IImageList:
+    Data.l $46EB5926
+    Data.w $582E, $4017
+    Data.b $9F, $DF, $E8, $99, $8D, $AA, $09, $50
+  EndDataSection
+  
+  Procedure.i SHGetImageList(iImageList.i, riid.i, *ppvObj)
+    Protected Library, Result
+    
+    Library = OpenLibrary(#PB_Any, "shell32.dll")
+    If Library
+      Result = CallFunction(Library, "SHGetImageList", iImageList.i, riid.i, *ppvObj)
+      CloseLibrary(Library)
+    EndIf
+    
+    ProcedureReturn Result
+  EndProcedure
+  
+  Procedure.i GetIcon(File$, IconSize, StretchIcon=#False)
+    Protected FileInfo.SHFILEINFO, ImageList.IImageList
+    Protected IconHandle, Image, IconSizeType, RealIconWidth, RealIconHeight
+    
+    If FileSize(File$) < 0
+      ProcedureReturn 0
+    EndIf
+    
+    Select IconSize
+        
+      Case 1 To 16
+        IconSizeType = #SHIL_SMALL
+        ; These images are the Shell standard small icon size of 16x16, but
+        ; the size can be customized by the user.
+        
+      Case 17 To 32
+        IconSizeType = #SHIL_LARGE
+        ; The image size is normally 32x32 pixels. However, if the use large
+        ; icons option is selected from the Effects section of the Appearance
+        ; tab in Display Properties, the image is 48x48 pixels.
+        
+      Case 33 To 48
+        IconSizeType = #SHIL_EXTRALARGE
+        ; These images are the Shell standard extra-large icon size. This is
+        ; typically 48x48, but the size can be customized by the user.
+        
+      Case 49 To 8192
+        ; Because it is possible to stretch the icons, the maximum image size
+        ; supported by the operating systems is also included here.
+        If OSVersion() >= #PB_OS_Windows_Vista
+          IconSizeType = #SHIL_JUMBO
+          ; Windows Vista and later. The image is normally 256x256 pixels.
+        Else
+          IconSizeType = #SHIL_EXTRALARGE
+          ; Because the operating system does not support such large icons,
+          ; use the maximum supported icon size type as a fallback.
+        EndIf
+        
+      Default
+        ProcedureReturn 0
+        
+    EndSelect
+    
+    ; Get the index of the system image list icon
+    SHGetFileInfo_(@File$, 0, @FileInfo, SizeOf(FileInfo), #SHGFI_SYSICONINDEX)
+    
+    ; Get an image list that contains icons of the required size
+    If SHGetImageList(IconSizeType, ?IID_IImageList, @ImageList) = #S_OK
+      
+      ; Get the icon at the specified index position
+      ImageList\GetIcon(FileInfo\iIcon, #ILD_TRANSPARENT, @IconHandle)
+      If IconHandle
+        
+        ; Create a PB image and draw the icon into it
+        Image = CreateImage(#PB_Any, IconSize, IconSize, 32, #PB_Image_Transparent)
+        If Image
+          If StartDrawing(ImageOutput(Image))
+            If StretchIcon
+              ; If there is no icon in the file that corresponds to the
+              ; required size, the image is stretched to the required size
+              ; in this mode.
+              DrawImage(IconHandle, 0, 0, IconSize, IconSize)
+            Else
+              ; If there is no icon in the file that corresponds to the
+              ; required size, the image is positioned centered in this mode.
+              ImageList\GetIconSize(@RealIconWidth, @RealIconHeight)
+              If (IconSize < RealIconWidth) Or (IconSize < RealIconHeight)
+                ; If the obtained icon is larger than required, the icon will
+                ; be downsized to the required size.
+                DrawImage(IconHandle, 0, 0, IconSize, IconSize)
+              Else
+                DrawImage(IconHandle, IconSize/2-RealIconWidth/2, IconSize/2-RealIconHeight/2)
+              EndIf
+            EndIf
+            DestroyIcon_(IconHandle)
+            StopDrawing()
+          EndIf
+        EndIf
+        
+      EndIf
+      
+    EndIf
+    
+    ProcedureReturn Image
+  EndProcedure
 EndModule
 
 ;-Example
 CompilerIf #PB_Compiler_IsMainFile
   EnableExplicit
   
-  Define File$ = "notepad.exe"
+  Define File$ = "C:\WINDOWS\system32\notepad.exe"
   
   Debug "FileComments:         " + FileInfo::GetFileComments(File$)
   Debug "FileCompanyName:      " + FileInfo::GetFileCompanyName(File$)
@@ -269,4 +375,14 @@ CompilerIf #PB_Compiler_IsMainFile
   Debug "ProductName:          " + FileInfo::GetProductName(File$)
   Debug "ProductVersion:       " + FileInfo::GetProductVersion(File$)
   Debug "FileBitSystem:        " + FileInfo::GetFileBitSystem(File$)
+  
+  Define Image = FileInfo::GetIcon(File$, 32)
+  If Image
+    If OpenWindow(0, #PB_Ignore, #PB_Ignore, 100, 100, "Icon Extraction", #PB_Window_SystemMenu | #PB_Window_ScreenCentered)
+      ImageGadget(0, 0, 0, WindowWidth(0), WindowHeight(0), ImageID(Image))
+      While WaitWindowEvent() <> #PB_Event_CloseWindow : Wend
+    EndIf
+  Else
+    Debug "GetIcon: Error"
+  EndIf
 CompilerEndIf
