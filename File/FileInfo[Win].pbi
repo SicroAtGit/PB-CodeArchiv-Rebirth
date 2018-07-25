@@ -74,8 +74,9 @@ Module FileInfo
                 Str(*Pointer\dwProductVersionMS & $FFFF) + "." +
                 Str(*Pointer\dwProductVersionLS >> 16 & $FFFF) + "." +
                 Str(*Pointer\dwProductVersionLS & $FFFF)
+      
+      FreeMemory(*Buffer)
     EndIf
-    FreeMemory(*Buffer)
     
     ProcedureReturn RetVal$
   EndProcedure
@@ -89,8 +90,9 @@ Module FileInfo
                 Str(*Pointer\dwFileVersionMS & $FFFF) + "." +
                 Str(*Pointer\dwFileVersionLS >> 16 & $FFFF) + "." +
                 Str(*Pointer\dwFileVersionLS & $FFFF)
+      
+      FreeMemory(*Buffer)
     EndIf
-    FreeMemory(*Buffer)
     
     ProcedureReturn RetVal$
   EndProcedure
@@ -150,8 +152,9 @@ Module FileInfo
         Case #VFT_VXD
           RetVal$ = "Virtual Device"
       EndSelect
+      
+      FreeMemory(*Buffer)
     EndIf
-    FreeMemory(*Buffer)
     
     ProcedureReturn RetVal$
   EndProcedure
