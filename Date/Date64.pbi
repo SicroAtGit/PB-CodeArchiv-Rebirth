@@ -50,11 +50,11 @@ EndDeclareModule
 Module Date64
   EnableExplicit
 
-  ; !!! >>> WARNUNG <<< !!!
-  ; Der gregorianische Kalender wurde in vielen Gebieten zu unterschiedlichen Zeiten eingeführt.
-  ; Dieses Modul verwendet die API-Datumsfunktionen des Betriebssystems und diese haben eine
-  ; vereinheitlichte Einführungszeit einprogrammiert, wodurch Datumsberechnungen vor Einführung
-  ; des gregorianischen Kalenders meistens falsche Ergebnisse liefern.
+  ; !!! >>> WARNING <<< !!!
+  ; The Gregorian calendar was introduced in many regions at different times.
+  ; This module uses the API date functions of the operating system and these have implemented a
+  ; uniform introduction time, so that date calculations before the introduction of the Gregorian
+  ; calendar usually lead to wrong results.
 
   ; == Windows ==
   ; >> Minimum: 01.01.1601 00:00:00
@@ -418,8 +418,8 @@ Module Date64
 
           If Day > DaysInMonth64(Year, Month)
             ; Mktime corrects the date unlike PB-AddDate it does
-            ; >> mktime:     31.03.2004 => 1 Monat später => 01.05.2004
-            ; >> PB-AddDate: 31.03.2004 => 1 Monat später => 30.04.2004
+            ; >> mktime:     31.03.2004 => 1 month later => 01.05.2004
+            ; >> PB-AddDate: 31.03.2004 => 1 month later => 30.04.2004
 
             ; Set day to the maximum of the new month
             Day = DaysInMonth64(Year, Month)
