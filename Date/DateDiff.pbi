@@ -27,7 +27,7 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-IncludeFile "DaysInMonth.pbi"
+XIncludeFile "DaysInMonth.pbi"
 
 Procedure$ GetDateDiff(Date1, Date2, ResultMask$ = "%y years, %m months, %d days, %h hours, %i minutes, %s seconds")
   

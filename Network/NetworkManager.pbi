@@ -827,7 +827,7 @@ EndModule
 CompilerIf #PB_Compiler_IsMainFile
   EnableExplicit
   
-  ;IncludeFile "NetworkManager.pbi"
+  ;XIncludeFile "NetworkManager.pbi"
   
   Procedure ServerCallback(EventServer.i, EventClient.i, Event.i, Param1.i, Param2.i, Param3.q, Param4.q, Param5.q)
     ;                                                                         Param1 (Integer)           Param2 (Integer)          Param3 (Quad)            Param4 (Quad)            Param5 (Quad)

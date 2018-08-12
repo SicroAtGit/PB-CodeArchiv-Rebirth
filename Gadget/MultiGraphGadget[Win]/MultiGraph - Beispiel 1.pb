@@ -45,7 +45,7 @@
 
 
 
-IncludeFile "MultiGraph.pbi"
+XIncludeFile "MultiGraph.pbi"
 
 
 Procedure.s _Get_CPU_Name ()

@@ -355,7 +355,7 @@ EndModule
 ;-Example
 CompilerIf #PB_Compiler_IsMainFile
   
-    ;IncludeFile "Modul_Logging.pb"
+    ;XIncludeFile "Modul_Logging.pb"
 
     UseModule Logging
 

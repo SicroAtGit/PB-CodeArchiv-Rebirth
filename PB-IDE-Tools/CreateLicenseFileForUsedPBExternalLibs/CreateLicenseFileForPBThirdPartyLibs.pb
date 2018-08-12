@@ -5,11 +5,11 @@
 EnableExplicit
 
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  IncludeFile "..\..\FileSystem\IsAbsolutePath.pbi"
-  IncludeFile "..\..\FileSystem\EnsureTrailingSlashExists.pbi"
+  XIncludeFile "..\..\FileSystem\IsAbsolutePath.pbi"
+  XIncludeFile "..\..\FileSystem\EnsureTrailingSlashExists.pbi"
 CompilerElse
-  IncludeFile "../../FileSystem/IsAbsolutePath.pbi"
-  IncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
+  XIncludeFile "../../FileSystem/IsAbsolutePath.pbi"
+  XIncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
 CompilerEndIf
 
 Structure FunctionStruc

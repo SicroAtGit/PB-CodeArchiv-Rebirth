@@ -1232,7 +1232,7 @@ CompilerIf #PB_Compiler_IsMainFile
                   ; Test 1
     
     
-    ;IncludeFile "libnodave2.pbi"
+    ;XIncludeFile "libnodave2.pbi"
     
     Define r1, hSocket
     
@@ -1297,7 +1297,7 @@ CompilerIf #PB_Compiler_IsMainFile
     hWnd = OpenWindow(0, 20,20,300,200,"Test S7Online")
     DoEvent()
     
-    ;IncludeFile "libnodave2.pbi"
+    ;XIncludeFile "libnodave2.pbi"
     
     Define r1, hS7Online
     

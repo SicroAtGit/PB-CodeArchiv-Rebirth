@@ -560,7 +560,7 @@ Module Silbentrennung
 	EndDataSection
 EndModule
 
-; IncludeFile "mod_Silbentrennung.pbi"
+; XIncludeFile "mod_Silbentrennung.pbi"
 
 CompilerIf #PB_Compiler_IsMainFile = 1
 	

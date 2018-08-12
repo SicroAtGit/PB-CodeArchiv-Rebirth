@@ -27,7 +27,7 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-IncludeFile "GetParentDirectory.pbi"
+XIncludeFile "GetParentDirectory.pbi"
 
 Procedure$ GetAbsolutePath(RelativePath$)
   
