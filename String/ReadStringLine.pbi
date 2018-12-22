@@ -63,17 +63,22 @@ Procedure$ ReadStringLine(String$, *StringPosition.Integer, StringLength = 0)
   
 EndProcedure
 
-Define String$, StringLine$
-Define StringLength, Pos
-
-String$ = "Line 1" + #CRLF$ +
-          "Line 2" + #CRLF$ +
-          "Line 3"
-
-StringLength = Len(String$)
-
-StringLine$ = ReadStringLine(String$, @Pos, StringLength)
-While StringLine$ <> ""
-  Debug StringLine$
+;-Example
+CompilerIf #PB_Compiler_IsMainFile
+  
+  Define String$, StringLine$
+  Define StringLength, Pos
+  
+  String$ = "Line 1" + #CRLF$ +
+            "Line 2" + #CRLF$ +
+            "Line 3"
+  
+  StringLength = Len(String$)
+  
   StringLine$ = ReadStringLine(String$, @Pos, StringLength)
-Wend
+  While StringLine$ <> ""
+    Debug StringLine$
+    StringLine$ = ReadStringLine(String$, @Pos, StringLength)
+  Wend
+  
+CompilerEndIf
