@@ -121,7 +121,7 @@ Module PBLexer
       
       Lexer::DefineNewToken(*lexer, #TokenType_String, ~"~\"(?:\\\\.|.)*?\"|\".*?\"", #False, "String")
       
-      regEx$ = "[0-9]+(?:\.[0-9]+(?:e[0-9]+)?)?" + ; Integers and decimal numbers
+      regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e[0-9]+)?" + ; Integers and decimal numbers
                "|" +
                "%[01]+" + ; Binary numbers
                "|" +
