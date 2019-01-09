@@ -299,21 +299,21 @@ Module PBLexer
     ProcedureReturn Lexer::StringColumnNumber(*lexer)
   EndProcedure
   
-  ; ------------------------------------------------------------------------------------------------------------------------==
+  ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Data section
-  ; ------------------------------------------------------------------------------------------------------------------------==
+  ; ------------------------------------------------------------------------------------------------------------------------
   DataSection
     PBKeywords:
-    Data$ "(?:align|array|case|compilercase|compilerdefault|compilerelse|compilerelseif|compilerendif|compilerendselect|" +
-          "compilererror|compilerif|compilerselect|compilerwarning|datasection|data|debug|declare|declarec|" +
-          "declarecdll|declaredll|declaremodule|enddeclaremodule|default|define|dim|redim|disableasm|disabledebugger|" +
-          "disableexplicit|else|elseif|enableasm|enabledebugger|enableexplicit|end|enddatasection|endenumeration|endif|" +
-          "endimport|endinterface|endmodule|endprocedure|endselect|endstructure|endstructureunion|endwith|enumeration|" +
-          "enumerationbinary|extends|for|foreach|forever|global|if|import|importc|includebinary|includefile|includepath|" +
-          "interface|list|map|macro|not|endmacro|module|newlist|newmap|next|procedure|procedurec|procedurecdll|" +
-          "proceduredll|procedurereturn|protected|prototype|prototypec|repeat|restore|read|runtime|select|shared|static|" +
-          "structure|structureunion|threaded|until|usemodule|unusemodule|wend|while|with|xincludefile|continue|break|goto|" +
-          "end|swap|gosub|return|fakereturn)\b\$?"
+    Data$ "(?:align|array|as|break|calldebugger|case|compilercase|compilerdefault|compilerelse|compilerelseif|" +
+          "compilerendif|compilerendselect|compilererror|compilerif|compilerselect|compilerwarning|continue|data|" +
+          "datasection|debug|debuglevel|declare|declarec|declarecdll|declaredll|declaremodule|default|define|dim|" +
+          "disableasm|disabledebugger|disableexplicit|else|elseif|enableasm|enabledebugger|enableexplicit|end|" +
+          "enddatasection|enddeclaremodule|endenumeration|endif|endimport|endinterface|endmacro|endmodule|endprocedure|" +
+          "endselect|endstructure|endstructureunion|endwith|enumeration|enumerationbinary|extends|fakereturn|for|foreach|" +
+          "forever|global|gosub|goto|if|import|importc|includebinary|includefile|includepath|interface|list|macro|map|" +
+          "module|newlist|newmap|next|procedure|procedurec|procedurecdll|proceduredll|procedurereturn|protected|" +
+          "prototype|prototypec|read|redim|repeat|restore|return|runtime|select|shared|static|step|structure|" +
+          "structureunion|swap|threaded|to|until|unusemodule|usemodule|wend|while|with|xincludefile)\b\$?"
     Data.c 0
   EndDataSection
 EndModule
@@ -327,15 +327,15 @@ CompilerIf #PB_Compiler_IsMainFile
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
   Procedure$ GetContentOfFile(fileName$)
-    ; ------------------------------------------------------------------------------------------------------------------------
+    ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Returns the complete content of the file
     ;               | Supported BOMs: Ascii, UTF8, Unicode
     ;               | In case of a unsupported BOM the file will be readed as UTF8
-    ; ------------------------------------------------------------------------------------------------------------------------
+    ; ----------------------------------------------------------------------------------------------------------------------
     ; Parameter:    | fileName$
-    ; ------------------------------------------------------------------------------------------------------------------------
+    ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | File content
-    ; ------------------------------------------------------------------------------------------------------------------------
+    ; ----------------------------------------------------------------------------------------------------------------------
     Protected file, stringFormat
     Protected content$
     file = ReadFile(#PB_Any, fileName$)
