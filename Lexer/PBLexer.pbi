@@ -274,7 +274,7 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | String offset. On error: -1
     ; ----------------------------------------------------------------------------------------------------------------------
-    ProcedureReturn Lexer::StringOffset(*lexer)
+    ProcedureReturn Lexer::StringOffset(*lexer, value)
   EndProcedure
   
   Procedure StringLineNumber(*lexer)
