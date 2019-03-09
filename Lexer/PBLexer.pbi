@@ -115,6 +115,11 @@ Module PBLexer
       ; Otherwise, this token type is never recognized, because the identifier token will consume it
       Lexer::DefineNewToken(*lexer, #TokenType_Keyword, PeekS(?PBKeywords), #False, "Keyword")
       
+      ; The token directly below this comment must be defined after the string token!
+      ; Otherwise, this token type will consume the character "~" as an operator
+      Lexer::DefineNewToken(*lexer, #TokenType_Operator, "and|or|xor|not|<<|>>|<=|>=|=<|=>|[|+\-*/!%&<>=@?~]", #False,
+                            "Operator")
+      
       Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Identifier")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", #False, "Comment")
@@ -129,11 +134,6 @@ Module PBLexer
                "|" +
                "'.*?'" ; 'a'
       Lexer::DefineNewToken(*lexer, #TokenType_Number, regEx$, #False, "Number")
-      
-      ; The token directly below this comment must be defined after the string token!
-      ; Otherwise, this token type will consume the character "~" as an operator
-      Lexer::DefineNewToken(*lexer, #TokenType_Operator, "and|or|xor|not|<<|>>|<=|>=|=<|=>|[|+\-*/!%&<>=@?~]", #False,
-                            "Operator")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Constant, "(?:#[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Constant")
       
