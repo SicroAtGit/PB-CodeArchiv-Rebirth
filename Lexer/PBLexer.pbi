@@ -176,7 +176,7 @@ Module PBLexer
         Case #TokenType_NewLine
           
           ; ----------------------------------------------------------------------------------------------------------------
-          ;- > Process ASM code that is passed directly to the assembler
+          ;- > Process the newline token type
           ; ----------------------------------------------------------------------------------------------------------------
           *lexer\currentTokenValue$ = "" ; For the new line token, no token value should be displayed
           ProcedureReturn #True
