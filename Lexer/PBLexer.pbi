@@ -71,7 +71,6 @@ DeclareModule PBLexer
     #TokenType_Constant
     #TokenType_Period
     #TokenType_DoubleColon ; ModuleName::ObjectName
-    #TokenType_PassThroughASM
     #TokenType_StringTypeSuffix
   EndEnumeration
 EndDeclareModule
@@ -162,10 +161,6 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | #True, if a token was found, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------
-    Static lastTokenType = #TokenType_Newline ; This has the effect that ASM code is also recognized in the first line of
-                                              ; code
-    Protected asmCode$, character$
-    Protected stringOffset
     While Lexer::NextToken(*lexer)
       Select Lexer::TokenType(*lexer)
         Case Lexer::#TokenType_Unkown
@@ -182,42 +177,12 @@ Module PBLexer
           *lexer\currentTokenValue$ = "" ; For the new line token, no token value should be displayed
           ProcedureReturn #True
         Default
-          If lastTokenType = #TokenType_Newline And Lexer::TokenType(*lexer) = #TokenType_Operator And
-             Lexer::TokenValue(*lexer) = "!"
-            
-            ; --------------------------------------------------------------------------------------------------------------
-            ;- > Process ASM code that is passed directly to the assembler
-            ; --------------------------------------------------------------------------------------------------------------
-            ; An exclamation mark directly at the beginning of a line indicates that ASM code now follows until the end of
-            ; the line is reached
-            asmCode$ = "!"
-            stringOffset = Lexer::StringOffset(*lexer) ; Get current string position from lexer
-            Repeat
-              ; Combine all following characters until one of these characters is recognized: #CR$, #LF$ or ";"
-              character$ = Mid(*lexer\string$, stringOffset, 1)
-              Select character$
-                Case #CR$, #LF$, ";"
-                  Break
-                Default
-                  asmCode$ + character$
-              EndSelect
-              stringOffset + 1
-            Until character$ = ""
-            Lexer::StringOffset(*lexer, stringOffset) ; Set the new string position to the lexer
-            *lexer\currentTokenType        = #TokenType_PassThroughASM
-            *lexer\currentTokenName$       = "PassThroughASM"
-            *lexer\currentTokenValue$      = asmCode$
-            *lexer\currentTokenValueLength = Len(asmCode$)
-            ProcedureReturn #True
-          Else
-            
-            ; --------------------------------------------------------------------------------------------------------------
-            ;- > Process all other token types
-            ; --------------------------------------------------------------------------------------------------------------
-            ProcedureReturn #True
-          EndIf
+          
+          ; --------------------------------------------------------------------------------------------------------------
+          ;- > Process all other token types
+          ; --------------------------------------------------------------------------------------------------------------
+          ProcedureReturn #True
       EndSelect
-      lastTokenType = Lexer::TokenType(*lexer)
     Wend
   EndProcedure
   
