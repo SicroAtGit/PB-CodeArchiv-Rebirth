@@ -51,12 +51,12 @@ DeclareModule Lexer
   Declare  StringOffset(*lexer, value=-1)
   Declare  StringLineNumber(*lexer)
   Declare  StringColumnNumber(*lexer)
-  Declare$ TokenListTuningInfo(*lexer)
+  Declare$ TokenDefinitionsListTuningInfo(*lexer)
   
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of structures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Structure TokenStruc
+  Structure TokenDefinitionsListStruc
     regEx.i
     skipToken.i
     tokenName$
@@ -72,7 +72,7 @@ DeclareModule Lexer
     stringLineNumber.i
     stringColumnNumber.i
     lastNewLineCharacterEndPosition.i ; Needed for 'stringColumnNumber'
-    List tokenList.TokenStruc()
+    List tokenDefinitionsList.TokenDefinitionsListStruc()
     currentTokenName$
     currentTokenType.i
     currentTokenValue$
@@ -90,7 +90,7 @@ Module Lexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of structures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Structure TokenListTuningInfoListStruc
+  Structure TokenDefinitionsListTuningInfoListStruc
     countOfMatches.i
     tokenName$
     tokenType.i
@@ -138,8 +138,8 @@ Module Lexer
     ; Return value: | None
     ; ----------------------------------------------------------------------------------------------------------------------
     If *lexer
-      ForEach *lexer\tokenList()
-        FreeRegularExpression(*lexer\tokenList()\regEx)
+      ForEach *lexer\tokenDefinitionsList()
+        FreeRegularExpression(*lexer\tokenDefinitionsList()\regEx)
       Next
       FreeStructure(*lexer)
     EndIf
@@ -164,24 +164,25 @@ Module Lexer
     ;               |                     slow
     ;               |                     (Optional - default is "")
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Notes:        | Keep the number of tokens small. Large token lists slow down the lexer very quickly
+    ; Notes:        | Keep the number of token definitions small. Large token definitions lists slow down the lexer very
+    ;               | quickly
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | None
     ; ----------------------------------------------------------------------------------------------------------------------
     Protected result
     With *lexer
-      If *lexer And AddElement(\tokenList())
-        \tokenList()\tokenType  = tokenType
-        \tokenList()\tokenName$ = tokenName$
-        \tokenList()\skipToken  = skipToken
-        \tokenList()\regEx      = CreateRegularExpression(#PB_Any, "^(?:"+tokenValueRegEx$+")", #PB_RegularExpression_NoCase)
-        If \tokenList()\regEx = 0
+      If *lexer And AddElement(\tokenDefinitionsList())
+        \tokenDefinitionsList()\tokenType  = tokenType
+        \tokenDefinitionsList()\tokenName$ = tokenName$
+        \tokenDefinitionsList()\skipToken  = skipToken
+        \tokenDefinitionsList()\regEx      = CreateRegularExpression(#PB_Any, "^(?:"+tokenValueRegEx$+")", #PB_RegularExpression_NoCase)
+        If \tokenDefinitionsList()\regEx = 0
           Debug "===================================================================================="
           Debug "In the procedure '" + #PB_Compiler_Procedure + "' the creation of this RegEx failed:"
           Debug "    Error in RegEx: " + tokenValueRegEx$
           Debug "    Error message:  " + RegularExpressionError()
           Debug "===================================================================================="
-          DeleteElement(\tokenList()) ; Delete the invalid token from the token list
+          DeleteElement(\tokenDefinitionsList()) ; Delete the invalid token definition from the token definitions list
           result = #False
         EndIf
         result = #True
@@ -217,18 +218,18 @@ Module Lexer
             \stringLineNumber + 1
             \lastNewLineCharacterEndPosition = \stringOffset + RegularExpressionMatchLength(\newLineRegEx)
           EndIf
-          ForEach \tokenList()
+          ForEach \tokenDefinitionsList()
             ; Compare current string with all defined tokens
-            If ExamineRegularExpression(\tokenList()\regEx, string$) And NextRegularExpressionMatch(\tokenList()\regEx)
+            If ExamineRegularExpression(\tokenDefinitionsList()\regEx, string$) And NextRegularExpressionMatch(\tokenDefinitionsList()\regEx)
               found = #True
-              \tokenList()\countOfMatches + 1
+              \tokenDefinitionsList()\countOfMatches + 1
               \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition + 1
-              \stringOffset + RegularExpressionMatchLength(\tokenList()\regEx)
-              If Not \tokenList()\skipToken
-                \currentTokenType        = \tokenList()\tokenType
-                \currentTokenName$       = \tokenList()\tokenName$
-                \currentTokenValue$      = RegularExpressionMatchString(\tokenList()\regEx)
-                \currentTokenValueLength = RegularExpressionMatchLength(\tokenList()\regEx)
+              \stringOffset + RegularExpressionMatchLength(\tokenDefinitionsList()\regEx)
+              If Not \tokenDefinitionsList()\skipToken
+                \currentTokenType        = \tokenDefinitionsList()\tokenType
+                \currentTokenName$       = \tokenDefinitionsList()\tokenName$
+                \currentTokenValue$      = RegularExpressionMatchString(\tokenDefinitionsList()\regEx)
+                \currentTokenValueLength = RegularExpressionMatchLength(\tokenDefinitionsList()\regEx)
                 result = #True
                 Break 2 ; New token was found. Exit procedure
               Else
@@ -359,34 +360,35 @@ Module Lexer
     EndIf
   EndProcedure
   
-  Procedure$ TokenListTuningInfo(*lexer.LexerStruc)
+  Procedure$ TokenDefinitionsListTuningInfo(*lexer.LexerStruc)
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Description:  | Helps to optimize the order of the tokens in the token list.
-    ;               | The Lexer counts during his work how often each individual token type was found. With this information
-    ;               | it is clear how the list of token types must be sorted in order to minimize unnecessary iterations
+    ; Description:  | Helps to optimize the order of the token definitions in the token definitions list.
+    ;               | The Lexer counts during his work how often each individual token definition was found. With this
+    ;               | information it is clear how the list of token definitions must be sorted in order to minimize
+    ;               | unnecessary iterations
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Parameter:    | *lexer -- The handle of the lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Return value: | The token list in optimized order
+    ; Return value: | The token definitions list in optimized order
     ; ----------------------------------------------------------------------------------------------------------------------
     Protected result$ = #CRLF$ + "Best token list order:" ; Add '#CRLF$' at the beginning of 'result$' to make sure that the
                                                           ; output is cleanly listed in the log of the PB-IDE, even if the
                                                           ; time display is enabled
-    Protected NewList tokenListTuningInfoList.TokenListTuningInfoListStruc()
-    With tokenListTuningInfoList()
+    Protected NewList tokenDefinitionsListTuningInfoList.TokenDefinitionsListTuningInfoListStruc()
+    With tokenDefinitionsListTuningInfoList()
       ; Maps can not be sorted. Therefore, a list must be created and all map elements to be sorted must be inserted in this
       ; list.
-      ForEach *lexer\tokenList()
-        If AddElement(tokenListTuningInfoList())
-          \countOfMatches = *lexer\tokenList()\countOfMatches
-          \tokenName$     = *lexer\tokenList()\tokenName$
-          \tokenType      = *lexer\tokenList()\tokenType
+      ForEach *lexer\tokenDefinitionsList()
+        If AddElement(tokenDefinitionsListTuningInfoList())
+          \countOfMatches = *lexer\tokenDefinitionsList()\countOfMatches
+          \tokenName$     = *lexer\tokenDefinitionsList()\tokenName$
+          \tokenType      = *lexer\tokenDefinitionsList()\tokenType
         EndIf
       Next
-      SortStructuredList(tokenListTuningInfoList(), #PB_Sort_Descending,
-                         OffsetOf(TokenListTuningInfoListStruc\countOfMatches), #PB_Integer)
+      SortStructuredList(tokenDefinitionsListTuningInfoList(), #PB_Sort_Descending,
+                         OffsetOf(TokenDefinitionsListTuningInfoListStruc\countOfMatches), #PB_Integer)
       ; Combine the entries of the sorted list in a string
-      ForEach tokenListTuningInfoList()
+      ForEach tokenDefinitionsListTuningInfoList()
         result$ = #CRLF$ +
                   "[" +
                   "TokenType: " + Str(\tokenType) +
