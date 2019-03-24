@@ -186,7 +186,7 @@ Module PBLexer
     Wend
   EndProcedure
   
-  Procedure$ TokenName(*lexer.Lexer::LexerStruc)
+  Procedure$ TokenName(*lexer)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Returns the name of the current token
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -194,10 +194,10 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | Token name
     ; ----------------------------------------------------------------------------------------------------------------------
-    ProcedureReturn *lexer\currentTokenName$
+    ProcedureReturn Lexer::TokenName(*lexer)
   EndProcedure
   
-  Procedure TokenType(*lexer.Lexer::LexerStruc)
+  Procedure TokenType(*lexer)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Returns the type of the current token
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -205,10 +205,10 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | Token type. On error: -1
     ; ----------------------------------------------------------------------------------------------------------------------
-    ProcedureReturn *lexer\currentTokenType
+    ProcedureReturn Lexer::TokenType(*lexer)
   EndProcedure
   
-  Procedure$ TokenValue(*lexer.Lexer::LexerStruc)
+  Procedure$ TokenValue(*lexer)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Returns the value of the current token
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -216,10 +216,10 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | Token value
     ; ----------------------------------------------------------------------------------------------------------------------
-    ProcedureReturn *lexer\currentTokenValue$
+    ProcedureReturn Lexer::TokenValue(*lexer)
   EndProcedure
   
-  Procedure TokenValueLength(*lexer.Lexer::LexerStruc)
+  Procedure TokenValueLength(*lexer)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Returns the value length of the current token
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | Token value length. On error: -1
     ; ----------------------------------------------------------------------------------------------------------------------
-    ProcedureReturn *lexer\currentTokenValueLength
+    ProcedureReturn Lexer::TokenValueLength(*lexer)
   EndProcedure
   
   Procedure StringOffset(*lexer.Lexer::LexerStruc, value=-1)
