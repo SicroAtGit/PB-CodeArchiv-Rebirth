@@ -72,6 +72,7 @@ DeclareModule PBLexer
     #TokenType_Period
     #TokenType_DoubleColon ; ModuleName::ObjectName
     #TokenType_PassThroughASM
+    #TokenType_StringTypeSuffix
   EndEnumeration
 EndDeclareModule
 
@@ -120,7 +121,7 @@ Module PBLexer
       Lexer::DefineNewToken(*lexer, #TokenType_Operator, "and|or|xor|not|<<|>>|<=|>=|=<|=>|[|+\-*/!%&<>=@?~]", #False,
                             "Operator")
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Identifier")
+      Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b", #False, "Identifier")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", #False, "Comment")
       
@@ -135,9 +136,11 @@ Module PBLexer
                "'.*?'" ; 'a'
       Lexer::DefineNewToken(*lexer, #TokenType_Number, regEx$, #False, "Number")
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Constant, "(?:#[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Constant")
+      Lexer::DefineNewToken(*lexer, #TokenType_Constant, "(?:#[A-Z_]+[A-Z0-9_]*)\b", #False, "Constant")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Period, "\.", #False, "Period")
+      
+      Lexer::DefineNewToken(*lexer, #TokenType_StringTypeSuffix, "\$", #False, "StringTypeSuffix")
     EndIf
     ProcedureReturn *lexer
   EndProcedure
@@ -313,7 +316,7 @@ Module PBLexer
           "forever|global|gosub|goto|if|import|importc|includebinary|includefile|includepath|interface|list|macro|map|" +
           "module|newlist|newmap|next|procedure|procedurec|procedurecdll|proceduredll|procedurereturn|protected|" +
           "prototype|prototypec|read|redim|repeat|restore|return|runtime|select|shared|static|step|structure|" +
-          "structureunion|swap|threaded|to|until|unusemodule|usemodule|wend|while|with|xincludefile)\b\$?"
+          "structureunion|swap|threaded|to|until|unusemodule|usemodule|wend|while|with|xincludefile)\b"
     Data.c 0
   EndDataSection
 EndModule
@@ -390,19 +393,22 @@ CompilerIf #PB_Compiler_IsMainFile
       Case PBLexer::#TokenType_Keyword
         keywordName$ = LCase(PBLexer::TokenValue(*pbLexer))
         Select keywordName$
-          Case "procedure", "procedure$" ; Start keyword of a procedure definition block
+          Case "procedure" ; Start keyword of a procedure definition block
             Debug "A procedure definition was found:"
             If PBLexer::NextToken(*pbLexer)
-              If Right(keywordName$, 1) = "$" ; Support for "Procedure$"
-                Debug "Procedure return type: s"
-              ElseIf PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Period And PBLexer::NextToken(*pbLexer) And
-                     PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Identifier
-                ; The procedure has a return type definition
-                Debug "Procedure return type: " + PBLexer::TokenValue(*pbLexer)
-                PBLexer::NextToken(*pbLexer)
-              Else ; No procedure return type was defined
-                Debug "Procedure return type: i" ; Default procedure return type is "i" (Integer)
-              EndIf
+              Select PBLexer::TokenType(*pbLexer)
+                Case PBLexer::#TokenType_StringTypeSuffix
+                  Debug "Procedure return type: s"
+                  PBLexer::NextToken(*pbLexer)
+                Case PBLexer::#TokenType_Period
+                  If PBLexer::NextToken(*pbLexer) And PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Identifier
+                    Debug "Procedure return type: " + PBLexer::TokenValue(*pbLexer)
+                    PBLexer::NextToken(*pbLexer)
+                  EndIf
+                Default
+                  ; No procedure return type was defined
+                  Debug "Procedure return type: i" ; Default procedure return type is "i" (Integer)
+              EndSelect
               If PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Identifier
                 Debug "Procedure name: " + PBLexer::TokenValue(*pbLexer)
                 AddMapElement(countOfCallsOfDefinedProceduresMap(), PBLexer::TokenValue(*pbLexer))
