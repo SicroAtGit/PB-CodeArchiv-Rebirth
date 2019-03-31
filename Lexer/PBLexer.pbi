@@ -115,6 +115,8 @@ Module PBLexer
       ; Otherwise, this token type is never recognized, because the identifier token will consume it
       Lexer::DefineNewToken(*lexer, #TokenType_Keyword, PeekS(?PBKeywords), #False, "Keyword")
       
+      Lexer::DefineNewToken(*lexer, #TokenType_String, ~"~\"(?:\\\\.|.)*?\"|\".*?\"", #False, "String")
+      
       ; The token directly below this comment must be defined after the string token!
       ; Otherwise, this token type will consume the character "~" as an operator
       Lexer::DefineNewToken(*lexer, #TokenType_Operator, "and|or|xor|not|<<|>>|<=|>=|=<|=>|[|+\-*/!%&<>=@?~]", #False,
@@ -123,8 +125,6 @@ Module PBLexer
       Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b", #False, "Identifier")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", #False, "Comment")
-      
-      Lexer::DefineNewToken(*lexer, #TokenType_String, ~"~\"(?:\\\\.|.)*?\"|\".*?\"", #False, "String")
       
       regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
