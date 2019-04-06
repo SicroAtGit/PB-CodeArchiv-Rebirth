@@ -105,7 +105,7 @@ Module PBLexer
       ; --------------------------------------------------------------------------------------------------------------------
       Lexer::DefineNewToken(*lexer, #TokenType_Whitespace, "[ \t]+", #True)
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Newline, "(\r\n|\r|\n)", #False, "NewLine")
+      Lexer::DefineNewToken(*lexer, #TokenType_Newline, "(?:\r\n|\r|\n)", #False, "NewLine")
       
       Lexer::DefineNewToken(*lexer, #TokenType_DoubleColon, "::", #False, "DoubleColon")
       
