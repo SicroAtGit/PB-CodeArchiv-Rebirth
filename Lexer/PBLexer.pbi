@@ -126,7 +126,7 @@ Module PBLexer
       
       Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", #False, "Comment")
       
-      regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e[0-9]+)?" + ; Integers, decimal numbers and binary numbers
+      regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e[+\-]?[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
                "\$[0-9A-F]+" + ; Hexadecimal numbers
                "|" +
