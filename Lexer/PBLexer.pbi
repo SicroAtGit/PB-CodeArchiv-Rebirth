@@ -128,7 +128,7 @@ Module PBLexer
       
       regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e(?:[ \t]*[+\-][ \t]*)?[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
-               "\$[0-9A-F]+" + ; Hexadecimal numbers
+               "\$[ \t]*[0-9A-F]+" + ; Hexadecimal numbers
                "|" +
                "'.*?'" ; 'a'
       Lexer::DefineNewToken(*lexer, #TokenType_Number, regEx$, #False, "Number")
