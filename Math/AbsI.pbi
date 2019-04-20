@@ -36,24 +36,6 @@ EndProcedure
 
 ;-Example
 CompilerIf #PB_Compiler_IsMainFile
-  
-  x=ElapsedMilliseconds()
-  For i=-100000000 To 100000000
-    result=AbsI(i)
-  Next
-  
-  a$+"AbsI:"+Str(x-ElapsedMilliseconds())+Chr(10)
-  x=ElapsedMilliseconds()
-  
-  Macro mAbsI(intValue)
-    intValue!(intValue>>63)+((intValue>>63)&1)
-  EndMacro
-  
-  For i=-100000000 To 100000000
-    result=mAbsI(i)
-  Next
-  a$+"mAbsI:"+Str(x-ElapsedMilliseconds())+Chr(10)
-  x=ElapsedMilliseconds()
-  
-  MessageRequester("Results",a$)
+  Debug "-10 >> " + AbsI(-10)
+  Debug " 10 >> " + AbsI(10)
 CompilerEndIf
