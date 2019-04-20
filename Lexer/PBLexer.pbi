@@ -176,7 +176,6 @@ Module PBLexer
           ; ----------------------------------------------------------------------------------------------------------------
           ;- > Process the newline token type
           ; ----------------------------------------------------------------------------------------------------------------
-          *lexer\currentTokenValue$ = "" ; For the new line token, no token value should be displayed
           ProcedureReturn #True
         Default
           
