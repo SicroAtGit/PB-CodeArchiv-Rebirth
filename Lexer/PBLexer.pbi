@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(string$, maxTokenValueLength=200, includeWhitespaceTokens=#False)
+  Declare  Create(string$, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -81,7 +81,7 @@ Module PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(string$, maxTokenValueLength=200, includeWhitespaceTokens=#False)
+  Procedure Create(string$, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
