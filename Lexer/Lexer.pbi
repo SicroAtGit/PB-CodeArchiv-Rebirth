@@ -40,7 +40,7 @@ DeclareModule Lexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(string$, maxTokenValueLength=200)
+  Declare  Create(*string, maxTokenValueLength=200)
   Declare  Free(*lexer)
   Declare  DefineNewToken(*lexer, tokenType, tokenValueRegEx$, skipToken=#False, tokenName$="")
   Declare  NextToken(*lexer)
@@ -67,7 +67,7 @@ DeclareModule Lexer
   Structure LexerStruc
     maxTokenValueLength.i
     newLineRegEx.i ; Needed for 'stringLineNumber' and 'lastNewLineCharacterEndPosition'
-    string$
+    *string
     stringOffset.i
     stringLineNumber.i
     stringColumnNumber.i
@@ -99,11 +99,11 @@ Module Lexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(string$, maxTokenValueLength=200)
+  Procedure Create(*string, maxTokenValueLength=200)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Parameter:    |             string$ -- The string to be scanned
+    ; Parameter:    |            *string$ -- The pointer to the pointer of the string to be scanned
     ;               | maxTokenValueLength -- Specifies the length of the substring in which a token is to be scanned.
     ;               |                        Too large values slow down the Lexer.
     ;               |                        Too low values can cause the substring to be too short and some tokens can no
@@ -114,17 +114,17 @@ Module Lexer
     ; Return value: | On success the handle of the created lexer, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------
     Protected *lexer.LexerStruc
-    If string$ <> ""
+    If *string <> 0
       *lexer = AllocateStructure(LexerStruc)
       If *lexer
         With *lexer
-          \string$          = string$
+          \string           = *string
           \stringOffset     = 1
           \stringLineNumber = 1
           \newLineRegEx     = CreateRegularExpression(#PB_Any, "^(\r\n|\r|\n)")
           \maxTokenValueLength  = maxTokenValueLength
         EndWith
-      Endif
+      EndIf
     EndIf
     ProcedureReturn *lexer
   EndProcedure
@@ -208,10 +208,11 @@ Module Lexer
         Repeat
           ; This loop is required to perform a new pass if the current token is to be skipped
           found   = #False
-          string$ = Mid(\string$, \stringOffset, \maxTokenValueLength) ; Always passing the whole string to
-                                                                       ; "ExamineRegularExpression()" would slow down the
-                                                                       ; lexer very much. Therefore, only a limited length
-                                                                       ; of the string is passed
+          
+          ; Always passing the whole string to "ExamineRegularExpression()" would slow down the lexer very much. Therefore,
+          ; only a limited length of the string is passed
+          string$ = PeekS(\string + (\stringOffset - 1) * SizeOf(Character), \maxTokenValueLength)
+          
           If string$ = "" : Break : EndIf
           ; Check whether a new line of code begins
           If ExamineRegularExpression(\newLineRegEx, string$) And NextRegularExpressionMatch(\newLineRegEx)
@@ -433,7 +434,7 @@ CompilerIf #PB_Compiler_IsMainFile
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Create lexer
   ; ------------------------------------------------------------------------------------------------------------------------
-  *lexer = Lexer::Create(htmlCode$)
+  *lexer = Lexer::Create(@htmlCode$)
   If *lexer = 0
     Debug "Lexer can't be created!"
     End

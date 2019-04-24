@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(string$, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
+  Declare  Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -81,11 +81,11 @@ Module PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(string$, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
+  Procedure Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Parameter:    |                 string$ -- The string to be scanned
+    ; Parameter:    |                 *string -- Pointer to the pointer of the string to be scanned
     ;               |     maxTokenValueLength -- Specifies the length of the substring in which a token is to be scanned.
     ;               |                            Too large values slow down the Lexer.
     ;               |                            Too low values can cause the substring to be too short and some tokens can
@@ -99,7 +99,7 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     Protected *lexer
     Protected regEx$
-    *lexer = Lexer::Create(string$, maxTokenValueLength)
+    *lexer = Lexer::Create(*string, maxTokenValueLength)
     If *lexer
       
       ; --------------------------------------------------------------------------------------------------------------------
@@ -347,7 +347,7 @@ CompilerIf #PB_Compiler_IsMainFile
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Create lexer
   ; ------------------------------------------------------------------------------------------------------------------------
-  *pbLexer = PBLexer::Create(code$)
+  *pbLexer = PBLexer::Create(@code$)
   If *pbLexer = 0
     Debug "PBLexer can't be created!"
     End
