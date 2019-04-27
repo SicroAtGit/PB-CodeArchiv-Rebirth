@@ -29,8 +29,8 @@
 
 Procedure GetIPInfos(Map infos$(), ip$="")
   
-  Protected httpRequest, json, httpStatusCode
-  Protected url$, httpResponse$
+  Protected httpRequest, json, httpStatusCode, *jsonValuePointer, *jsonMemberValuePointer
+  Protected url$, httpResponse$, value$
   
   InitNetwork()
   
@@ -62,7 +62,21 @@ Procedure GetIPInfos(Map infos$(), ip$="")
   EndIf
   
   ; Convert the JSON to a MAP
-  ExtractJSONMap(JSONValue(json), infos$())
+  ; ExtractJSONMap() does not convert member values to strings if they have a different type
+  *jsonValuePointer = JSONValue(json)
+  If Not ExamineJSONMembers(*jsonValuePointer)
+    FreeJSON(json)
+    ProcedureReturn #False
+  EndIf
+  While NextJSONMember(*jsonValuePointer)
+    *jsonMemberValuePointer = JSONMemberValue(*jsonValuePointer)
+    Select JSONType(*jsonMemberValuePointer)
+      Case #PB_JSON_String:  value$ = GetJSONString(*jsonMemberValuePointer)
+      Case #PB_JSON_Number:  value$ = StrD(GetJSONDouble(*jsonMemberValuePointer))    
+      Case #PB_JSON_Boolean: value$ = Str(GetJSONBoolean(*jsonMemberValuePointer))
+    EndSelect
+    infos$(JSONMemberKey(*jsonValuePointer)) = value$
+  Wend
   
   FreeJSON(json)
   ProcedureReturn #True
