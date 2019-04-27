@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(string$, maxTokenValueLength=200)
+  Declare  Create(string$, maxTokenValueLength=200, includeWhitespaceTokens=#False)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -59,7 +59,8 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of constants
   ; ------------------------------------------------------------------------------------------------------------------------
-  Enumeration 1 ; Must start at "1", because of the internal constant "#TokenType_Whitespace", which has "0"
+  Enumeration
+    #TokenType_Whitespace
     #TokenType_Newline
     #TokenType_Identifier
     #TokenType_Separator
@@ -76,22 +77,23 @@ DeclareModule PBLexer
 EndDeclareModule
 
 Module PBLexer
-  #TokenType_Whitespace = 0
   
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(string$, maxTokenValueLength=200)
+  Procedure Create(string$, maxTokenValueLength=200, includeWhitespaceTokens=#False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Parameter:    |             string$ -- The string to be scanned
-    ;               | maxTokenValueLength -- Specifies the length of the substring in which a token is to be scanned.
-    ;               |                        Too large values slow down the Lexer.
-    ;               |                        Too low values can cause the substring to be too short and some tokens can no
-    ;               |                        longer be read out completely. It is also possible that some tokens are not
-    ;               |                        recognized at all, because the RegEx of the token no longer matches
-    ;               |                        (Optional - default is 300)
+    ; Parameter:    |                 string$ -- The string to be scanned
+    ;               |     maxTokenValueLength -- Specifies the length of the substring in which a token is to be scanned.
+    ;               |                            Too large values slow down the Lexer.
+    ;               |                            Too low values can cause the substring to be too short and some tokens can
+    ;               |                            no longer be read out completely. It is also possible that some tokens are
+    ;               |                            not recognized at all, because the RegEx of the token no longer matches
+    ;               |                            (Optional - default is 200)
+    ;               | includeWhitespaceTokens -- Specifies whether white-space tokens should be created
+    ;               |                            (Optional - default is #False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | On success the handle of the created lexer, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -103,7 +105,7 @@ Module PBLexer
       ; --------------------------------------------------------------------------------------------------------------------
       ;- > Definition of all token types
       ; --------------------------------------------------------------------------------------------------------------------
-      Lexer::DefineNewToken(*lexer, #TokenType_Whitespace, "[ \t]+", #True)
+      Lexer::DefineNewToken(*lexer, #TokenType_Whitespace, "[ \t]", Bool(includeWhitespaceTokens <> #True), "WhiteSpace")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Newline, "(?:\r\n|\r|\n)", #False, "NewLine")
       
