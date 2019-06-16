@@ -1,0 +1,1155 @@
+%PDF-1.6
+%ту╧╙
+32 0 obj
+<<
+/Title (Example: RoundRectangle)
+/Parent 7 0 R
+/Prev 29 0 R
+/Dest [30 0 R /XYZ 0 841.89 0]
+/Next 35 0 R
+>>
+endobj
+34 0 obj
+<</Length 611>>
+stream
+2 J
+0.85 w
+0.502 G
+1.000 0.471 0.471 rg
+368.50 700.16 m
+368.50 731.47 330.43 756.85 283.46 756.85 c
+236.50 756.85 198.43 731.47 198.43 700.16 c
+198.43 668.85 236.50 643.46 283.46 643.46 c
+330.43 643.46 368.50 668.85 368.50 700.16 c
+s
+1.000 1.000 0.000 rg
+331.65 708.66 m
+331.65 719.62 322.77 728.50 311.81 728.50 c
+300.85 728.50 291.97 719.62 291.97 708.66 c
+291.97 697.70 300.85 688.82 311.81 688.82 c
+322.77 688.82 331.65 697.70 331.65 708.66 c
+f
+1.000 0.471 0.471 rg
+56.69 501.73 m
+340.16 501.73 l
+56.69 218.27 l
+b
+283.46 303.31 226.77 -170.08 re
+S
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (7) Tj ET Q
+endstream
+endobj
+36 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 37 0 R
+>>
+endobj
+38 0 obj
+<<
+/Title (Example: Sector)
+/Parent 7 0 R
+/Prev 35 0 R
+/Dest [36 0 R /XYZ 0 841.89 0]
+/Next 41 0 R
+>>
+endobj
+41 0 obj
+<<
+/Title (Example: Rotating Text)
+/Parent 7 0 R
+/Prev 38 0 R
+/Dest [39 0 R /XYZ 0 841.89 0]
+/Next 44 0 R
+>>
+endobj
+43 0 obj
+<</Length 4635>>
+stream
+2 J
+0.85 w
+0.502 G
+1.000 0.471 0.471 rg
+0.800 1.000 1.000 RG
+0.71 w
+0.00 841.89 m 0.00 0.00 l S
+14.17 841.89 m 14.17 0.00 l S
+28.35 841.89 m 28.35 0.00 l S
+42.52 841.89 m 42.52 0.00 l S
+56.69 841.89 m 56.69 0.00 l S
+70.87 841.89 m 70.87 0.00 l S
+85.04 841.89 m 85.04 0.00 l S
+99.21 841.89 m 99.21 0.00 l S
+113.39 841.89 m 113.39 0.00 l S
+127.56 841.89 m 127.56 0.00 l S
+141.73 841.89 m 141.73 0.00 l S
+155.91 841.89 m 155.91 0.00 l S
+170.08 841.89 m 170.08 0.00 l S
+184.25 841.89 m 184.25 0.00 l S
+198.43 841.89 m 198.43 0.00 l S
+212.60 841.89 m 212.60 0.00 l S
+226.77 841.89 m 226.77 0.00 l S
+240.94 841.89 m 240.94 0.00 l S
+255.12 841.89 m 255.12 0.00 l S
+269.29 841.89 m 269.29 0.00 l S
+283.46 841.89 m 283.46 0.00 l S
+297.64 841.89 m 297.64 0.00 l S
+311.81 841.89 m 311.81 0.00 l S
+325.98 841.89 m 325.98 0.00 l S
+340.16 841.89 m 340.16 0.00 l S
+354.33 841.89 m 354.33 0.00 l S
+368.50 841.89 m 368.50 0.00 l S
+382.68 841.89 m 382.68 0.00 l S
+396.85 841.89 m 396.85 0.00 l S
+411.02 841.89 m 411.02 0.00 l S
+425.20 841.89 m 425.20 0.00 l S
+439.37 841.89 m 439.37 0.00 l S
+453.54 841.89 m 453.54 0.00 l S
+467.72 841.89 m 467.72 0.00 l S
+481.89 841.89 m 481.89 0.00 l S
+496.06 841.89 m 496.06 0.00 l S
+510.24 841.89 m 510.24 0.00 l S
+524.41 841.89 m 524.41 0.00 l S
+538.58 841.89 m 538.58 0.00 l S
+552.76 841.89 m 552.76 0.00 l S
+566.93 841.89 m 566.93 0.00 l S
+581.10 841.89 m 581.10 0.00 l S
+595.28 841.89 m 595.28 0.00 l S
+0.00 841.89 m 595.28 841.89 l S
+0.00 827.72 m 595.28 827.72 l S
+0.00 813.54 m 595.28 813.54 l S
+0.00 799.37 m 595.28 799.37 l S
+0.00 785.20 m 595.28 785.20 l S
+0.00 771.02 m 595.28 771.02 l S
+0.00 756.85 m 595.28 756.85 l S
+0.00 742.68 m 595.28 742.68 l S
+0.00 728.50 m 595.28 728.50 l S
+0.00 714.33 m 595.28 714.33 l S
+0.00 700.16 m 595.28 700.16 l S
+0.00 685.98 m 595.28 685.98 l S
+0.00 671.81 m 595.28 671.81 l S
+0.00 657.64 m 595.28 657.64 l S
+0.00 643.46 m 595.28 643.46 l S
+0.00 629.29 m 595.28 629.29 l S
+0.00 615.12 m 595.28 615.12 l S
+0.00 600.95 m 595.28 600.95 l S
+0.00 586.77 m 595.28 586.77 l S
+0.00 572.60 m 595.28 572.60 l S
+0.00 558.43 m 595.28 558.43 l S
+0.00 544.25 m 595.28 544.25 l S
+0.00 530.08 m 595.28 530.08 l S
+0.00 515.91 m 595.28 515.91 l S
+0.00 501.73 m 595.28 501.73 l S
+0.00 487.56 m 595.28 487.56 l S
+0.00 473.39 m 595.28 473.39 l S
+0.00 459.21 m 595.28 459.21 l S
+0.00 445.04 m 595.28 445.04 l S
+0.00 430.87 m 595.28 430.87 l S
+0.00 416.69 m 595.28 416.69 l S
+0.00 402.52 m 595.28 402.52 l S
+0.00 388.35 m 595.28 388.35 l S
+0.00 374.17 m 595.28 374.17 l S
+0.00 360.00 m 595.28 360.00 l S
+0.00 345.83 m 595.28 345.83 l S
+0.00 331.65 m 595.28 331.65 l S
+0.00 317.48 m 595.28 317.48 l S
+0.00 303.31 m 595.28 303.31 l S
+0.00 289.13 m 595.28 289.13 l S
+0.00 274.96 m 595.28 274.96 l S
+0.00 260.79 m 595.28 260.79 l S
+0.00 246.61 m 595.28 246.61 l S
+0.00 232.44 m 595.28 232.44 l S
+0.00 218.27 m 595.28 218.27 l S
+0.00 204.09 m 595.28 204.09 l S
+0.00 189.92 m 595.28 189.92 l S
+0.00 175.75 m 595.28 175.75 l S
+0.00 161.58 m 595.28 161.58 l S
+0.00 147.40 m 595.28 147.40 l S
+0.00 133.23 m 595.28 133.23 l S
+0.00 119.06 m 595.28 119.06 l S
+0.00 104.88 m 595.28 104.88 l S
+0.00 90.71 m 595.28 90.71 l S
+0.00 76.54 m 595.28 76.54 l S
+0.00 62.36 m 595.28 62.36 l S
+0.00 48.19 m 595.28 48.19 l S
+0.00 34.02 m 595.28 34.02 l S
+0.00 19.84 m 595.28 19.84 l S
+0.00 5.67 m 595.28 5.67 l S
+BT /F5 9.00 Tf ET
+q 0.800 0.800 0.800 rg BT 5.67 783.91 Td (20) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 727.22 Td (40) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 670.53 Td (60) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 613.84 Td (80) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 557.14 Td (100) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 500.45 Td (120) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 443.76 Td (140) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 387.06 Td (160) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 330.37 Td (180) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 273.68 Td (200) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 216.99 Td (220) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 160.29 Td (240) Tj ET Q
+q 0.800 0.800 0.800 rg BT 5.67 103.60 Td (260) Tj ET Q
+q 0.800 0.800 0.800 rg BT 56.69 832.10 Td (20) Tj ET Q
+q 0.800 0.800 0.800 rg BT 113.39 832.10 Td (40) Tj ET Q
+q 0.800 0.800 0.800 rg BT 170.08 832.10 Td (60) Tj ET Q
+q 0.800 0.800 0.800 rg BT 226.77 832.10 Td (80) Tj ET Q
+q 0.800 0.800 0.800 rg BT 283.46 832.10 Td (100) Tj ET Q
+q 0.800 0.800 0.800 rg BT 340.16 832.10 Td (120) Tj ET Q
+q 0.800 0.800 0.800 rg BT 396.85 832.10 Td (140) Tj ET Q
+q 0.800 0.800 0.800 rg BT 453.54 832.10 Td (160) Tj ET Q
+q 0.800 0.800 0.800 rg BT 510.24 832.10 Td (180) Tj ET Q
+0.000 G
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (10) Tj ET Q
+endstream
+endobj
+45 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding>>
+endobj
+47 0 obj
+<</Length 298>>
+stream
+2 J
+0.71 w
+0.000 G
+1.000 0.471 0.471 rg
+0.28 w
+[14.173 14.173] 0 d
+56.69 785.20 m 535.75 785.20 l S
+1.42 w
+56.69 771.02 m 535.75 771.02 l S
+2.27 w
+[11.339 5.669] 0 d
+56.69 756.85 479.06 -56.69 re
+S
+[] 0 d
+56.69 685.98 m 535.75 685.98 l S
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (11) Tj ET Q
+endstream
+endobj
+49 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 50 0 R
+>>
+endobj
+2 0 obj
+<<
+/Producer (pbPDF V2.0 for PureBasic X86)
+/CreationDate (D:20190221173324)
+>>
+endobj
+4 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <</F1 9 0 R /F2 11 0 R /F3 15 0 R /F4 19 0 R /F5 45 0 R /F6 60 0 R>>
+>>
+endobj
+6 0 obj
+<</Length 149>>
+stream
+2 J
+0.57 w
+BT /F1 16.00 Tf ET
+28.35 813.54 113.39 -28.35 re S BT 31.18 794.57 Td (Hello World!) Tj ET
+BT /F2 9.00 Tf ET
+BT 291.97 25.65 Td (1) Tj ET
+endstream
+endobj
+8 0 obj
+<<
+/Title (Example: Hello)
+/Parent 7 0 R
+/Dest [5 0 R /XYZ 0 813.54 0]
+/Next 14 0 R
+>>
+endobj
+50 0 obj
+<</Length 1272>>
+stream
+2 J
+2.27 w
+0.000 G
+1.000 0.471 0.471 rg
+BT /F3 12.00 Tf ET
+0.784 G
+141.73 785.20 113.39 -28.35 re
+S
+q 0.784 g BT 141.73 788.03 Td (Scale) Tj ET Q
+0.000 G
+q
+1.500 0.000 0.000 1.500 -70.866 -378.425 cm
+141.73 785.20 113.39 -28.35 re
+S
+q 0.000 g BT 141.73 788.03 Td (Scale) Tj ET Q
+Q
+0.784 G
+354.33 785.20 113.39 -28.35 re
+S
+q 0.784 g BT 354.33 788.03 Td (Translate) Tj ET Q
+0.000 G
+q
+1.000 0.000 0.000 1.000 20.000 15.000 cm
+354.33 785.20 113.39 -28.35 re
+S
+q 0.000 g BT 354.33 788.03 Td (Translate) Tj ET Q
+Q
+0.784 G
+141.73 700.16 113.39 -28.35 re
+S
+q 0.784 g BT 141.73 702.99 Td (Rotate) Tj ET Q
+0.000 G
+q
+q
+0.93969 0.34202 -0.34202 0.93969 141.73 671.81 cm
+1 0 0 1 -141.73 -671.81 cm
+141.73 700.16 113.39 -28.35 re
+S
+q 0.000 g BT 141.73 702.99 Td (Rotate) Tj ET Q
+Q
+0.784 G
+354.33 700.16 113.39 -28.35 re
+S
+q 0.784 g BT 354.33 702.99 Td (Skew) Tj ET Q
+0.000 G
+q
+1.000 0.000 0.577 1.000 -387.870 0.000 cm
+354.33 700.16 113.39 -28.35 re
+S
+q 0.000 g BT 354.33 702.99 Td (Skew) Tj ET Q
+Q
+0.784 G
+354.33 615.12 113.39 -28.35 re
+S
+q 0.784 g BT 354.33 617.95 Td (MirrorV) Tj ET Q
+0.000 G
+q
+1.000 0.000 0.000 -1.000 0.000 1173.544 cm
+354.33 615.12 113.39 -28.35 re
+S
+q 0.000 g BT 354.33 617.95 Td (MirrorV) Tj ET Q
+Q
+Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (12) Tj ET Q
+endstream
+endobj
+52 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 53 0 R
+>>
+endobj
+54 0 obj
+<<
+/Title (Example: Subwrite)
+/Parent 7 0 R
+/Prev 51 0 R
+/Dest [52 0 R /XYZ 0 813.54 0]
+/Next 57 0 R
+>>
+endobj
+11 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Helvetica-BoldOblique /Encoding /WinAnsiEncoding>>
+endobj
+56 0 obj
+<</Length 573>>
+stream
+2 J
+2.27 w
+0.000 G
+1.000 0.471 0.471 rg
+BT /F4 12.00 Tf ET
+q 0.000 g BT 31.18 802.85 Td (TOC 1 ) Tj ET Q
+q 0.000 g BT 31.18 788.68 Td (TOC 1.1) Tj ET Q
+q 0.000 g BT 31.18 774.51 Td (TOC 3) Tj ET Q
+q 0.000 g BT 31.18 760.33 Td (TOC 4) Tj ET Q
+q 0.000 g BT 31.18 746.16 Td (TOC 5) Tj ET Q
+q 0.000 g BT 31.18 731.99 Td (TOC 6) Tj ET Q
+q 0.000 g BT 31.18 717.81 Td (TOC 7) Tj ET Q
+q 0.000 g BT 31.18 703.64 Td (TOC 8) Tj ET Q
+q 0.000 g BT 31.18 689.47 Td (TOC 9) Tj ET Q
+q 0.000 g BT 31.18 675.29 Td (TOC 10) Tj ET Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (15) Tj ET Q
+endstream
+endobj
+13 0 obj
+<</Length 425>>
+stream
+2 J
+0.57 w
+BT /F3 11.00 Tf ET
+28.35 813.54 99.21 -17.01 re S BT 31.18 801.74 Td (That is a long text to test it.) Tj ET
+28.35 796.53 99.21 -17.01 re S BT 31.18 784.73 Td (That is a long tex...) Tj ET
+28.35 765.35 121.89 -17.01 re S BT 31.18 753.55 Td (That is a long text to test it.) Tj ET
+28.35 748.34 121.89 -17.01 re S BT 31.18 736.54 Td (That is a long text to t...) Tj ET
+BT /F2 9.00 Tf ET
+BT 291.97 25.65 Td (2) Tj ET
+endstream
+endobj
+58 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 59 0 R
+>>
+endobj
+15 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding>>
+endobj
+17 0 obj
+<</Length 3778>>
+stream
+2 J
+0.57 w
+BT /F4 12.00 Tf ET
+BT 31.18 801.44 Td (Х) Tj ET
+0.288 Tw
+BT 44.05 801.44 Td (This is bulleted text. The text is indented and the ) Tj ET
+4.282 Tw
+BT 44.05 784.43 Td (bullet appears at the first line only. This is) Tj ET
+0.949 Tw
+BT 44.05 767.42 Td (bulleted text. The text is indented and the bullet) Tj ET
+0 Tw
+BT 44.05 750.41 Td (appears at the first line only.) Tj ET
+BT 31.18 733.40 Td (Х) Tj ET
+0.288 Tw
+BT 44.05 733.40 Td (This is bulleted text. The text is indented and the ) Tj ET
+4.282 Tw
+BT 44.05 716.40 Td (bullet appears at the first line only. This is) Tj ET
+0.949 Tw
+BT 44.05 699.39 Td (bulleted text. The text is indented and the bullet) Tj ET
+0 Tw
+BT 44.05 682.38 Td (appears at the first line only.) Tj ET
+BT 31.18 665.37 Td (Х) Tj ET
+0.288 Tw
+BT 44.05 665.37 Td (This is bulleted text. The text is indented and the ) Tj ET
+4.282 Tw
+BT 44.05 648.37 Td (bullet appears at the first line only. This is) Tj ET
+0.949 Tw
+BT 44.05 631.36 Td (bulleted text. The text is indented and the bullet) Tj ET
+0 Tw
+BT 44.05 614.35 Td (appears at the first line only.) Tj ET
+BT 31.18 597.34 Td (-) Tj ET
+0.644 Tw
+BT 40.85 597.34 Td (This is bulleted text. The text is indented and the ) Tj ET
+4.683 Tw
+BT 40.85 580.33 Td (bullet appears at the first line only. This is) Tj ET
+1.350 Tw
+BT 40.85 563.33 Td (bulleted text. The text is indented and the bullet) Tj ET
+0 Tw
+BT 40.85 546.32 Td (appears at the first line only.) Tj ET
+BT 31.18 529.31 Td (-) Tj ET
+0.644 Tw
+BT 40.85 529.31 Td (This is bulleted text. The text is indented and the ) Tj ET
+4.683 Tw
+BT 40.85 512.30 Td (bullet appears at the first line only. This is) Tj ET
+1.350 Tw
+BT 40.85 495.29 Td (bulleted text. The text is indented and the bullet) Tj ET
+0 Tw
+BT 40.85 478.29 Td (appears at the first line only.) Tj ET
+BT 314.65 801.44 Td (1\)) Tj ET
+2.182 Tw
+BT 330.31 801.44 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 784.43 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 767.42 Td (2\)) Tj ET
+2.182 Tw
+BT 330.31 767.42 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 750.42 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 733.41 Td (3\)) Tj ET
+2.182 Tw
+BT 330.31 733.41 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 716.40 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 699.39 Td (4\)) Tj ET
+2.182 Tw
+BT 330.31 699.39 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 682.38 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 665.38 Td (5\)) Tj ET
+2.182 Tw
+BT 330.31 665.38 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 648.37 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 631.36 Td (6\)) Tj ET
+2.182 Tw
+BT 330.31 631.36 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 614.35 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 597.35 Td (7\)) Tj ET
+2.182 Tw
+BT 330.31 597.35 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 580.34 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 563.33 Td (8\)) Tj ET
+2.182 Tw
+BT 330.31 563.33 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 546.32 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 529.31 Td (9\)) Tj ET
+2.182 Tw
+BT 330.31 529.31 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 330.31 512.31 Td (the bullet appears at the first line only.) Tj ET
+BT 314.65 495.30 Td (10\)) Tj ET
+1.432 Tw
+BT 336.31 495.30 Td (This is bulleted text. The text is indented and ) Tj ET
+0 Tw
+BT 336.31 478.29 Td (the bullet appears at the first line only.) Tj ET
+BT /F2 9.00 Tf ET
+BT 291.97 25.65 Td (3) Tj ET
+endstream
+endobj
+19 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding>>
+endobj
+20 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 21 0 R
+/Annots [23 0 R  24 0 R  25 0 R  26 0 R]
+>>
+endobj
+22 0 obj
+<<
+/Title (Example: Table)
+/Parent 7 0 R
+/Prev 18 0 R
+/Dest [20 0 R /XYZ 0 841.89 0]
+/Next 29 0 R
+>>
+endobj
+24 0 obj
+<<
+/Type /Annot /Subtype /Link
+/Rect [447.88 722.66 478.46 711.66]
+/Border [0 0 0]
+/A << /S /URI /URI (www.purebasic.com) >>
+>>
+endobj
+26 0 obj
+<<
+/Type /Annot /Subtype /Link
+/Rect [447.88 688.65 478.46 677.65]
+/Border [0 0 0]
+/A << /S /URI /URI (www.purebasic.com) >>
+>>
+endobj
+28 0 obj
+<</Length 1958>>
+stream
+2 J
+0.85 w
+0.502 G
+0.878 0.922 1.000 rg
+56.69 785.20 283.46 -283.46 re
+S
+226.77 785.20 113.39 -113.39 re
+S
+56.69 615.12 113.39 -113.39 re
+S
+BT /F3 10.00 Tf ET
+2.130 Tw
+q 0.000 g BT 59.53 775.11 Td (all work and no play makes jack a ) Tj ET Q
+0.938 Tw
+q 0.000 g BT 59.53 760.94 Td (dull boy all work and no play makes) Tj ET Q
+1.237 Tw
+q 0.000 g BT 59.53 746.76 Td (jack a dull boy all work and no play) Tj ET Q
+1.813 Tw
+q 0.000 g BT 59.53 732.59 Td (makes jack a dull boy all work and) Tj ET Q
+3.003 Tw
+q 0.000 g BT 59.53 718.42 Td (no play makes jack a dull boy all) Tj ET Q
+1.336 Tw
+q 0.000 g BT 59.53 704.24 Td (work and no play makes jack a dull) Tj ET Q
+0.621 Tw
+q 0.000 g BT 59.53 690.07 Td (boy all work and no play makes jack) Tj ET Q
+4.351 Tw
+q 0.000 g BT 59.53 675.90 Td (a dull boy all work and no play) Tj ET Q
+0.072 Tw
+q 0.000 g BT 59.53 661.72 Td (akes jack a dull boy all work and no play makes jack a dull boy ) Tj ET Q
+1.617 Tw
+q 0.000 g BT 59.53 647.55 Td (all work and no play makes jack a dull boy all work and no) Tj ET Q
+0.677 Tw
+q 0.000 g BT 59.53 633.38 Td (play makes jack a dull boy all work and no play makes jack a) Tj ET Q
+1.319 Tw
+q 0.000 g BT 59.53 619.21 Td (dull boy all work and no play makes jack a dull boy all work) Tj ET Q
+0.890 Tw
+q 0.000 g BT 172.91 605.03 Td (nd no play makes jack a dull boy all ) Tj ET Q
+1.336 Tw
+q 0.000 g BT 172.91 590.86 Td (work and no play makes jack a dull) Tj ET Q
+0.621 Tw
+q 0.000 g BT 172.91 576.69 Td (boy all work and no play makes jack) Tj ET Q
+4.351 Tw
+q 0.000 g BT 172.91 562.51 Td (a dull boy all work and no play) Tj ET Q
+1.813 Tw
+q 0.000 g BT 172.91 548.34 Td (makes jack a dull boy all work and) Tj ET Q
+3.003 Tw
+q 0.000 g BT 172.91 534.17 Td (no play makes jack a dull boy all) Tj ET Q
+1.336 Tw
+q 0.000 g BT 172.91 519.99 Td (work and no play makes jack a dull) Tj ET Q
+0 Tw
+q 0.000 g BT 172.91 505.82 Td (boy ) Tj ET Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (5) Tj ET Q
+endstream
+endobj
+31 0 obj
+<</Length 866>>
+stream
+2 J
+0.85 w
+0.502 G
+0.878 0.922 1.000 rg
+0.471 0.471 1.000 rg
+56.69 714.33 m
+56.69 749.76 92.13 785.20 127.56 785.20 c
+411.02 785.20 l
+446.46 785.20 481.89 749.76 481.89 714.33 c
+481.89 714.33 l
+481.89 678.90 446.46 643.46 411.02 643.46 c
+127.56 643.46 l
+92.13 643.46 56.69 678.90 56.69 714.33 c
+b
+0.471 1.000 0.471 rg
+56.69 600.95 m
+56.69 608.03 63.78 615.12 70.87 615.12 c
+467.72 615.12 l
+474.80 615.12 481.89 608.03 481.89 600.95 c
+481.89 487.56 l
+481.89 480.47 474.80 473.39 467.72 473.39 c
+70.87 473.39 l
+63.78 473.39 56.69 480.47 56.69 487.56 c
+b
+1.000 0.471 0.471 rg
+56.69 416.69 m
+56.69 430.87 70.87 445.04 85.04 445.04 c
+453.54 445.04 l
+467.72 445.04 481.89 430.87 481.89 416.69 c
+481.89 331.65 l
+481.89 317.48 467.72 303.31 453.54 303.31 c
+85.04 303.31 l
+70.87 303.31 56.69 317.48 56.69 331.65 c
+b
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (6) Tj ET Q
+endstream
+endobj
+33 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 34 0 R
+>>
+endobj
+35 0 obj
+<<
+/Title (Example: Geometric Shapes)
+/Parent 7 0 R
+/Prev 32 0 R
+/Dest [33 0 R /XYZ 0 841.89 0]
+/Next 38 0 R
+>>
+endobj
+37 0 obj
+<</Length 792>>
+stream
+2 J
+0.85 w
+0.502 G
+1.000 0.471 0.471 rg
+0.471 0.471 1.000 rg
+297.64 685.98 m
+395.83 629.29 l
+404.11 643.63 409.15 659.61 410.59 676.10 c
+412.04 692.60 409.85 709.21 404.19 724.76 c
+398.52 740.32 389.52 754.45 377.81 766.16 c
+366.11 777.87 351.98 786.87 336.42 792.53 c
+b
+0.471 1.000 0.471 rg
+297.64 685.98 m
+191.09 647.20 l
+198.47 626.92 211.49 609.17 228.61 596.03 c
+245.74 582.89 266.25 574.91 287.76 573.03 c
+309.26 571.15 330.85 575.44 349.99 585.41 c
+369.14 595.38 385.04 610.60 395.83 629.29 c
+b
+1.000 0.471 0.471 rg
+297.64 685.98 m
+336.42 792.53 l
+316.14 799.91 294.17 801.35 273.10 796.68 c
+252.02 792.01 232.72 781.42 217.46 766.16 c
+202.20 750.90 191.61 731.60 186.94 710.53 c
+182.27 689.45 183.71 667.49 191.09 647.20 c
+b
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (8) Tj ET Q
+endstream
+endobj
+39 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 40 0 R
+>>
+endobj
+40 0 obj
+<</Length 246>>
+stream
+2 J
+0.85 w
+0.502 G
+1.000 0.471 0.471 rg
+BT /F3 40.00 Tf ET
+q
+0.70711 0.70711 -0.70711 0.70711 283.46 671.81 cm
+1 0 0 1 -283.46 -671.81 cm
+q 0.000 g BT 283.46 671.81 Td (Hello!) Tj ET Q
+Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (9) Tj ET Q
+endstream
+endobj
+42 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 43 0 R
+>>
+endobj
+44 0 obj
+<<
+/Title (Example: Grid)
+/Parent 7 0 R
+/Prev 41 0 R
+/Dest [42 0 R /XYZ 0 841.89 0]
+/Next 48 0 R
+>>
+endobj
+46 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 47 0 R
+>>
+endobj
+48 0 obj
+<<
+/Title (Example: Dash)
+/Parent 7 0 R
+/Prev 44 0 R
+/Dest [46 0 R /XYZ 0 813.54 0]
+/Next 51 0 R
+>>
+endobj
+1 0 obj
+<<
+/Type /Pages
+/Kids [5 0 R 12 0 R 16 0 R 20 0 R 27 0 R 30 0 R 33 0 R 36 0 R 39 0 R 42 0 R 46 0 R 49 0 R 52 0 R 58 0 R 55 0 R]
+/Count 15
+>>
+endobj
+3 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [5 0 R /FitH]
+/Outlines 7 0 R
+>>
+endobj
+5 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 6 0 R
+/Annots [10 0 R]
+>>
+endobj
+7 0 obj
+<<
+/Type /Outlines
+/Count 0
+/First 8 0 R
+/Last 57 0 R
+/Count 14
+>>
+endobj
+9 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding>>
+endobj
+51 0 obj
+<<
+/Title (Example: Transform)
+/Parent 7 0 R
+/Prev 48 0 R
+/Dest [49 0 R /XYZ 0 813.54 0]
+/Next 54 0 R
+>>
+endobj
+53 0 obj
+<</Length 1285>>
+stream
+2 J
+2.27 w
+0.000 G
+1.000 0.471 0.471 rg
+BT /F1 12.00 Tf ET
+q 0.000 g BT 31.18 802.85 Td (Hello World!) Tj ET Q
+q 0.000 g BT 286.30 802.85 Td (This is standard text.\r) Tj ET Q
+BT /F1 33.00 Tf ET
+q 0.000 g BT 31.18 761.75 Td (H) Tj ET Q
+BT /F1 12.00 Tf ET
+q 0.000 g BT 55.01 761.75 Td (ello World!) Tj ET Q
+q 0.000 g BT 286.30 761.75 Td (This is text with a capital first letter.\r) Tj ET Q
+BT /F1 7.00 Tf ET
+q 0.000 g BT 31.18 734.82 Td (Y) Tj ET Q
+BT /F1 12.00 Tf ET
+q 0.000 g BT 35.85 734.82 Td (ou can also begin the sentence with a small letter. And word wrap also works if the line is) Tj ET Q
+q 0.000 g BT 31.18 720.65 Td (too long!) Tj ET Q
+q 0.000 g BT 286.30 720.65 Td (This is text with a small first letter.\r) Tj ET Q
+q 0.000 g BT 31.18 686.63 Td (The world has a lot of km) Tj ET Q
+BT /F1 6.00 Tf ET
+q 0.000 g BT 175.22 690.63 Td (2) Tj ET Q
+BT /F1 12.00 Tf ET
+q 0.000 g BT 286.30 686.63 Td (This is text with a superscripted letter.\r) Tj ET Q
+q 0.000 g BT 31.18 652.62 Td (The world has a lot of H) Tj ET Q
+BT /F1 6.00 Tf ET
+q 0.000 g BT 166.54 649.62 Td (2) Tj ET Q
+BT /F1 12.00 Tf ET
+q 0.000 g BT 169.88 652.62 Td (O) Tj ET Q
+q 0.000 g BT 286.30 652.62 Td (This is text with a subscripted letter.\r) Tj ET Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (13) Tj ET Q
+endstream
+endobj
+10 0 obj
+<<
+/Type /Annot /Subtype /Link
+/Rect [31.18 807.37 125.41 791.37]
+/Dest [39 0 R /XYZ 0 814 0]
+>>
+endobj
+55 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 56 0 R
+>>
+endobj
+12 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 13 0 R
+>>
+endobj
+57 0 obj
+<<
+/Title (Example: Table of Contents)
+/Parent 7 0 R
+/Prev 54 0 R
+/Dest [55 0 R /XYZ 0 813.54 0]
+/Count 0
+>>
+endobj
+14 0 obj
+<<
+/Title (Example: TruncateCell\(\))
+/Parent 7 0 R
+/Prev 8 0 R
+/Dest [12 0 R /XYZ 0 841.89 0]
+/Next 18 0 R
+>>
+endobj
+59 0 obj
+<</Length 4102>>
+stream
+2 J
+2.27 w
+0.000 G
+1.000 0.471 0.471 rg
+BT /F6 20.00 Tf ET
+q 0.000 g BT 221.11 800.45 Td (Inhaltsverzeichnis) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 760.19 Td (TOC 1 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 760.19 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 760.19 Td (14) Tj ET Q
+
+q 0.000 g BT 53.86 744.52 Td (TOC 1.1 ) Tj ET Q
+q 0.000 g BT 90.71 744.52 Td (.......................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 744.52 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 728.85 Td (TOC 2 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 728.85 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 728.85 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 713.18 Td (TOC 3 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 713.18 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 713.18 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 697.51 Td (TOC 4 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 697.51 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 697.51 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 681.84 Td (TOC 5 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 681.84 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 681.84 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 666.17 Td (TOC 6 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 666.17 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 666.17 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 650.50 Td (TOC 7 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 650.50 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 650.50 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 634.83 Td (TOC 8 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 634.83 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 634.83 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 619.16 Td (TOC 9 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 62.37 619.16 Td (..................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 619.16 Td (14) Tj ET Q
+BT /F6 10.00 Tf ET
+q 0.000 g BT 31.18 603.49 Td (TOC 10 ) Tj ET Q
+BT /F4 10.00 Tf ET
+q 0.000 g BT 68.04 603.49 Td (................................................................................................................................................................................................) Tj ET Q
+q 0.000 g BT 554.10 603.49 Td (14) Tj ET Q
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (14) Tj ET Q
+endstream
+endobj
+16 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 17 0 R
+>>
+endobj
+18 0 obj
+<<
+/Title (Example: Bulleted Text)
+/Parent 7 0 R
+/Prev 14 0 R
+/Dest [16 0 R /XYZ 0 841.89 0]
+/Next 22 0 R
+>>
+endobj
+60 0 obj
+<</Type /Font /Subtype /Type1 /BaseFont /Times-Bold /Encoding /WinAnsiEncoding>>
+endobj
+21 0 obj
+<</Length 4998>>
+stream
+2 J
+0.57 w
+BT /F3 14.00 Tf ET
+1.000 g
+0.502 G
+0.85 w
+BT /F1 11.00 Tf ET
+28.35 813.54 113.39 -19.84 re B q 0.000 g BT 65.20 800.32 Td (Country) Tj ET Q
+141.74 813.54 99.21 -19.84 re B q 0.000 g BT 172.92 800.32 Td (Capital) Tj ET Q
+240.95 813.54 113.39 -19.84 re B q 0.000 g BT 263.63 800.32 Td (Area \(sq km\)) Tj ET Q
+354.33 813.54 127.56 -19.84 re B q 0.000 g BT 374.18 800.32 Td (Pop. \(thousands\)) Tj ET Q
+0.878 0.922 1.000 rg
+BT /F3 11.00 Tf ET
+28.35 793.70 113.39 -17.01 re f 28.35 793.70 m 28.35 776.69 l S 141.73 793.70 m 141.73 776.69 l S q 0.000 g BT 31.18 781.89 Td (Austria) Tj ET Q
+141.74 793.70 99.21 -17.01 re f 141.73 793.70 m 141.73 776.69 l S 240.94 793.70 m 240.94 776.69 l S q 0.000 g BT 144.57 781.89 Td (Vienna) Tj ET Q
+240.95 793.70 113.39 -17.01 re f 240.94 793.70 m 240.94 776.69 l S 354.33 793.70 m 354.33 776.69 l S q 0.000 g BT 320.32 781.89 Td (83859) Tj ET Q
+354.33 793.70 127.56 -17.01 re f 354.33 793.70 m 354.33 776.69 l S 481.89 793.70 m 481.89 776.69 l S q 0.000 g BT 453.55 781.89 Td (8075) Tj ET Q
+28.35 776.69 m 28.35 759.69 l S 141.73 776.69 m 141.73 759.69 l S q 0.000 g BT 31.18 764.89 Td (Belgium) Tj ET Q
+141.73 776.69 m 141.73 759.69 l S 240.94 776.69 m 240.94 759.69 l S q 0.000 g BT 144.57 764.89 Td (Brussels) Tj ET Q
+240.94 776.69 m 240.94 759.69 l S 354.33 776.69 m 354.33 759.69 l S q 0.000 g BT 320.32 764.89 Td (30518) Tj ET Q
+354.33 776.69 m 354.33 759.69 l S 481.89 776.69 m 481.89 759.69 l S q 0.000 0.000 1.000 rg BT 447.88 764.89 Td (10192) Tj ET 447.88 763.79 30.58 -0.55 re f Q
+28.35 759.68 113.39 -17.01 re f 28.35 759.69 m 28.35 742.68 l S 141.73 759.69 m 141.73 742.68 l S q 0.000 g BT 31.18 747.88 Td (Denmark) Tj ET Q
+141.74 759.68 99.21 -17.01 re f 141.73 759.69 m 141.73 742.68 l S 240.94 759.69 m 240.94 742.68 l S q 0.000 g BT 144.57 747.88 Td (Copenhagen) Tj ET Q
+240.95 759.68 113.39 -17.01 re f 240.94 759.69 m 240.94 742.68 l S 354.33 759.69 m 354.33 742.68 l S q 0.000 g BT 320.32 747.88 Td (43094) Tj ET Q
+354.33 759.68 127.56 -17.01 re f 354.33 759.69 m 354.33 742.68 l S 481.89 759.69 m 481.89 742.68 l S q 0.000 g BT 453.55 747.88 Td (5295) Tj ET Q
+28.35 742.68 m 28.35 725.67 l S 141.73 742.68 m 141.73 725.67 l S q 0.000 g BT 31.18 730.87 Td (Finland) Tj ET Q
+141.73 742.68 m 141.73 725.67 l S 240.94 742.68 m 240.94 725.67 l S q 0.000 g BT 144.57 730.87 Td (Helsinki) Tj ET Q
+240.94 742.68 m 240.94 725.67 l S 354.33 742.68 m 354.33 725.67 l S q 0.000 g BT 314.65 730.87 Td (304529) Tj ET Q
+354.33 742.68 m 354.33 725.67 l S 481.89 742.68 m 481.89 725.67 l S q 0.000 g BT 453.55 730.87 Td (5147) Tj ET Q
+28.35 725.67 113.39 -17.01 re f 28.35 725.67 m 28.35 708.66 l S 141.73 725.67 m 141.73 708.66 l S q 0.000 g BT 31.18 713.86 Td (France) Tj ET Q
+141.74 725.67 99.21 -17.01 re f 141.73 725.67 m 141.73 708.66 l S 240.94 725.67 m 240.94 708.66 l S q 0.000 g BT 144.57 713.86 Td (Paris) Tj ET Q
+240.95 725.67 113.39 -17.01 re f 240.94 725.67 m 240.94 708.66 l S 354.33 725.67 m 354.33 708.66 l S q 0.000 g BT 314.65 713.86 Td (543965) Tj ET Q
+354.33 725.67 127.56 -17.01 re f 354.33 725.67 m 354.33 708.66 l S 481.89 725.67 m 481.89 708.66 l S q 0.000 0.000 1.000 rg BT 447.88 713.86 Td (58728) Tj ET 447.88 712.76 30.58 -0.55 re f Q
+28.35 708.66 m 28.35 691.65 l S 141.73 708.66 m 141.73 691.65 l S q 0.000 g BT 31.18 696.85 Td (Germany) Tj ET Q
+141.73 708.66 m 141.73 691.65 l S 240.94 708.66 m 240.94 691.65 l S q 0.000 g BT 144.57 696.85 Td (Berlin) Tj ET Q
+240.94 708.66 m 240.94 691.65 l S 354.33 708.66 m 354.33 691.65 l S q 0.000 g BT 314.65 696.85 Td (357022) Tj ET Q
+354.33 708.66 m 354.33 691.65 l S 481.89 708.66 m 481.89 691.65 l S q 0.000 0.000 1.000 rg BT 447.88 696.85 Td (82057) Tj ET 447.88 695.75 30.58 -0.55 re f Q
+28.35 691.65 113.39 -17.01 re f 28.35 691.65 m 28.35 674.65 l S 141.73 691.65 m 141.73 674.65 l S q 0.000 g BT 31.18 679.85 Td (Greece) Tj ET Q
+141.74 691.65 99.21 -17.01 re f 141.73 691.65 m 141.73 674.65 l S 240.94 691.65 m 240.94 674.65 l S q 0.000 g BT 144.57 679.85 Td (Athens) Tj ET Q
+240.95 691.65 113.39 -17.01 re f 240.94 691.65 m 240.94 674.65 l S 354.33 691.65 m 354.33 674.65 l S q 0.000 g BT 314.65 679.85 Td (131625) Tj ET Q
+354.33 691.65 127.56 -17.01 re f 354.33 691.65 m 354.33 674.65 l S 481.89 691.65 m 481.89 674.65 l S q 0.000 0.000 1.000 rg BT 447.88 679.85 Td (10511) Tj ET 447.88 678.75 30.58 -0.55 re f Q
+28.35 674.65 m 28.35 657.64 l S 141.73 674.65 m 141.73 657.64 l S q 0.000 g BT 31.18 662.84 Td (Ireland) Tj ET Q
+141.73 674.65 m 141.73 657.64 l S 240.94 674.65 m 240.94 657.64 l S q 0.000 g BT 144.57 662.84 Td (Dublin) Tj ET Q
+240.94 674.65 m 240.94 657.64 l S 354.33 674.65 m 354.33 657.64 l S q 0.000 g BT 320.32 662.84 Td (70723) Tj ET Q
+354.33 674.65 m 354.33 657.64 l S 481.89 674.65 m 481.89 657.64 l S q 0.000 g BT 453.55 662.84 Td (3694) Tj ET Q
+28.35 657.64 m 141.73 657.64 l S 
+141.73 657.64 m 240.94 657.64 l S 
+240.94 657.64 m 354.33 657.64 l S 
+354.33 657.64 m 481.89 657.64 l S 
+BT /F2 9.00 Tf ET
+q 0.000 g BT 291.97 25.65 Td (4) Tj ET Q
+endstream
+endobj
+23 0 obj
+<<
+/Type /Annot /Subtype /Link
+/Rect [447.88 773.69 478.46 762.69]
+/Border [0 0 0]
+/A << /S /URI /URI (www.purebasic.com) >>
+>>
+endobj
+25 0 obj
+<<
+/Type /Annot /Subtype /Link
+/Rect [447.88 705.65 478.46 694.65]
+/Border [0 0 0]
+/A << /S /URI /URI (www.purebasic.com) >>
+>>
+endobj
+27 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 28 0 R
+>>
+endobj
+29 0 obj
+<<
+/Title (Example: MaxLine)
+/Parent 7 0 R
+/Prev 22 0 R
+/Dest [27 0 R /XYZ 0 841.89 0]
+/Next 32 0 R
+>>
+endobj
+30 0 obj
+<<
+/Type /Page
+/Parent 1 0 R
+/MediaBox [0 0 595.28 841.89]
+/Resources 4 0 R
+/Contents 31 0 R
+>>
+endobj
+xref
+0 61
+0000000000 65535 f
+0000019257 00000 n 
+0000006404 00000 n 
+0000019413 00000 n 
+0000006499 00000 n 
+0000019504 00000 n 
+0000006641 00000 n 
+0000019631 00000 n 
+0000006838 00000 n 
+0000019713 00000 n 
+0000021269 00000 n 
+0000008494 00000 n 
+0000021494 00000 n 
+0000009224 00000 n 
+0000021731 00000 n 
+0000009810 00000 n 
+0000026010 00000 n 
+0000009906 00000 n 
+0000026122 00000 n 
+0000013734 00000 n 
+0000013832 00000 n 
+0000026344 00000 n 
+0000013985 00000 n 
+0000031392 00000 n 
+0000014102 00000 n 
+0000031536 00000 n 
+0000014246 00000 n 
+0000031680 00000 n 
+0000014390 00000 n 
+0000031792 00000 n 
+0000031911 00000 n 
+0000016398 00000 n 
+0000000015 00000 n 
+0000017313 00000 n 
+0000000141 00000 n 
+0000017425 00000 n 
+0000000801 00000 n 
+0000017553 00000 n 
+0000000913 00000 n 
+0000018394 00000 n 
+0000018506 00000 n 
+0000001031 00000 n 
+0000018801 00000 n 
+0000001156 00000 n 
+0000018913 00000 n 
+0000005841 00000 n 
+0000019029 00000 n 
+0000005945 00000 n 
+0000019141 00000 n 
+0000006292 00000 n 
+0000006940 00000 n 
+0000019813 00000 n 
+0000008262 00000 n 
+0000019934 00000 n 
+0000008374 00000 n 
+0000021382 00000 n 
+0000008602 00000 n 
+0000021606 00000 n 
+0000009698 00000 n 
+0000021858 00000 n 
+0000026247 00000 n 
+trailer
+<<
+/Size 61
+/Root 3 0 R
+/Info 2 0 R
+/ID [<5817b44084c6f3be2a625bcf3076c922> <5817b44084c6f3be2a625bcf3076c922>]
+>>
+startxref
+32023
+%%EOF
