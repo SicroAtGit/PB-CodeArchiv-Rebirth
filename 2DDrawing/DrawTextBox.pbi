@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2014 mk-soft
+; Copyright (c) 2014-2019 mk-soft
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -28,39 +28,44 @@
 ; SOFTWARE.
 
 ;-TOP
+
+; -----------------------------------------------------------------------------------
+
 ; Kommentar     : DrawTextBox
 ; Author        : mk-soft
 ; Second Author :
-; Datei         : DrawTextBox.pbi
-; Version       : 1.04
+; Original      : DrawTextBox.pbi
+; Version       : 1.06r2
 ; Erstellt      : 20.04.2014
-; Geändert      : 23.04.2016
-;
-; Compilermode  :
-;
-; Link          : http://www.purebasic.fr/german/viewtopic.php?f=8&t=27954
-;
-; ***************************************************************************************
+; Geändert      : 03.06.2019
+
+; -----------------------------------------------------------------------------------
 
 EnableExplicit
 
-#TBOX_Right   = 1
-#TBOX_HCenter = 2
-#TBOX_VCenter = 4
-#TBOX_Bottom  = 8
+; -----------------------------------------------------------------------------------
+
+EnumerationBinary TextBox
+  #TEXT_Right
+  #TEXT_HCenter
+  #TEXT_VCenter
+  #TEXT_Bottom
+EndEnumeration
+
+; -----------------------------------------------------------------------------------
 
 Procedure DrawTextBox(x, y, dx, dy, text.s, flags = 0)
 
   Protected is_right, is_hcenter, is_vcenter, is_bottom
-  Protected text_width, text_height
+  Protected text_height
   Protected text_x, text_y, break_y
   Protected text2.s, rows, row, row_text.s, row_text1.s, out_text.s, start, count
 
   ; Flags
-  is_right = flags & #TBOX_Right
-  is_hcenter = flags & #TBOX_HCenter
-  is_vcenter = flags & #TBOX_VCenter
-  is_bottom = flags & #TBOX_Bottom
+  is_right = flags & #TEXT_Right
+  is_hcenter = flags & #TEXT_HCenter
+  is_vcenter = flags & #TEXT_VCenter
+  is_bottom = flags & #TEXT_Bottom
 
   ; Übersetze Zeilenumbrüche
   text = ReplaceString(text, #LFCR$, #LF$)
@@ -96,7 +101,11 @@ Procedure DrawTextBox(x, y, dx, dy, text.s, flags = 0)
   text_height = TextHeight("X")
   rows = CountString(out_text, #LF$)
   If is_vcenter
-    text_y = (dy / 2 - text_height / 2) - (text_height / 2 * (rows-1))
+    CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
+      text_y = (dy / 2 - text_height / 2) - (text_height / 2 * (rows-1)) - 2
+    CompilerElse
+      text_y = (dy / 2 - text_height / 2) - (text_height / 2 * (rows-1))
+    CompilerEndIf
   ElseIf is_bottom
     text_y = dy - (text_height * rows) - 2
   Else
@@ -105,10 +114,10 @@ Procedure DrawTextBox(x, y, dx, dy, text.s, flags = 0)
 
   ; Korrigiere Y-Position
   While text_y < 2
-   text_y + text_height
+    text_y = 2;+ text_height
   Wend
 
-  break_y = dy - text_height - 2
+  break_y = dy - text_height / 2
 
   ; Text ausgeben
   For row = 1 To rows
@@ -131,9 +140,60 @@ Procedure DrawTextBox(x, y, dx, dy, text.s, flags = 0)
 
 EndProcedure
 
-; ***************************************************************************************
+; -------------------------------------------------------------------------------------
 
-;- Test
+Procedure.s WrapText(Width, Text.s, FontID = 0)
+  Protected text2.s, rows, row, row_text.s, row_text1.s, out_text.s, start, count
+  Static image
+ 
+  If Not image
+    image = CreateImage(#PB_Any, 16, 16)
+  EndIf
+ 
+  ; Übersetze Zeilenumbrüche
+  text = ReplaceString(text, #LFCR$, #LF$)
+  text = ReplaceString(text, #CRLF$, #LF$)
+  text = ReplaceString(text, #CR$, #LF$)
+ 
+  If StartDrawing(ImageOutput(image))
+    If FontID
+      DrawingFont(FontID)
+    EndIf
+    ; Erforderliche Zeilenumbrüche setzen
+    rows = CountString(text, #LF$)
+    For row = 1 To rows + 1
+      text2 = StringField(text, row, #LF$)
+      If text2 = ""
+        out_text + #LF$
+        Continue
+      EndIf
+      start = 1
+      count = CountString(text2, " ") + 1
+      Repeat
+        row_text = StringField(text2, start, " ") + " "
+        Repeat
+          start + 1
+          row_text1 = StringField(text2, start, " ")
+          If TextWidth(row_text + row_text1) < Width - 12
+            row_text + row_text1 + " "
+          Else
+            Break
+          EndIf
+        Until start > count
+        out_text + RTrim(row_text) + #LF$
+      Until start > count
+    Next
+    out_text = RTrim(out_text, #LF$)
+    StopDrawing()
+  EndIf
+ 
+  ProcedureReturn out_text
+ 
+EndProcedure
+
+; *************************************************************************************
+
+;- Example
 
 CompilerIf #PB_Compiler_IsMainFile
 
@@ -158,11 +218,23 @@ CompilerIf #PB_Compiler_IsMainFile
     #Canvas
   EndEnumeration
 
-  ; ***************************************************************************************
+  ; *************************************************************************************
+ 
+  Procedure.s GetDataSectionText(Addr)
+    Protected result.s, temp.s
+    While PeekC(Addr)
+      temp = PeekS(Addr)
+      Addr + StringByteLength(temp) + SizeOf(Character)
+      result + temp
+    Wend
+    ProcedureReturn result
+  EndProcedure
+ 
+  ; -------------------------------------------------------------------------------------
 
   Procedure Draw(output, text.s)
 
-    Define hfont = LoadFont(0, "Arial", 14, #PB_Font_Bold)
+    Define hfont = LoadFont(0, "Arial", 12);, #PB_Font_Bold)
 
     If  StartDrawing(output)
       DrawingFont(hfont)
@@ -172,40 +244,42 @@ CompilerIf #PB_Compiler_IsMainFile
       DrawTextBox(10, 10, 400, 200, text)
 
       Box(10, 220, 400, 200,$E16941)
-      DrawTextBox(10, 220, 400, 200, text, #TBOX_VCenter)
+      DrawTextBox(10, 220, 400, 200, text, #TEXT_VCenter)
 
       Box(10, 430, 400, 200,$FF0000)
-      DrawTextBox(10, 430, 400, 200, text, #TBOX_Bottom)
+      DrawTextBox(10, 430, 400, 200, text, #TEXT_Bottom)
 
       Box(420, 10, 200, 200, $0045FF)
-      DrawTextBox(420, 10, 200, 200, text, #TBOX_HCenter)
+      DrawTextBox(420, 10, 200, 200, text, #TEXT_HCenter)
 
       Box(420, 220, 200, 200, $00008B)
-      DrawTextBox(420, 220, 200, 200, text, #TBOX_HCenter | #TBOX_VCenter)
+      DrawTextBox(420, 220, 200, 200, text, #TEXT_HCenter | #TEXT_VCenter)
 
       Box(420, 430, 200, 200, $20A5DA)
-      DrawTextBox(420, 430, 200, 200, text, #TBOX_HCenter | #TBOX_Bottom)
+      DrawTextBox(420, 430, 200, 200, text, #TEXT_HCenter | #TEXT_Bottom)
 
       Box(630, 10, 400, 200, $238E6B)
-      DrawTextBox(630, 10, 400, 200, text, #TBOX_Right)
+      DrawTextBox(630, 10, 400, 200, text, #TEXT_Right)
 
       Box(630, 220, 400, 200, $006400)
-      DrawTextBox(630, 220, 400, 200, text, #TBOX_Right | #TBOX_VCenter)
+      DrawTextBox(630, 220, 400, 200, text, #TEXT_Right | #TEXT_VCenter)
 
       Box(630, 430, 400, 200, $32CD32)
-      DrawTextBox(630, 430, 400, 200, text, #TBOX_Right | #TBOX_Bottom)
+      DrawTextBox(630, 430, 400, 200, text, #TEXT_Right | #TEXT_Bottom)
 
       StopDrawing()
     EndIf
 
   EndProcedure
+ 
+  ; -------------------------------------------------------------------------------------
 
   ;- Globale Variablen
   Global exit = 0
 
   ;- Fenster
-  Define style = #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget | #PB_Window_SizeGadget
-  If OpenWindow(#Window, #PB_Ignore, #PB_Ignore, 1200, 800, "Fenster", style)
+  Define style = #PB_Window_SystemMenu | #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget | #PB_Window_SizeGadget
+  If OpenWindow(#Window, #PB_Ignore, #PB_Ignore, 1200, 800, "DrawTextBox", style)
     ; Menu
     If CreateMenu(#Menu, WindowID(#Window))
       MenuTitle("&File")
@@ -219,17 +293,12 @@ CompilerIf #PB_Compiler_IsMainFile
     ; Gadgets
     CanvasGadget(#Canvas, 0, 0, WindowWidth(#Window), WindowHeight(#Window) - MenuHeight() - StatusBarHeight(#Statusbar))
 
-    Define t1.s
-    t1 = "PureBasic ist eine Hochsprachen Programmiersprache, die auf den bekannten BASIC-Regeln basiert." + #LF$
-    t1 + "Sie ist größtenteils kompatibel mit jedem anderen BASIC-Compiler, egal ob für das Amiga- "
-    t1 + "oder PC-Format. Das Erlernen von PureBasic ist sehr leicht! PureBasic ist für Anfänger "
-    t1 + "genauso wie für Experten geschaffen worden. Die Übersetzungsgeschwindigkeit ist wirklich schnell. "
-    t1 + "Diese Software wurde für das Windows- Operating-System entwickelt. "
-    ;t1 + "Wir haben eine Menge Anstrengungen in ihre Realisierung gesetzt, um eine schnelle, "
-    ;t1 + "zuverlässige und systemfreundliche Sprache zu produzieren"
+    Define t1.s = GetDataSectionText(?Text1)
 
     Draw(CanvasOutput(#Canvas), t1)
-
+   
+    MessageRequester("WrapText",  WrapText(250, t1))
+   
     ;-- Hauptschleife
     Repeat
       Select WaitWindowEvent()
@@ -249,5 +318,21 @@ CompilerIf #PB_Compiler_IsMainFile
 
     Until Exit
   EndIf
+ 
+  DataSection
+    Text1:
+    Data.s "PureBasic is a native 32-bit and 64-bit programming language based on established BASIC rules."
+    Data.s "The key features of PureBasic are portability (Windows, Linux And MacOS X are currently supported),"
+    Data.s "the production of very fast And highly optimized executables And, of course, the very simple BASIC syntax."
+    Data.i 0
+    Text2:
+    Data.s "PureBasic has been created For the beginner And expert alike."
+    Data.s "We have put a lot of effort into its realization To produce a fast, reliable system friendly language."
+    Data.s "In spite of its beginner-friendly syntax, the possibilities are endless With PureBasic's advanced "
+    Data.s "features such As pointers, structures, procedures, dynamically linked lists And much more."
+    Data.s "Experienced coders will have no problem gaining access To any of the legal OS structures"
+    Data.s "Or API objects And PureBasic even allows inline ASM."
+    Data.i 0
+  EndDataSection
 
 CompilerEndIf

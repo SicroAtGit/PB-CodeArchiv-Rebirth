@@ -1,13 +1,13 @@
 ﻿;   Description: Supports the thread-safe manipulation of windows and gadgets
 ;            OS: Windows, Linux, Mac
-; English-Forum: 
+; English-Forum: http://www.purebasic.fr/english/viewtopic.php?f=12&t=66180
 ;  French-Forum: 
 ;  German-Forum: http://www.purebasic.fr/german/viewtopic.php?f=8&t=29728
 ; -----------------------------------------------------------------------------
 
 ; MIT License
 ; 
-; Copyright (c) 2016-2017 mk-soft
+; Copyright (c) 2016-2018 mk-soft
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,13 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
- ;-TOP
+;-TOP
 
 ; Comment: Thread To GUI
 ; Author : mk-soft
-; Version: v1.16
+; Version: v1.19
 ; Created: 16.07.2016
-; Updated: 10.07.2017
+; Updated: 21.05.2018
 ; Link En: http://www.purebasic.fr/english/viewtopic.php?f=12&t=66180
 ; Link De: http://www.purebasic.fr/german/viewtopic.php?f=8&t=29728
 
@@ -50,8 +50,8 @@ DeclareModule ThreadToGUI
   ;-Public
  
   ;- Init
-  Declare BindEventGUI(EventCustomValue = #PB_Event_FirstCustomValue)
-  Declare UnBindEventGUI()
+  Declare   BindEventGUI(EventCustomValue = #PB_Event_FirstCustomValue)
+  Declare   UnBindEventGUI()
   ; Main
   Declare   DoWait()
   ; Windows
@@ -67,8 +67,10 @@ DeclareModule ThreadToGUI
   Declare   DoSetMenuItemState(Menu, MenuItem, State)
   Declare   DoSetMenuItemText(Menu, MenuItem, Text.s)
   Declare   DoSetMenuTitleText(Menu, Index, Text.s)
+  Declare   DoDisplayPopupMenu(Menu, WindowID, x = #PB_Ignore, y = #PB_Ignore)
+ 
   ; Gadgets
-  Declare   DoAddGadgetColumn(Gadget, Postion, Text.s, Width)
+  Declare   DoAddGadgetColumn(Gadget, Position, Text.s, Width)
   Declare   DoAddGadgetItem(Gadget, Position, Text.s, ImageID = 0, Flags = #PB_Ignore)
   Declare   DoClearGadgetItems(Gadget)
   Declare   DoClearGadgetColumns(Gadget) ; Owner Gadget Function
@@ -83,8 +85,8 @@ DeclareModule ThreadToGUI
   Declare   DoSetGadgetItemColor(Gadget, Item, ColorType, Color, Column = 0)
   Declare   DoSetGadgetItemData(Gadget, Item, Value)
   Declare   DoSetGadgetItemImage(Gadget, Item, ImageID)
-  Declare   DoSetGadgetItemState(Gadget, Postion, State)
-  Declare   DoSetGadgetItemText(Gadget, Postion, Text.s, Column = 0)
+  Declare   DoSetGadgetItemState(Gadget, Position, State)
+  Declare   DoSetGadgetItemText(Gadget, Position, Text.s, Column = 0)
   Declare   DoSetGadgetState(Gadget, State)
   Declare   DoSetGadgetText(Gadget, Text.s)
   Declare   DoResizeGadget(Gadget, x, y, Width, Height)
@@ -105,30 +107,30 @@ DeclareModule ThreadToGUI
   Declare   DoGetClipboardImage(Image, Depth=24)
   Declare.s DoGetClipboardText()
   Declare   DoSetClipboardImage(Image)
-  Declare   DoSetClipboardText(Texte.s)
+  Declare   DoSetClipboardText(Text.s)
   Declare   DoClearClipboard()
   ; Requester
-  Declare   DoMessageRequester(Titel.s, Text.s, Flags=0)
+  Declare   DoMessageRequester(Title.s, Text.s, Flags=0)
  
-  Declare.s DoOpenFileRequester(Titel.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
-  Declare.s   DoNextSelectedFileName()
-  Declare     DoSelectedFilePattern()
+  Declare.s DoOpenFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
+  Declare.s DoNextSelectedFileName()
+  Declare   DoSelectedFilePattern()
          
-  Declare.s DoSaveFileRequester(Titel.s, DefaultFile.s, Pattern.s, PatterPosition)
-  Declare.s DoPathRequester(Titel.s, InitialPath.s)
-  Declare.s DoInputRequester(Titel.s, Message.s, DefaultString.s, Flags=0)
+  Declare.s DoSaveFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition)
+  Declare.s DoPathRequester(Title.s, InitialPath.s)
+  Declare.s DoInputRequester(Title.s, Message.s, DefaultString.s, Flags=0)
   Declare   DoColorRequester(Color = $FFFFFF)
  
   Declare   DoFontRequester(FontName.s, FontSize, Flags, Color = 0, Style = 0)
-  Declare.s   DoSelectedFontName()
-  Declare     DoSelectedFontSize()
-  Declare     DoSelectedFontColor()
-  Declare     DoSelectedFontStyle()
+  Declare.s DoSelectedFontName()
+  Declare   DoSelectedFontSize()
+  Declare   DoSelectedFontColor()
+  Declare   DoSelectedFontStyle()
  
   ; SendEvent
-  Declare SendEvent(Event, Window = 0, Object = 0, EventType = 0, pData = 0, Semaphore = 0)
-  Declare SendEventData(*MyEvent)
-  Declare DispatchEvent(*MyEvent, result)
+  Declare   SendEvent(Event, Window = 0, Object = 0, EventType = 0, pData = 0, Semaphore = 0)
+  Declare   SendEventData(*MyEvent)
+  Declare   DispatchEvent(*MyEvent, result)
  
 EndDeclareModule
 
@@ -157,12 +159,13 @@ Module ThreadToGUI
     #EndOfWindows
   EndEnumeration
  
-  Enumeration Command ; Menu
+  Enumeration Command ; Menus
     #BeginOfMenu
     #DisableMenuItem
     #SetMenuItemState
     #SetMenuItemText
     #SetMenuTitleText
+    #DisplayPopupMenu
     #EndOfMenu
   EndEnumeration
  
@@ -305,6 +308,7 @@ Module ThreadToGUI
  
   ;-- Global
   Global DoEvent
+  Global LockMessageRequester = CreateMutex()
  
   ; -----------------------------------------------------------------------------------
  
@@ -315,7 +319,6 @@ Module ThreadToGUI
     Protected *data.udtParamAll
    
     *data = EventData()
-   
     With *data
       Select \Command
         Case #WaitOnSignal
@@ -352,6 +355,13 @@ Module ThreadToGUI
                 SetMenuItemText(\Object, \Param1, \Text)
               Case #SetMenuTitleText
                 SetMenuTitleText(\Object, \Param1, \Text)
+              Case #DisplayPopupMenu
+                If \Param2 = #PB_Ignore
+                  Debug "Popup"
+                  DisplayPopupMenu(\Object, \Param1)
+                Else
+                  DisplayPopupMenu(\Object, \Param1, \Param2, \Param3)
+                EndIf 
             EndSelect
           EndIf
          
@@ -789,6 +799,27 @@ Module ThreadToGUI
  
   ; -----------------------------------------------------------------------------------
  
+  Procedure DoDisplayPopupMenu(Menu, WindowID, x = #PB_Ignore, y = #PB_Ignore)
+    Protected *data.udtParam
+   
+    If Not DoEvent : ProcedureReturn 0 : EndIf
+    With *data
+      *data = AllocateStructure(udtParamText)
+      If *data
+        \Command = #DisplayPopupMenu
+        \Object = Menu
+        \Param1 = WindowID
+        \Param2 = x
+        \Param3 = y
+        PostEvent(DoEvent, 0, 0, 0, *data)
+        ProcedureReturn 1
+      Else
+        ProcedureReturn 0
+      EndIf
+    EndWith
+  EndProcedure
+ 
+  ; -----------------------------------------------------------------------------------
  
   ;-- Gadget commands
  
@@ -1526,7 +1557,7 @@ Module ThreadToGUI
  
   ;-- Requester
  
-  Procedure DoMessageRequester(Titel.s, Text.s, Flags=0)
+  Procedure DoMessageRequester(Title.s, Text.s, Flags=0)
     Protected *data.udtParamText2, signal, result
    
     If Not DoEvent : ProcedureReturn 0 : EndIf
@@ -1537,12 +1568,14 @@ Module ThreadToGUI
         If signal
           \Command = #MessageRequester
           \Signal = signal
-          \Text = Titel
+          \Text = Title
           \Text2 = Text
           \Param3 = Flags
+          LockMutex(LockMessageRequester)
           PostEvent(DoEvent, 0, 0, 0, *data)
           WaitSemaphore(signal)
           FreeSemaphore(signal)
+          UnlockMutex(LockMessageRequester)
           result = \Result
         EndIf
         FreeStructure(*data)
@@ -1556,7 +1589,7 @@ Module ThreadToGUI
   Threaded NewList SelectedFileName.s()
   Threaded __SelectedFilePattern.i
  
-  Procedure.s DoOpenFileRequester(Titel.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
+  Procedure.s DoOpenFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
     Protected *data.udtParamText3, signal, result.s, cnt, index, filename.s
    
     If Not DoEvent : ProcedureReturn "" : EndIf
@@ -1567,7 +1600,7 @@ Module ThreadToGUI
         If signal
           \Command = #OpenFileRequester
           \Signal = signal
-          \Text = Titel
+          \Text = Title
           \Text2 = DefaultFile
           \Text3 = Pattern
           \Param4 = PatterPosition
@@ -1615,7 +1648,7 @@ Module ThreadToGUI
  
   ; -----------------------------------------------------------------------------------
  
-  Procedure.s DoSaveFileRequester(Titel.s, DefaultFile.s, Pattern.s, PatterPosition)
+  Procedure.s DoSaveFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition)
     Protected *data.udtParamText3, signal, result.s
    
     If Not DoEvent : ProcedureReturn "" : EndIf
@@ -1626,7 +1659,7 @@ Module ThreadToGUI
         If signal
           \Command = #SaveFileRequester
           \Signal = signal
-          \Text = Titel
+          \Text = Title
           \Text2 = DefaultFile
           \Text3 = Pattern
           \Param4 = PatterPosition
@@ -1643,7 +1676,7 @@ Module ThreadToGUI
  
   ; -----------------------------------------------------------------------------------
  
-  Procedure.s DoPathRequester(Titel.s, InitialPath.s)
+  Procedure.s DoPathRequester(Title.s, InitialPath.s)
     Protected *data.udtParamText2, signal, result.s
    
     If Not DoEvent : ProcedureReturn "" : EndIf
@@ -1654,7 +1687,7 @@ Module ThreadToGUI
         If signal
           \Command = #PathRequester
           \Signal = signal
-          \Text = Titel
+          \Text = Title
           \Text2 = InitialPath
           PostEvent(DoEvent, 0, 0, 0, *data)
           WaitSemaphore(signal)
@@ -1669,7 +1702,7 @@ Module ThreadToGUI
  
   ; -----------------------------------------------------------------------------------
  
-  Procedure.s DoInputRequester(Titel.s, Message.s, DefaultString.s, Flags=0)
+  Procedure.s DoInputRequester(Title.s, Message.s, DefaultString.s, Flags=0)
     Protected *data.udtParamText3, signal, result.s
    
     If Not DoEvent : ProcedureReturn "" : EndIf
@@ -1680,7 +1713,7 @@ Module ThreadToGUI
         If signal
           \Command = #InputRequester
           \Signal = signal
-          \Text = Titel
+          \Text = Title
           \Text2 = Message
           \Text3 = DefaultString
           \Param4 = Flags
@@ -1830,291 +1863,3 @@ EndModule
 ;- End Module
 
 ; ***************************************************************************************
-
-;- Begin Module Macros
-
-DeclareModule ThreadedGUI
- 
-  ; Macros switch to ThreadToGUI
- 
-  ; Window
-  Macro DisableWindow(Window, State)
-    ThreadToGUI::DoDisableWindow(Window, State)
-  EndMacro
-  Macro HideWindow(Window, State, Flags)
-    ThreadToGUI::DoHideWindow(Window, State, Flags)
-  EndMacro
-  Macro SetActiveWindow(Window)
-    ThreadToGUI::DoSetActiveWindow(Window)
-  EndMacro
-  Macro SetWindowColor(Window, Color)
-    ThreadToGUI::DoSetWindowColor(Window, Color)
-  EndMacro
-  Macro SetWindowData(Window, Value)
-    ThreadToGUI::DoSetWindowData(Window, Value)
-  EndMacro
-  Macro SetWindowState(Window, State)
-    ThreadToGUI::DoSetWindowState(Window, State)
-  EndMacro
-  Macro SetWindowTitle(Window, Text)
-    ThreadToGUI::DoSetWindowTitle(Window, Text)
-  EndMacro
-  ; Menus
-  Macro DisableMenuItem(Menu, MenuItem, State)
-    ThreadToGUI::DoDisableMenuItem(Menu, MenuItem, State)
-  EndMacro
-  Macro SetMenuItemState(Menu, MenuItem, State)
-    ThreadToGUI::DoSetMenuItemState(Menu, MenuItem, State)
-  EndMacro
-  Macro SetMenuItemText(Menu, MenuItem, Text)
-    ThreadToGUI::DoSetMenuItemText(Menu, MenuItem, Text)
-  EndMacro
-  Macro SetMenuTitleText(Menu, Index, Text)
-    ThreadToGUI::DoSetMenuTitleText(Menu, Index, Text)
-  EndMacro
-  ; Gadgets
-  Macro AddGadgetColumn(Gadget, Postion, Text, Width)
-    ThreadToGUI::DoAddGadgetColumn(Gadget, Postion, Text, Width)
-  EndMacro
-  Macro AddGadgetItem(Gadget, Position, Text, ImageID = 0, Flags = #PB_Ignore)
-    ThreadToGUI::DoAddGadgetItem(Gadget, Position, Text, ImageID, Flags)
-  EndMacro
-  Macro ClearGadgetItems(Gadget)
-    ThreadToGUI::DoClearGadgetItems(Gadget)
-  EndMacro
-  Macro ClearGadgetColumns(Gadget) ; Owner Gadget Function
-    ThreadToGUI::DoClearGadgetColumns(Gadget) ; Owner Gadget Function
-  EndMacro
-  Macro DisableGadget(Gadget, State)
-    ThreadToGUI::DoDisableGadget(Gadget, State)
-  EndMacro
-  Macro HideGadget(Gadget, State)
-    ThreadToGUI::DoHideGadget(Gadget, State)
-  EndMacro
-  Macro SetActiveGadget(Gadget)
-    ThreadToGUI::DoSetActiveGadget(Gadget)
-  EndMacro
-  Macro SetGadgetAttribute(Gadget, Attribute, Value)
-    ThreadToGUI::DoSetGadgetAttribute(Gadget, Attribute, Value)
-  EndMacro
-  Macro SetGadgetColor(Gadget, ColorType, Color)
-    ThreadToGUI::DoSetGadgetColor(Gadget, ColorType, Color)
-  EndMacro
-  Macro SetGadgetData(Gadget, Value)
-    ThreadToGUI::DoSetGadgetData(Gadget, Value)
-  EndMacro
-  Macro SetGadgetFont(Gadget, FontID)
-    ThreadToGUI::DoSetGadgetFont(Gadget, FontID)
-  EndMacro
-  Macro SetGadgetItemAttribute(Gadget, Item, Attribute, Value, Column = 0)
-    ThreadToGUI::DoSetGadgetItemAttribute(Gadget, Item, Attribute, Value, Column)
-  EndMacro
-  Macro SetGadgetItemColor(Gadget, Item, ColorType, Color, Column = 0)
-    ThreadToGUI::DoSetGadgetItemColor(Gadget, Item, ColorType, Color, Column)
-  EndMacro
-  Macro SetGadgetItemData(Gadget, Item, Value)
-    ThreadToGUI::DoSetGadgetItemData(Gadget, Item, Value)
-  EndMacro
-  Macro SetGadgetItemImage(Gadget, Item, ImageID)
-    ThreadToGUI::DoSetGadgetItemImage(Gadget, Item, ImageID)
-  EndMacro
-  Macro SetGadgetItemState(Gadget, Postion, State)
-    ThreadToGUI::DoSetGadgetItemState(Gadget, Postion, State)
-  EndMacro
-  Macro SetGadgetItemText(Gadget, Postion, Text, Column = 0)
-    ThreadToGUI::DoSetGadgetItemText(Gadget, Postion, Text, Column)
-  EndMacro
-  Macro SetGadgetState(Gadget, State)
-    ThreadToGUI::DoSetGadgetState(Gadget, State)
-  EndMacro
-  Macro SetGadgetText(Gadget, Text)
-    ThreadToGUI::DoSetGadgetText(Gadget, Text)
-  EndMacro
-  Macro ResizeGadget(Gadget, x, y, Width, Height)
-    ThreadToGUI::DoResizeGadget(Gadget, x, y, Width, Height)
-  EndMacro
-  Macro RemoveGadgetColumn(Gadget, Column)
-    ThreadToGUI::DoRemoveGadgetColumn(Gadget, Column)
-  EndMacro
-  Macro RemoveGadgetItem(Gadget, Position)
-    ThreadToGUI::DoRemoveGadgetItem(Gadget, Position)
-  EndMacro
-  Macro GadgetToolTip(Gadget, Text)
-    ThreadToGUI::DoGadgetToolTip(Gadget, Text)
-  EndMacro
-  ; Statusbar
-  Macro StatusBarImage(StatusBar, Field, ImageID, Appearance = 0)
-    ThreadToGUI::DoStatusBarImage(StatusBar, Field, ImageID, Appearance)
-  EndMacro
-  Macro StatusBarProgress(StatusBar, Field, Value, Appearance = 0, Min = #PB_Ignore, Max = #PB_Ignore)
-    ThreadToGUI::DoStatusBarProgress(StatusBar, Field, Value, Appearance, Min, Max)
-  EndMacro
-  Macro StatusBarText(StatusBar, Field, Text, Appearance = 0)
-    ThreadToGUI::DoStatusBarText(StatusBar, Field, Text, Appearance)
-  EndMacro
-  ; Toolbar
-  Macro DisableToolBarButton(ToolBar, ButtonID, State)
-    ThreadToGUI::DoDisableToolBarButton(ToolBar, ButtonID, State)
-  EndMacro
-  Macro SetToolBarButtonState(ToolBar, ButtonID, State)
-    ThreadToGUI::DoSetToolBarButtonState(ToolBar, ButtonID, State)
-  EndMacro
-  ; Systray
-  Macro ChangeSysTrayIcon(SysTrayIcon, ImageID)
-    ThreadToGUI::DoChangeSysTrayIcon(SysTrayIcon, ImageID)
-  EndMacro
-  Macro SysTrayIconToolTip(SysTrayIcon, Text)
-    ThreadToGUI::DoSysTrayIconToolTip(SysTrayIcon, Text)
-  EndMacro
-  ; Clipboard
-  Macro GetClipboardImage(Image, Depth=24)
-    ThreadToGUI::DoGetClipboardImage(Image, Depth)
-  EndMacro
-  Macro GetClipboardText()
-    ThreadToGUI::DoGetClipboardText()
-  EndMacro
-  Macro SetClipboardImage(Image)
-    ThreadToGUI::DoSetClipboardImage(Image)
-  EndMacro
-  Macro SetClipboardText(Texte)
-    ThreadToGUI::DoSetClipboardText(Texte)
-  EndMacro
-  Macro ClearClipboard()
-    ThreadToGUI::DoClearClipboard()
-  EndMacro
-  ; Requester
-  Macro MessageRequester(Titel, Text, Flags=0)
-    ThreadToGUI::DoMessageRequester(Titel, Text, Flags)
-  EndMacro
-  Macro OpenFileRequester(Titel, DefaultFile, Pattern, PatterPosition, Flags=0)
-    ThreadToGUI::DoOpenFileRequester(Titel, DefaultFile, Pattern, PatterPosition, Flags)
-  EndMacro
-  Macro NextSelectedFileName()
-    ThreadToGUI::DoNextSelectedFileName()
-  EndMacro
-  Macro SelectedFilePattern()
-    ThreadToGUI::DoSelectedFilePattern()
-  EndMacro
-  Macro SaveFileRequester(Titel, DefaultFile, Pattern, PatterPosition)
-    ThreadToGUI::DoSaveFileRequester(Titel, DefaultFile, Pattern, PatterPosition)
-  EndMacro
-  Macro PathRequester(Titel, InitialPath)
-    ThreadToGUI::DoPathRequester(Titel, InitialPath)
-  EndMacro
-  Macro InputRequester(Titel, Message, DefaultString, Flags=0)
-    ThreadToGUI::DoInputRequester(Titel, Message, DefaultString, Flags)
-  EndMacro
-  Macro ColorRequester(Color = $FFFFFF)
-    ThreadToGUI::DoColorRequester(Color)
-  EndMacro
-  Macro FontRequester(FontName, FontSize, Flags, Color = 0, Style = 0)
-    ThreadToGUI::DoFontRequester(FontName, FontSize, Flags, Color, Style)
-  EndMacro
-  Macro SelectedFontName()
-    ThreadToGUI::DoSelectedFontName()
-  EndMacro
-  Macro SelectedFontSize()
-    ThreadToGUI::DoSelectedFontSize()
-  EndMacro
-  Macro SelectedFontColor()
-    ThreadToGUI::DoSelectedFontColor()
-  EndMacro
-  Macro SelectedFontStyle()
-    ThreadToGUI::DoSelectedFontStyle()
-  EndMacro
-EndDeclareModule
-
-Module ThreadedGUI
-  ; Do nothing
-EndModule
-
-;- End Module Macros
-
-;-Example
-CompilerIf #PB_Compiler_IsMainFile
-  Procedure thFillList(id)
-    Protected text.s, count
-    ThreadToGUI::DoDisableGadget(1, #True)
-    ThreadToGUI::DoStatusBarText(0, 0, "Thread 1 running...")
-    For count = 1 To 10
-      text = FormatDate("%HH:%II:%SS - Number ", Date()) + Str(count)
-      ThreadToGUI::DoAddGadgetItem(0, -1, text)
-      Delay(1000)
-    Next
-    ThreadToGUI::DoStatusBarText(0, 0, "Thread 1 finished.")
-    ThreadToGUI::DoDisableGadget(1, #False)
-  EndProcedure
-  
-  Procedure thFlash(id)
-    Protected count, col
-  
-    UseModule ThreadToGUI
-  
-    DoDisableGadget(2, #True)
-    For count = 0 To 4
-      For col = 0 To 3
-        DoStatusBarProgress(0, 1, count * 20 + col * 5)
-        Select col
-          Case 0 : DoSetGadgetColor(3, #PB_Gadget_BackColor, RGB(255,0,0))
-          Case 1 : DoSetGadgetColor(3, #PB_Gadget_BackColor, RGB(255,255,0))
-          Case 2 : DoSetGadgetColor(3, #PB_Gadget_BackColor, RGB(0,255,0))
-          Case 3 : DoSetGadgetColor(3, #PB_Gadget_BackColor, RGB(255,255,255))
-        EndSelect
-        Delay(1000)
-      Next
-    Next
-    DoStatusBarProgress(0, 1, 100)
-    DoDisableGadget(2, #False)
-  
-    UnuseModule ThreadToGUI
-  
-  EndProcedure
-  
-  Procedure Main()
-    Protected event, thread1, thread2
-  
-    If OpenWindow(0, #PB_Ignore, #PB_Ignore, 800, 560, "Thread To GUI Example", #PB_Window_SystemMenu)
-      CreateStatusBar(0, WindowID(0))
-      AddStatusBarField(200)
-      StatusBarText(0, 0, "Thread 1")
-      AddStatusBarField(200)
-      AddStatusBarField(#PB_Ignore)
-  
-      ListViewGadget(0, 0, 0, 800, 500)
-      ButtonGadget(1, 10, 510, 120, 24, "Fill List")
-      ButtonGadget(2, 140, 510, 120, 24, "Flash")
-      StringGadget(3, 710, 510, 80, 24, "State", #PB_String_ReadOnly)
-  
-      ThreadToGUI::BindEventGUI(#PB_Event_FirstCustomValue)
-  
-      Repeat
-        event = WaitWindowEvent()
-        Select event
-          Case #PB_Event_CloseWindow
-            If IsThread(thread1) : KillThread(thread1) : EndIf
-            If IsThread(thread2) : KillThread(thread2) : EndIf
-            ThreadToGUI::UnBindEventGUI()
-            Break
-  
-          Case #PB_Event_Gadget
-            Select EventGadget()
-              Case 1
-                If Not IsThread(thread1)
-                  thread1 = CreateThread(@thFillList(), 0)
-                EndIf
-  
-              Case 2
-                If Not IsThread(thread2)
-                  thread2 = CreateThread(@thFlash(), 0)
-                EndIf
-  
-            EndSelect
-  
-        EndSelect
-  
-      ForEver
-  
-    EndIf
-  
-  EndProcedure : Main()
-CompilerEndIf

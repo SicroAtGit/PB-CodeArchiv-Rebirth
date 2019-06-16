@@ -42,7 +42,6 @@ Procedure.i OpenWithStandardProgram(FilePath$)
       ; https://portland.freedesktop.org/doc/xdg-open.html
       Result = Bool(RunProgram("xdg-open", FilePath$, GetCurrentDirectory()))
     CompilerCase #PB_OS_MacOS
-      ; TODO: Test the code on MacOS
       Result = Bool(RunProgram("open", FilePath$, GetCurrentDirectory()))
   CompilerEndSelect
   
@@ -126,7 +125,6 @@ Procedure.i OpenStandardMailProgram(RecipientAddress$, Subject$="", Body$="", At
         ; https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-shellexecutew
         Result = Bool(ShellExecute_(0, "open", "mailto:" + URLEncoder(RecipientAddress$ + Parameters$), #Null, #Null, #SW_SHOW) > 32)
       CompilerCase #PB_OS_MacOS
-        ; TODO: Test the code
         Result = Bool(RunProgram("open", "mailto:" + URLEncoder(RecipientAddress$ + Parameters$), GetCurrentDirectory()))
     CompilerEndSelect
   CompilerEndIf

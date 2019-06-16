@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2015-2017 mk-soft
+; Copyright (c) 2015-2019 mk-soft
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -27,13 +27,13 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
- ;-Begin Module BaseClass
+;-Begin Module BaseClass Small Version
 
 ; Comment : Module as Object
 ; Author  : mk-soft
-; Version : v1.33
-; Created : 13.12.2015
-; Updated : 21.12.2017
+; Version : v1.13
+; Created : 16.08.2017
+; Updated : 03.05.2019
 ; Link GE : http://www.purebasic.fr/german/viewtopic.php?f=8&t=29343
 ; Link EN : http://www.purebasic.fr/english/viewtopic.php?f=12&t=64305
 
@@ -46,7 +46,7 @@ DeclareModule BaseClass
  
   ; ---------------------------------------------------------------------------
  
-  ; Internal Class Manager
+  ; Internal class declaration
  
   Prototype ProtoInvoke(*This)
  
@@ -56,18 +56,9 @@ DeclareModule BaseClass
  
   Structure udtClass
     Array *vTable(3)
-    Map vMethodeID.i()
     Array Initialize.udtInvoke(0)
     Array Dispose.udtInvoke(0)
   EndStructure
- 
-  Structure udtClasses
-    Map Entry.udtClass()
-    ObjectCounter.i
-    Mutex.i
-  EndStructure
- 
-  Global Class.udtClasses
  
   ; ---------------------------------------------------------------------------
  
@@ -103,14 +94,17 @@ DeclareModule BaseClass
   ; Added New Class
   Declare AddClass(ClassName.s, ClassExtends.s, Size) ; Internal
  
-  Macro NewClass(ClassInterface, ClassExtends=BaseClass)
+  Macro NewClass(ClassInterface, ClassExtends=)
     ; Interface helper
     Interface __Interface Extends ClassInterface
     EndInterface
+    ; Internal class pointer
+    Global *__Class.udtClass
     ; Add new class
-    AddClass(#PB_Compiler_Module, dq#ClassExtends#dq, SizeOf(__Interface) / SizeOf(integer))
+    Procedure __NewClass()
+      *__Class = AddClass(dq#ClassInterface#dq, dq#ClassExtends#dq, SizeOf(ClassInterface) / SizeOf(integer))
+    EndProcedure : __NewClass()
   EndMacro
- 
  
   ; ---------------------------------------------------------------------------
  
@@ -119,26 +113,14 @@ DeclareModule BaseClass
     Protected *Object.sProperty, __cnt, __index
     *Object = AllocateStructure(sProperty)
     If *Object
-      LockMutex(Class\Mutex)
-      Class\ObjectCounter + 1
-      UnlockMutex(Class\Mutex)
-      *Object\System\vTable = Class\Entry(#PB_Compiler_Module)\vTable()
-      *Object\System\Self = @Class\Entry(#PB_Compiler_Module)
+      *Object\System\vTable = *__Class\vTable()
+      *Object\System\Self = *__Class
       *Object\System\RefCount = 0
       *Object\System\Mutex = CreateMutex()
-      If Not *Object\System\Mutex
-        Debug "Error: CreateMutex Class '" + #PB_Compiler_Module + "'!"
-        FreeStructure(*Object)
-        *Object = 0
-        LockMutex(Class\Mutex)
-        Class\ObjectCounter - 1
-        UnlockMutex(Class\Mutex)
-      Else
-        __cnt = ArraySize(*Object\System\Self\Initialize())
-        For __index = 1 To __cnt
-          *Object\System\Self\Initialize(__index)\Invoke(*Object)
-        Next
-      EndIf
+      __cnt = ArraySize(*Object\System\Self\Initialize())
+      For __index = 1 To __cnt
+        *Object\System\Self\Initialize(__index)\Invoke(*Object)
+      Next
     EndIf
     ProcedureReturn *Object
   EndMacro
@@ -149,25 +131,14 @@ DeclareModule BaseClass
   Macro AllocateObject(Object, sProperty)
     Object = AllocateStructure(sProperty)
     If Object
-      LockMutex(Class\Mutex)
-      Class\ObjectCounter + 1
-      UnlockMutex(Class\Mutex)
-      Object\System\vTable = Class\Entry(#PB_Compiler_Module)\vTable()
-      Object\System\Self = @Class\Entry(#PB_Compiler_Module)
+      Object\System\vTable = *__Class\vTable()
+      Object\System\Self = *__Class
       Object\System\RefCount = 0
       Object\System\Mutex = CreateMutex()
-      If Not Object\System\Mutex
-        Debug "Error: CreateMutex Class '" + #PB_Compiler_Module + "'!"
-        FreeStructure(Object)
-        Object = 0
-        LockMutex(Class\Mutex)
-        Class\ObjectCounter - 1
-        UnlockMutex(Class\Mutex)
-      EndIf
     EndIf
   EndMacro
  
-  Macro InitializeObject(Object, sProperty=)
+  Macro InitializeObject(Object)
     If Object
       Protected __cnt, __index
       __cnt = ArraySize(Object\System\Self\Initialize())
@@ -186,11 +157,6 @@ DeclareModule BaseClass
       CopyStructure(This, Clone, sProperty)
       Clone\System\RefCount = 0
       Clone\System\Mutex = CreateMutex()
-      If Not Clone\System\Mutex
-        Debug "Error: CreateMutex Class '" + #PB_Compiler_Module + "'!"
-        FreeStructure(Clone)
-        Clone = 0
-      EndIf
     EndIf
   EndMacro
  
@@ -203,7 +169,7 @@ DeclareModule BaseClass
   Macro UnlockObject(This)
     UnlockMutex(This\System\Mutex)
   EndMacro
-   
+ 
   ; ---------------------------------------------------------------------------
  
   ; Macros to defined Initialize, Dispose, Methods
@@ -212,14 +178,9 @@ DeclareModule BaseClass
   Macro AsInitializeObject(Name)
     Procedure __AddInitializeObject#Name()
       Protected index
-      If FindMapElement(Class\Entry(), #PB_Compiler_Module)
-        index = ArraySize(Class\Entry()\Initialize()) + 1
-        ReDim Class\Entry()\Initialize(index)
-        Class\Entry()\Initialize(index)\Invoke = @Name()
-      Else
-        Debug "Error: Class is not initialized. Module '" + #PB_Compiler_Module + "'!"
-        CallDebugger
-      EndIf
+      index = ArraySize(*__Class\Initialize()) + 1
+      ReDim *__Class\Initialize(index)
+      *__Class\Initialize(index)\Invoke = @Name()
     EndProcedure : __AddInitializeObject#Name()
   EndMacro
  
@@ -227,136 +188,67 @@ DeclareModule BaseClass
   Macro AsDisposeObject(Name)
     Procedure __AddDisposeObject#Name()
       Protected index
-      If FindMapElement(Class\Entry(), #PB_Compiler_Module)
-        index = ArraySize(Class\Entry()\Dispose()) + 1
-        ReDim Class\Entry()\Dispose(index)
-        Class\Entry()\Dispose(index)\Invoke = @Name()
-      Else
-        Debug "Error: Class is not initialized. Module '" + #PB_Compiler_Module + "'!"
-        CallDebugger
-      EndIf
+      index = ArraySize(*__Class\Dispose()) + 1
+      ReDim *__Class\Dispose(index)
+      *__Class\Dispose(index)\Invoke = @Name()
     EndProcedure : __AddDisposeObject#Name()
   EndMacro
  
-  ; Add Procedure as Methode
-  Macro AsMethode(Name)
-    Procedure __AddMethode#Name()
-      Protected MethodeID
-      If FindMapElement(Class\Entry(), #PB_Compiler_Module)
-        MethodeID = OffsetOf(__Interface\Name()) / SizeOf(integer)
-        Class\Entry()\vTable(MethodeID) = @Name()
-        Class\Entry()\vMethodeID(dq#Name#dq) = MethodeID
-      Else
-        Debug "Error: Class is not initialized. Module '" + #PB_Compiler_Module + "'!"
-        CallDebugger
-      EndIf
-    EndProcedure : __AddMethode#Name()
+  ; Add Procedure as Method or Overwrite inheritance method
+  Macro AsMethod(Name)
+    Procedure __AddMethod#Name()
+      *__Class\vTable(OffsetOf(__Interface\Name()) / SizeOf(integer)) = @Name()
+    EndProcedure : __AddMethod#Name()
   EndMacro
  
-  ; Overwrite inheritance methode
-  Macro AsNewMethode(Name)
-    Procedure __OverwriteMethode#Name()
-      Protected MethodeID
-      If FindMapElement(Class\Entry(#PB_Compiler_Module)\vMethodeID(), dq#Name#dq)
-        MethodeID = Class\Entry()\vMethodeID()
-        Class\Entry()\vTable(MethodeID) = @Name()
-      Else
-        Debug "Error: Method in the inherited class not found. [" + dq#name#dq + "()]"
-        CallDebugger
-      EndIf
-    EndProcedure : __OverwriteMethode#Name()
+  Macro AsNewMethod(Name)
+    AsMethod(Name)
   EndMacro
  
   ; ---------------------------------------------------------------------------
  
   ; Debugger functions
  
-  Macro ShowInterface(ClassName=#PB_Compiler_Module)
+  Macro CheckInterface()
     CompilerIf #PB_Compiler_Debugger
-      Define __index
-      Debug "Interface " + ClassName
-      Debug "{"
-      If FindMapElement(BaseClass::Class\Entry(), ClassName)
-        For __index = 0 To ArraySize(BaseClass::Class\Entry()\vTable()) - 1
-          ForEach BaseClass::Class\Entry()\vMethodeID()
-            If BaseClass::Class\Entry()\vMethodeID() = __index
-              Debug " - MethodeID " + BaseClass::Class\Entry()\vMethodeID() + " - " + MapKey(BaseClass::Class\Entry()\vMethodeID()) + "()"
+      Procedure __CheckInterface()
+        Protected *xml, *node, ErrorCount
+        *xml = CreateXML(#PB_Any)
+        If *xml
+          *node = InsertXMLStructure(RootXMLNode(*xml), *__Class\vTable(), __Interface)
+          *node = ChildXMLNode(*node)
+          Repeat
+            If Not *node
               Break
             EndIf
-          Next
-        Next
-      Else
-        Debug " - Interface not found."
-      EndIf
-      Debug "}"
-    CompilerEndIf
-  EndMacro
- 
-  Macro ShowClasses()
-    CompilerIf #PB_Compiler_Debugger
-      ForEach BaseClass::Class\Entry()
-        Define __index
-        Debug "Interface " + MapKey(BaseClass::Class\Entry())
-        Debug "{"
-        For __index = 0 To ArraySize(BaseClass::Class\Entry()\vTable()) - 1
-          ForEach BaseClass::Class\Entry()\vMethodeID()
-            If BaseClass::Class\Entry()\vMethodeID() = __index
-              Debug " - MethodeID " + BaseClass::Class\Entry()\vMethodeID() + " - " + MapKey(BaseClass::Class\Entry()\vMethodeID()) + "()"
-              Break
+            If GetXMLNodeText(*node) = "0"
+              ErrorCount + 1
+              Debug "Module " + #PB_Compiler_Module + ": Error Interface - Missing Method '" + GetXMLNodeName(*node) + "()'"
             EndIf
-          Next
-        Next
-        Debug "}"
-      Next
-  CompilerEndIf
-  EndMacro
- 
-  Macro CheckInterface(InterfaceName)
-    CompilerIf #PB_Compiler_Debugger
-      CompilerIf Defined(InterfaceName, #PB_Interface)
-        Define __SizeOfInterface = SizeOf(InterfaceName) / SizeOf(Integer)
-        Define __IndexOfInterface
-        For __IndexOfInterface = 0 To __SizeOfInterface - 1
-          If Class\Entry(#PB_Compiler_Module)\vTable(__IndexOfInterface) = 0
-            Debug "Error: Invalid Interface " + dq#InterfaceName#dq + " by MethodeID " + __IndexOfInterface
-            ShowInterface()
+            *node = NextXMLNode(*node)
+          ForEver
+          FreeXML(*xml)
+          If ErrorCount
+            Debug "Module " + #PB_Compiler_Module + ": Error Count " + ErrorCount
             CallDebugger
           EndIf
-        Next
-      CompilerElse
-        Debug "Error: Interface not exists"
-        CallDebugger
-      CompilerEndIf
+        EndIf
+      EndProcedure : __CheckInterFace()
     CompilerEndIf
   EndMacro
 
-  ; ---------------------------------------------------------------------------
- 
+; ---------------------------------------------------------------------------
+
 EndDeclareModule
 
 Module BaseClass
  
   EnableExplicit
  
-  ; ---------------------------------------------------------------------------
- 
-  Procedure AddClass(ClassName.s, ClassExtends.s, Size)
-    Protected r1
-    If FindMapElement(Class\Entry(), ClassExtends)
-      r1 = AddMapElement(Class\Entry(), ClassName)
-    Else
-      Debug "Error: Extends Class '" + ClassExtends + "' not exists!"
-      CallDebugger
-    EndIf
-    If r1
-      CopyStructure(Class\Entry(ClassExtends), Class\Entry(ClassName), udtClass)
-      ReDim Class\Entry(ClassName)\vTable(Size)
-    Else
-      Debug "Warning: Class '" + ClassName + "' not Initialized!"
-    EndIf
-    ProcedureReturn r1
-  EndProcedure
-
+  Procedure InitBaseClass()
+    Global NewMap Class.udtClass()
+  EndProcedure : InitBaseClass()
+   
   ; ---------------------------------------------------------------------------
  
   Procedure QueryInterface(*This.sBaseClass, *riid, *addr)
@@ -382,14 +274,9 @@ Module BaseClass
         cnt = ArraySize(\Self\Dispose())
         For index = cnt To 1 Step -1
           \Self\Dispose(index)\Invoke(*This)
-        Next   
+        Next
         FreeMutex(*This\System\Mutex)
         FreeStructure(*This)
-        LockMutex(Class\Mutex)
-        If Class\ObjectCounter > 0
-          Class\ObjectCounter - 1
-        EndIf
-        UnlockMutex(Class\Mutex)
         ProcedureReturn 0
       Else
         \RefCount - 1
@@ -401,21 +288,50 @@ Module BaseClass
  
   ; ---------------------------------------------------------------------------
  
-  Procedure InitBaseClass()
-    Class\Mutex = CreateMutex()
-    AddMapElement(Class\Entry(), "BaseClass")
-    With Class\Entry("BaseClass")
-      \vTable(0) = @QueryInterface()
-      \vTable(1) = @AddRef()
-      \vTable(2) = @Release()
-      \vMethodeID("QueryInterface") = 0
-      \vMethodeID("AddRef") = 1
-      \vMethodeID("Release") = 2
-    EndWith
-  EndProcedure : InitBaseClass()
+  Procedure AddClass(ClassName.s, ClassExtends.s, Size)
+    Protected *class.udtClass, *extends.udtClass, sClassName.s, sClassExtends.s
+    sClassName = LCase(ClassName)
+    sClassExtends = LCase(ClassExtends)
+    CompilerIf #PB_Compiler_Debugger
+      If FindMapElement(Class(), sClassName)
+        Debug "Error: Class '" + ClassName + "' already exists!"
+        CallDebugger
+        End -1
+      EndIf
+      If Bool(sClassExtends)
+        *extends = FindMapElement(Class(), sClassExtends)
+        If Not *extends
+          Debug "Error: Extends Class '" + ClassExtends + "' not exists!"
+          CallDebugger
+          End -1
+        EndIf
+      EndIf
+    CompilerEndIf
+    *class = AddMapElement(Class(), sClassName)
+    If *class
+      If Bool(sClassExtends)
+        *extends = FindMapElement(Class(), sClassExtends)
+        CopyStructure(*extends, *class, udtClass)
+        ReDim *class\vTable(Size)
+        ProcedureReturn *class
+      Else
+        ReDim *class\vTable(Size)
+        *class\vTable(0) = @QueryInterface()
+        *class\vTable(1) = @AddRef()
+        *class\vTable(2) = @Release()
+        ProcedureReturn *class
+      EndIf
+    Else
+      Debug "Error: Class '" + ClassName + "' Out Of Memory!"
+      CallDebugger
+      End -1
+    EndIf
+  EndProcedure
  
   ; ---------------------------------------------------------------------------
  
 EndModule
 
 ;- End Module BaseClass
+
+; ***************************************************************************************
