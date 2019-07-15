@@ -586,14 +586,23 @@ Procedure$ ResolveValue(value$)
 EndProcedure
 
 Procedure$ GetFileContent(filePath$)
-    Protected file
+    Protected file, stringFormat
     Protected result$
     
     file = ReadFile(#PB_Any, filePath$)
     If Not file
         ProcedureReturn ""
     EndIf
-    result$ = ReadString(file, #PB_File_IgnoreEOL)
+    stringFormat = ReadStringFormat(file)
+    Select stringFormat
+        Case #PB_Ascii, #PB_UTF8, #PB_Unicode
+        Default
+            ; ReadString() supports fewer string formats than ReadStringFormat(),
+            ; so in case of an unsupported format it is necessary to fall back
+            ; to a supported format
+            stringFormat = #PB_UTF8
+    EndSelect
+    result$ = ReadString(file, stringFormat|#PB_File_IgnoreEOL)
     CloseFile(file)
     
     ProcedureReturn result$
