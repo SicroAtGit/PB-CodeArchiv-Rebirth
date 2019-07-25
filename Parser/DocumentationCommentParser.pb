@@ -118,7 +118,6 @@ If FileSize(filePath$) < 1
                      #PB_MessageRequester_Error)
     End
 EndIf
-SetCurrentDirectory(GetPathPart(filePath$))
 AddMapElement(files(), filePath$)
 ForEach files()
     Parser(MapKey(files()))
