@@ -66,12 +66,12 @@ EndStructure
 ;- Declare procedures
 ; =============================================================================
 
-Declare  Parser_ProcessToken(*lexer)
+Declare  Parser_ProcessToken(*lexer, currentDirectory$)
 Declare  Parser(filePath$)
 
-Declare  ProcessIncludePathKeyword(*lexer)
-Declare  ProcessIncludeFileKeyword(*lexer)
-Declare  ProcessXIncludeFileKeyword(*lexer)
+Declare$ ProcessIncludePathKeyword(*lexer, currentDirectory$)
+Declare  ProcessIncludeFileKeyword(*lexer, currentDirectory$)
+Declare  ProcessXIncludeFileKeyword(*lexer, currentDirectory$)
 
 Declare$ ProcessProcedureReturnType(*lexer)
 Declare$ ProcessProcedureParameters(*lexer)
@@ -93,7 +93,7 @@ Declare$ GetFileContent(filePath$)
 ;- Define local variables
 ; =============================================================================
 
-Define filePath$, currentIncludePath$, currentIncludeFilePath$, code$
+Define filePath$, code$
 Define file, i
 Define *lexer
 NewMap constants$()
@@ -150,7 +150,7 @@ Next
 ;- Define procedures
 ; =============================================================================
 
-Procedure Parser_ProcessToken(*lexer)
+Procedure Parser_ProcessToken(*lexer, currentDirectory$)
     Select PBLexer::TokenType(*lexer)
         Case PBLexer::#TokenType_Keyword
             Select LCase(PBLexer::TokenValue(*lexer))
@@ -159,11 +159,11 @@ Procedure Parser_ProcessToken(*lexer)
                 Case "macro"
                     ProcessMacro(*lexer)
                 Case "includepath"
-                    ProcessIncludePathKeyword(*lexer)
+                    currentDirectory$ = ProcessIncludePathKeyword(*lexer, currentDirectory$)
                 Case "includefile"
-                    ProcessIncludeFileKeyword(*lexer)
+                    ProcessIncludeFileKeyword(*lexer, currentDirectory$)
                 Case "xincludefile"
-                    ProcessXIncludeFileKeyword(*lexer)
+                    ProcessXIncludeFileKeyword(*lexer, currentDirectory$)
             EndSelect
         Case PBLexer::#TokenType_Constant
             ProcessConstant(*lexer)
@@ -175,9 +175,6 @@ EndProcedure
 Procedure Parser(filePath$)
     Protected code$
     Protected *lexer
-    
-    ; All relative paths refer to the directory of the current code file
-    SetCurrentDirectory(GetPathPart(filePath$))
     
     Debug "", 1
     Debug "Parse file: " + filePath$, 1
@@ -198,7 +195,7 @@ Procedure Parser(filePath$)
     EndIf
     
     While PBLexer::NextToken(*lexer)
-        Parser_ProcessToken(*lexer)
+        Parser_ProcessToken(*lexer, GetPathPart(filePath$))
     Wend
     
     PBLexer::Free(*lexer)
@@ -241,83 +238,80 @@ Procedure ProcessMacro(*lexer)
     Debug "--------------------", 1
 EndProcedure
 
-Procedure ProcessIncludePathKeyword(*lexer)
-    Shared currentIncludePath$
+Procedure$ ProcessIncludePathKeyword(*lexer, currentDirectory$)
+    Protected path$
     
     While PBLexer::NextToken(*lexer)
         If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Newline Or
            PBLexer::TokenValue(*lexer) = ":"
             Break
         EndIf
-        currentIncludePath$ + PBLexer::TokenValue(*lexer)
+        path$ + PBLexer::TokenValue(*lexer)
     Wend
     
-    If Right(currentIncludePath$, 1) <> #PS$
-        currentIncludePath$ + #PS$
+    If Right(path$, 1) <> #PS$
+        path$ + #PS$
     EndIf
-    currentIncludePath$ = ResolveValue(currentIncludePath$)
-    If Not IsAbsolutePath(currentIncludePath$)
-        currentIncludePath$ = GetCurrentDirectory() + currentIncludePath$
+    path$ = ResolveValue(path$)
+    If Not IsAbsolutePath(path$)
+        path$ = currentDirectory$ + path$
     EndIf
     
     Debug "ProcessIncludePathKeyword()", 1
-    Debug "  Value: " + currentIncludePath$, 1
+    Debug "  Value: " + path$, 1
     Debug "--------------------", 1
+    
+    ProcedureReturn path$
 EndProcedure
 
-Procedure ProcessIncludeFileKeyword(*lexer)
-    Shared currentIncludePath$, currentIncludeFilePath$
+Procedure ProcessIncludeFileKeyword(*lexer, currentDirectory$)
+    Protected filePath$
     
-    currentIncludeFilePath$ = currentIncludePath$
     While PBLexer::NextToken(*lexer)
         If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Newline Or
            PBLexer::TokenValue(*lexer) = ":"
             Break
         EndIf
-        currentIncludeFilePath$ + PBLexer::TokenValue(*lexer)
+        filePath$ + PBLexer::TokenValue(*lexer)
     Wend
-    currentIncludeFilePath$ = ResolveValue(currentIncludeFilePath$)
+    filePath$ = ResolveValue(filePath$)
     
-    If Not IsAbsolutePath(currentIncludeFilePath$)
-        currentIncludeFilePath$ = GetCurrentDirectory() +
-                                  currentIncludeFilePath$
+    If Not IsAbsolutePath(filePath$)
+        filePath$ = currentDirectory$ + filePath$
     EndIf
     
     Debug "ProcessIncludeFileKeyword()", 1
-    Debug "  Value: " + currentIncludeFilePath$, 1
+    Debug "  Value: " + filePath$, 1
     Debug "--------------------", 1
     
-    Parser(currentIncludeFilePath$)
+    Parser(filePath$)
 EndProcedure
 
-Procedure ProcessXIncludeFileKeyword(*lexer)
-    Shared xIncludedFilePaths(), currentIncludePath$
-    Shared currentIncludeFilePath$
-    
-    currentIncludeFilePath$ = currentIncludePath$
+Procedure ProcessXIncludeFileKeyword(*lexer, currentDirectory$)
+    Protected filePath$
+    Shared xIncludedFilePaths()
     
     While PBLexer::NextToken(*lexer)
         If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Newline Or
            PBLexer::TokenValue(*lexer) = ":"
             Break
         EndIf
-        currentIncludeFilePath$ + PBLexer::TokenValue(*lexer)
+        filePath$ + PBLexer::TokenValue(*lexer)
     Wend
     
-    currentIncludeFilePath$ = ResolveValue(currentIncludeFilePath$)
+    filePath$ = ResolveValue(filePath$)
     
-    If Not IsAbsolutePath(currentIncludeFilePath$)
-        currentIncludeFilePath$ = GetCurrentDirectory() +
-                                  currentIncludeFilePath$
+    If Not IsAbsolutePath(filePath$)
+        filePath$ = currentDirectory$ + filePath$
     EndIf
     
     Debug "ProcessXIncludeFileKeyword()", 1
-    Debug "  Value: " + currentIncludeFilePath$, 1
+    Debug "  Value: " + filePath$, 1
     
-    If Not FindMapElement(xIncludedFilePaths(), currentIncludeFilePath$)
-        AddMapElement(xIncludedFilePaths(), currentIncludeFilePath$)
+    If Not FindMapElement(xIncludedFilePaths(), filePath$)
+        AddMapElement(xIncludedFilePaths(), filePath$)
         Debug "--------------------", 1
-        Parser(currentIncludeFilePath$)
+        Parser(filePath$)
     Else
         ; The file has already been included and the include keyword does not
         ; allow more than one inclusion of the same file, therefore further
