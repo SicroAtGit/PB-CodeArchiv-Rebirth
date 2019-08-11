@@ -257,10 +257,11 @@ Module PBLexer
           "disableasm|disabledebugger|disableexplicit|else|elseif|enableasm|enabledebugger|enableexplicit|end|" +
           "enddatasection|enddeclaremodule|endenumeration|endif|endimport|endinterface|endmacro|endmodule|endprocedure|" +
           "endselect|endstructure|endstructureunion|endwith|enumeration|enumerationbinary|extends|fakereturn|for|foreach|" +
-          "forever|global|gosub|goto|if|import|importc|includebinary|includefile|includepath|interface|list|macro|map|" +
-          "module|newlist|newmap|next|procedure|procedurec|procedurecdll|proceduredll|procedurereturn|protected|" +
-          "prototype|prototypec|read|redim|repeat|restore|return|runtime|select|shared|static|step|structure|" +
-          "structureunion|swap|threaded|to|until|unusemodule|usemodule|wend|while|with|xincludefile)\b"
+          "forever|global|gosub|goto|if|import|importc|includebinary|includefile|includepath|interface|list|macro|" +
+          "macroexpandedcount|map|module|newlist|newmap|next|procedure|procedurec|procedurecdll|proceduredll|" +
+          "procedurereturn|protected|prototype|prototypec|read|redim|repeat|restore|return|runtime|select|shared|static|" +
+          "step|structure|structureunion|swap|threaded|to|undefinemacro|until|unusemodule|usemodule|wend|while|with|" +
+          "xincludefile)\b"
     Data.c 0
   EndDataSection
 EndModule
