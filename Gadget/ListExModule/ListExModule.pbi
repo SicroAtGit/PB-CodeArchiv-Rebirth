@@ -1,10 +1,3 @@
-;   Description: Editable and sortable ListGadget
-;            OS: Windows, Linux, Mac
-; English-Forum: https://www.purebasic.fr/english/viewtopic.php?f=27&t=72402
-;  French-Forum: 
-;  German-Forum: https://www.purebasic.fr/german/viewtopic.php?f=8&t=31330
-; -----------------------------------------------------------------------------
-
 ;/ ===========================
 ;/ =    ListEx-Module.pbi    =
 ;/ ===========================
@@ -15,21 +8,16 @@
 ;/
 ;/ © 2019 Thorsten1867 (03/2019)
 ;/
-  
-
-; Last Update: 12.06.2019
-
-; - Restore focus after sorting
-; - Bugfix: make row visible
+    
+; Last Update: 23.08.2019
 ;
-; - SetState() moves now the row into the visible area
-; - Key control (Up/Down, PageUp/PageDown, Home/End)
+; - #PB_EventType_LeftClick / #PB_EventType_LeftDoubleClick / #PB_EventType_RightClick for rows
 ;
-; - Added: #ProgressBar for AddColumn() => SetProgressBarAttribute() / SetProgressBarFlags()
+; - Bugfix
 ;
-; - Focus on the line in which a popup menu was opened with the right mouse button.
-; - SetState(GNum.i, Row.i=#PB_Default)
-; - BugFix: Right mouse click on Header 
+; - Added:    RemoveItemState() 
+; - Bugfixes: MouseWheel / Hide vertical Scrollbar
+;
 
 
 ;{ ===== MIT License =====
@@ -58,10 +46,11 @@
 
 ;{ _____ ListEx - Commands _____
 
-; ListEx::AddItem()                 - similar to 'AddGadgetItem()'
+; ListEx::AddCells()                - adds a new row and insert text in cells with label
 ; ListEx::AddColumn()               - similar to 'AddGadgetColumn()'
 ; ListEx::AddComboBoxItems()        - add items to the comboboxes of the column (items seperated by #LF$)
-; ListEx::CountItems()              - similar to 'CountGadgetItems()'
+; ListEx::AddItem()                 - similar to 'AddGadgetItem()'
+; ListEx::CountItems()              - similar to 'CountGadgetItems()' [#Selected/#Checked/#Inbetween]
 ; ListEx::ChangeCountrySettings()   - change default settings
 ; ListEx::ClearComboBoxItems()      - clear items of the comboboxes of the column
 ; ListEx::ClearItems()              - similar to 'ClearGadgetItems()'
@@ -78,16 +67,23 @@
 ; ListEx::GetCellState()            - similar to 'GetGadgetItemState()' with labels
 ; ListEx::GetChangedState()         - check whether entries have been edited
 ; ListEx::GetColumnAttribute()      - similar to 'GetGadgetItemAttribute()'
+; ListEx::GetColumnLabel()          - returns the label of the column
 ; ListEx::GetColumnState()          - similar to 'GetGadgetItemState()' for a specific column
 ; ListEx::GetItemData()             - similar to 'GetGadgetItemData()'
 ; ListEx::GetItemID()               - similar to 'GetGadgetItemData()' but with string data
-; ListEx::GetItemState()            - similar to 'GetGadgetItemState()'
+; ListEx::GetItemState()            - similar to 'GetGadgetItemState()' [#Selected/#Checked/#Inbetween]
 ; ListEx::GetItemText()             - similar to 'GetGadgetItemText()'
-; ListEx::GetState(GNum.i)         - similar to 'GetGadgetState()'
+; ListEx::GetRowFromLabel()         - returns row number for this label
+; ListEx::GetRowLabel()             - returns the label of the row
+; ListEx::GetState(GNum.i)          - similar to 'GetGadgetState()'
+; ListEx::HideColumn()              - hides a column
 ; ListEx::Refresh()                 - redraw gadget
 ; ListEx::RemoveColumn()            - similar to 'RemoveGadgetColumn()'
 ; ListEx::RemoveItem()              - similar to 'RemoveGadgetItem()'
+; ListEx::RemoveItemState()         - removes #Selected / #Checked / #Inbetween
 ; ListEx::ResetChangedState()       - reset to not edited
+; ListEx::SelectItems()             - select all rows [#All/#None]
+; ListEx::SetAttribute()            - similar to SetGadgetAttribute()  [#Padding] 
 ; ListEx::SetAutoResizeColumn()     - column that is reduced when the vertical scrollbar is displayed.
 ; ListEx::SetAutoResizeFlags()      - [#MoveX|#MoveY|#ResizeWidth|#ResizeHeight]
 ; ListEx::SetCellState()            - similar to 'SetGadgetItemState()' with labels
@@ -100,6 +96,7 @@
 ; ListEx::SetDateAttribute()        - similar to 'SetGadgetAttribute()' and 'DateGadget()'
 ; ListEx::SetFont()                 - similar to 'SetGadgetFont()'
 ; ListEx::SetHeaderAttribute()      - [#Align]
+; ListEx::SetHeaderHeight()         - set header height
 ; ListEx::SetHeaderSort()           - enable sort by header column [#Sort_Ascending|#Sort_Descending|#Sort_NoCase|#Sort_SwitchDirection]
 ; ListEx::SetItemAttribute()        - similar to 'SetGadgetItemAttribute()'
 ; ListEx::SetItemColor()            - similar to 'SetGadgetItemColor()'
@@ -107,7 +104,7 @@
 ; ListEx::SetItemFont()             - change font of row or header [#Header]
 ; ListEx::SetItemID()               - similar to 'SetGadgetItemData()' but with string data
 ; ListEx::SetItemImage( )           - add a image at row/column
-; ListEx::SetItemState()            - similar to 'SetGadgetItemState()'
+; ListEx::SetItemState()            - similar to 'SetGadgetItemState()' [#Selected/#Checked/#Inbetween]
 ; ListEx::SetItemText()             - similar to 'SetGadgetItemText()'
 ; ListEx::SetProgressBarAttribute() - set minimum or maximum value for progress bars
 ; ListEx::SetProgressBarFlags()     - set flags for progressbar (#ShowPercent)
@@ -122,6 +119,7 @@ DeclareModule ListEx
   
   #Enable_Validation  = #True
   #Enable_MarkContent = #True
+  #Enable_ProgressBar = #True
   
   ;- ===========================================================================
   ;-   DeclareModule - Constants / Structures
@@ -130,6 +128,9 @@ DeclareModule ListEx
   ;{ _____ Constants _____
   #FirstItem = 0
   #LastItem  = -1
+  
+  #All  = 1
+  #None = 0
   
   #Header   = -1
   #NotValid = -2 
@@ -172,12 +173,17 @@ DeclareModule ListEx
     #SwitchDirection
   EndEnumeration  
   
-  Enumeration 
+  Enumeration ; Attribute
     #Align
     #Font
     #FontID
     #Width
+    #Height
+    #Padding
     #Gadget
+    #StringFont
+    #HeaderFont
+    #GadgetFont
     #CellFont
   EndEnumeration
   
@@ -203,6 +209,7 @@ DeclareModule ListEx
     #ButtonColor
     #ButtonBorderColor
     #ProgressBarColor
+    #GradientColor
     #EditColor
     #FocusColor
     #FrontColor
@@ -213,6 +220,7 @@ DeclareModule ListEx
     #HeaderBackColor
     #HeaderGridColor
     #AlternateRowColor
+    #FitColumn
   EndEnumeration
 
   EnumerationBinary ColumnFlags
@@ -298,14 +306,16 @@ DeclareModule ListEx
   
   Declare.i AddColumn(GNum.i, Column.i, Title.s, Width.f, Label.s="", Flags.i=#False)
   Declare.i AddComboBoxItems(GNum.i, Column.i, Text.s)
-  Declare.i AddItem(GNum.i, Row.i=-1, Text.s="", RowID.s="", Flags.i=#False)
+  Declare.i AddCells(GNum.i, Row.i=-1, Labels.s="", Text.s="", RowID.s="", Flags.i=#False) 
+  Declare.i AddItem(GNum.i, Row.i=-1, Text.s="", Label.s="", Flags.i=#False)
   Declare   AttachPopupMenu(GNum.i, Popup.i)
   Declare   ChangeCountrySettings(GNum.i, CountryCode.s, Currency.s="", Clock.s="", DecimalSeperator.s="", TimeSeperator.s="", DateSeperator.s="")
   Declare   ClearComboBoxItems(GNum.i, Column.i)
   Declare   ClearItems(GNum.i)
-  Declare.i CountItems(GNum.i)
+  Declare   CloseEdit(GNum.i)
+  Declare.i CountItems(GNum.i, Flag.i=#False)
   Declare   DisableEditing(GNum.i, State.i=#True)
-  Declare   DisableReDraw(GNum.i, State.i=#False)
+  Declare   DisableReDraw(GNum.i, State.i=#True)
   Declare.i EventColumn(GNum)
   Declare.s EventID(GNum.i)
   Declare.i EventRow(GNum.i)
@@ -316,38 +326,46 @@ DeclareModule ListEx
   Declare.s GetCellText(GNum.i, Row.i, Label.s)
   Declare.i GetCellState(GNum.i, Row.i, Label.s) 
   Declare.i GetChangedState(GNum.i)
-  Declare.i GetColumnState(GNum.i, Row.i, Column.i)
   Declare.i GetColumnAttribute(GNum.i, Column.i, Attribute.i)
+  Declare.s GetColumnLabel(GNum.i, Column.i)
+  Declare.i GetColumnState(GNum.i, Row.i, Column.i)
   Declare.i GetItemData(GNum.i, Row.i)
   Declare.s GetItemID(GNum.i, Row.i)
-  Declare.i GetItemState(GNum.i, Row.i, Column.i=#PB_Default)
+  Declare.i GetItemState(GNum.i, Row.i, Column.i=#PB_Ignore)
   Declare.s GetItemText(GNum.i, Row.i, Column.i)
+  Declare.i GetRowFromLabel(GNum.i, Label.s)
+  Declare.s GetRowLabel(GNum.i, Row.i)
   Declare.i GetState(GNum.i)
+  Declare.i HideColumn(GNum.i, Column.i, State.i=#True)
   Declare   LoadColorTheme(GNum.i, File.s)
   Declare   Refresh(GNum.i)
   Declare   RemoveColumn(GNum.i, Column.i)
   Declare   RemoveItem(GNum.i, Row.i)
+  Declare   RemoveItemState(GNum.i, Row.i, State.i, Column.i=#PB_Ignore)
   Declare   ResetChangedState(GNum.i)
   Declare   SaveColorTheme(GNum.i, File.s)
+  Declare.i SelectItems(GNum.i, Flag.i=#All)
+  Declare   SetAttribute(GNum.i, Attrib.i, Value.i)
   Declare   SetAutoResizeColumn(GNum.i, Column.i, minWidth.f=#PB_Default, maxWidth.f=#PB_Default)
   Declare   SetAutoResizeFlags(GNum.i, Flags.i)
   Declare   SetCellState(GNum.i, Row.i, Label.s, State.i)
   Declare   SetCellText(GNum.i, Row.i, Label.s, Text.s)
-  Declare   SetColor(GNum.i, ColorTyp.i, Value.i)
+  Declare   SetColor(GNum.i, ColorTyp.i, Value.i, Column.i=#PB_Ignore)
   Declare   SetColorTheme(GNum.i, Theme.i=#PB_Default)
   Declare   SetColumnAttribute(GNum.i, Column.i, Attrib.i, Value.i)
   Declare   SetColumnState(GNum.i, Row.i, Column.i, State.i)
-  Declare   SetFont(GNum.i, FontID.i)     
+  Declare   SetFont(GNum.i, FontID.i, Type.i=#False, Column.i=#PB_Ignore)   
   Declare   SetDateAttribute(GNum.i, Column.i, Attrib.i, Value.i)
   Declare   SetDateMask(GNum.i, Mask.s, Column.i=#PB_Ignore)
-  Declare   SetHeaderAttribute(GNum.i, Attrib.i, Value.i)
+  Declare   SetHeaderAttribute(GNum.i, Attrib.i, Value.i, Column.i=#PB_Ignore)
+  Declare   SetHeaderHeight(GNum.i, Height.i)
   Declare   SetHeaderSort(GNum.i, Column.i, Direction.i=#PB_Sort_Ascending, Flag.i=#True)
   Declare   SetItemColor(GNum.i, Row.i, ColorTyp.i, Value.i, Column.i=#PB_Ignore)
   Declare   SetItemData(GNum.i, Row.i, Value.i)
   Declare   SetItemFont(GNum.i, Row.i, FontID.i, Column.i=#PB_Ignore)
   Declare   SetItemID(GNum.i, Row.i, String.s)
-  Declare   SetItemImage(GNum.i, Row.i, Column.i, Width.f, Height.f, ImageID.i, Align.i=#Left)
-  Declare   SetItemState(GNum.i, Row.i, State.i, Column.i=#PB_Default)
+  Declare   SetItemImage(GNum.i, Row.i, Column.i, Width.f, Height.f, Image.i, Align.i=#Left)
+  Declare   SetItemState(GNum.i, Row.i, State.i, Column.i=#PB_Ignore)
   Declare   SetItemText(GNum.i, Row.i, Text.s , Column.i)
   Declare   SetProgressBarAttribute(GNum.i, Attrib.i, Value.i)
   Declare   SetProgressBarFlags(GNum.i, Flags.i)
@@ -476,11 +494,16 @@ Module ListEx
     Flags.i
   EndStructure ;}
   
+  
   Structure Cols_Header_Structure       ;{ ListEx()\Cols()\Header\...
     Titel.s
     Direction.i
     Sort.i
+    Align.i
+    FontID.i
     Image.Image_Structure
+    FrontColor.i
+    BackColor.i
     Flags.i
   EndStructure ;}
   
@@ -504,6 +527,7 @@ Module ListEx
   EndStructure  ;}
   
 
+  
   Structure Rows_Column_Structure       ;{ ListEx()\Rows()\Column('label')\...
     Value.s
     FontID.i
@@ -541,6 +565,7 @@ Module ListEx
     Button.i
     ButtonBorder.i
     ProgressBar.i
+    Gradient.i
     Link.i
     ActiveLink.i
     ScrollBar.i
@@ -554,6 +579,7 @@ Module ListEx
     Current.i
     Number.i
     Width.f
+    Padding.i
     OffsetX.f
     CheckBoxes.i
   EndStructure ;}
@@ -566,8 +592,11 @@ Module ListEx
     Align.i
     FontID.i
     Mask.s
+    MaxWidth.i
     Currency.s
     Flags.i
+    FrontColor.i
+    BackColor.i
     Header.Cols_Header_Structure
   EndStructure ;}  
   
@@ -671,7 +700,6 @@ Module ListEx
     iSort.i
     fSort.f
     State.i
-    Flags.i
     Color.Color_Structure
     Map Column.Rows_Column_Structure()
   EndStructure ;}  
@@ -717,8 +745,9 @@ Module ListEx
     
     Cursor.i
     Focus.i
-    Strg.i
+    MultiSelect.i
     Changed.i
+    FitCols.i
     Flags.i
     
     Size.ListEx_Size_Structure
@@ -836,7 +865,7 @@ Module ListEx
       ListEx()\Cols()\X  = ListEx()\Size\Cols
       ListEx()\Size\Cols + ListEx()\Cols()\Width
     Next  
-      
+     
   EndProcedure
   
   Procedure   UpdateRowY_()
@@ -905,7 +934,6 @@ Module ListEx
     
   EndProcedure
   
-
   Procedure.i GetColumn_(X.i)
     
     If X > ListEx()\Size\X And X < ListEx()\Size\Cols
@@ -922,7 +950,7 @@ Module ListEx
     EndIf
     
   EndProcedure
-  
+    
   ;- _____ Check Content _____
   
   CompilerIf #Enable_Validation
@@ -1377,9 +1405,131 @@ Module ListEx
     
   CompilerEndIf   
   
-
-  ;- __________ Drawing __________
+  ;- _____ Sorting _____
   
+  Procedure.f GetCashFloat_(String.s, Currency.s)
+
+    String = ReplaceString(String, ",", ".")
+    String = RemoveString(String, "")
+    
+    ProcedureReturn ValF(Trim(String)) 
+  EndProcedure
+  
+  Procedure.s SortDEU_(Text.s, Flags.i=#Lexikon) ; german charakters (DIN 5007)
+    
+    If Flags & #Namen
+      Text = ReplaceString(Text, "Ä", "Ae")
+      Text = ReplaceString(Text, "Ö", "Oe")
+      Text = ReplaceString(Text, "Ü", "Ue")
+      Text = ReplaceString(Text, "ä", "ae")
+      Text = ReplaceString(Text, "ö", "oe")
+      Text = ReplaceString(Text, "ü", "ue")
+      Text = ReplaceString(Text, "ß", "ss")
+    ElseIf Flags & #Lexikon Or Flags & #Deutsch
+      Text = ReplaceString(Text, "Ä", "A")
+      Text = ReplaceString(Text, "Ö", "O")
+      Text = ReplaceString(Text, "Ü", "U")
+      Text = ReplaceString(Text, "ä", "a")
+      Text = ReplaceString(Text, "ö", "o")
+      Text = ReplaceString(Text, "ü", "u")
+      Text = ReplaceString(Text, "ß", "ss")
+    EndIf
+    
+    ProcedureReturn Text
+  EndProcedure 
+  
+  Procedure   SortColumn_()
+    Define.s String$
+    
+    If ListEx()\Sort\Flags & #SortNumber       ;{ Sort number (integer)
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\iSort = Val(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
+      ;}
+    ElseIf ListEx()\Sort\Flags & #SortFloat    ;{ Sort number (float)
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\fSort = ValF(ReplaceString(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value, ",", "."))
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\fSort), #PB_Float)
+      ;}
+    ElseIf ListEx()\Sort\Flags & #SortDate     ;{ Sort date   (integer)
+
+      If ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
+        String$ = ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
+      Else  
+        String$ = ListEx()\Date\Mask
+      EndIf
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\iSort = ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
+      ;}
+    ElseIf ListEx()\Sort\Flags & #SortBirthday ;{ Sort birthday   (string)
+
+      If ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
+        String$ = ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
+      Else  
+        String$ = ListEx()\Date\Mask
+      EndIf
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\Sort = FormatDate("%mm%dd", ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value))
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\Sort), #PB_String)
+      ;}  
+    ElseIf ListEx()\Sort\Flags & #SortCash     ;{ Sort cash   (float)
+
+      String$ = ListEx()\Country\Currency
+      If SelectElement(ListEx()\Cols(), ListEx()\Sort\Column)
+        If ListEx()\Cols()\Currency : String$ = ListEx()\Cols()\Currency : EndIf
+      EndIf
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\fSort = GetCashFloat_(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value, String$)
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\fSort), #PB_Float)
+      ;}
+    ElseIf ListEx()\Sort\Flags & #SortTime     ;{ Sort time   (integer)
+      
+      String$ = ListEx()\Country\TimeMask
+      If SelectElement(ListEx()\Cols(), ListEx()\Sort\Column)
+        If ListEx()\Cols()\Mask : String$ = ListEx()\Cols()\Mask : EndIf
+      EndIf
+      
+      ForEach ListEx()\Rows()
+        ListEx()\Rows()\iSort = ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
+      Next
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
+      ;}
+    Else                                       ;{ Sort text   (string)
+      
+      ForEach ListEx()\Rows()
+        If ListEx()\Sort\Flags & #Deutsch
+          ListEx()\Rows()\Sort = SortDEU_(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
+        Else
+          ListEx()\Rows()\Sort = ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value
+        EndIf
+      Next  
+      
+      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\Sort), #PB_String)
+      ;}
+    EndIf
+  
+  EndProcedure
+  
+  
+  ;- __________ Drawing __________ 
+   
   Procedure.f GetAlignOffset_(Text.s, Width.f, Flags.i)
     Define.f Offset
     
@@ -1408,6 +1558,195 @@ Module ListEx
     R2 = Red(Color2): G2 = Green(Color2): B2 = Blue(Color2)
     
     ProcedureReturn RGB((R1*Blend) + (R2 * (1-Blend)), (G1*Blend) + (G2 * (1-Blend)), (B1*Blend) + (B2 * (1-Blend)))
+  EndProcedure
+  
+  
+  Procedure   FitColumns_()
+    Define.i Flags, imgWidth, FontID
+    Define.s Key$, Text$
+    
+    If StartDrawing(CanvasOutput(ListEx()\CanvasNum))
+      
+      PushListPosition(ListEx()\Rows())
+      PushListPosition(ListEx()\Cols())
+      
+      ;{ _____ Header _____
+      If ListEx()\Flags & #NoRowHeader = #False
+  
+        ForEach ListEx()\Cols()
+          
+          If ListEx()\Cols()\Flags & #Hide : Continue : EndIf
+          
+          If ListEx()\Cols()\Header\FontID = #PB_Default
+            DrawingFont(ListEx()\Header\FontID)
+          Else
+            DrawingFont(ListEx()\Cols()\Header\FontID)
+          EndIf
+          
+          If ListEx()\Cols()\Header\Flags & #Image 
+            ListEx()\Cols()\MaxWidth = TextWidth(ListEx()\Cols()\Header\Titel) + ListEx()\Cols()\Header\Image\Width + dpiX(4)
+          Else
+            ListEx()\Cols()\MaxWidth = TextWidth(ListEx()\Cols()\Header\Titel)
+          EndIf          
+
+        Next
+        
+      EndIf ;}
+      
+      DrawingFont(ListEx()\Row\FontID)
+
+      ; _____ Rows _____
+
+      ForEach ListEx()\Rows()
+        
+        If ListEx()\Rows()\FontID : DrawingFont(ListEx()\Rows()\FontID) : EndIf
+        
+        DrawingMode(#PB_2DDrawing_Default)
+        
+        ;{ Columns of current row
+        ForEach ListEx()\Cols()
+          
+          If ListEx()\Cols()\Flags & #Hide : Continue : EndIf
+
+          Key$ = ListEx()\Cols()\Key
+          If Key$ = "" : Key$ = Str(ListIndex(ListEx()\Cols())) : EndIf
+          
+          Flags = ListEx()\Rows()\Column(Key$)\Flags
+          
+          If ListEx()\Cols()\FontID
+            FontID = ListEx()\Cols()\FontID
+          Else
+            FontID = ListEx()\Rows()\FontID
+          EndIf
+          DrawingFont(FontID)
+          
+          If CurrentColumn_() = 0 And ListEx()\Flags & #NumberedColumn ;{ Numbering column 0
+            
+            If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+            
+            Text$ = Str(ListIndex(ListEx()\Rows()) + 1)
+            If TextWidth(Text$) > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = TextWidth(Text$) : EndIf
+            
+            If Flags & #CellFont : DrawingFont(FontID) : EndIf
+            
+            ;}
+          Else  
+            
+            Flags = ListEx()\Rows()\Column(Key$)\Flags
+           
+            If ListEx()\Cols()\Flags & #CheckBoxes      ;{ CheckBox
+              If ListEx()\Cols()\Width > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = ListEx()\Cols()\Width : EndIf
+              ;}
+            ElseIf ListEx()\Cols()\Flags & #Buttons     ;{ Button
+              
+              If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+              
+              Text$ = ListEx()\Rows()\Column(Key$)\Value
+              
+              If Flags & #Image
+                If TextWidth(Text$) + ListEx()\Rows()\Column(Key$)\Image\Width > ListEx()\Cols()\MaxWidth
+                  ListEx()\Cols()\MaxWidth = TextWidth(Text$) + ListEx()\Rows()\Column(Key$)\Image\Width
+                EndIf
+              Else
+                If TextWidth(Text$) > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = TextWidth(Text$) : EndIf
+              EndIf
+              
+              If Flags & #CellFont : DrawingFont(FontID) : EndIf
+              ;}
+            ElseIf ListEx()\Cols()\Flags & #ProgressBar ;{ ProgressBar
+              If ListEx()\Cols()\Width > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = ListEx()\Cols()\Width : EndIf
+              ;}
+            ElseIf Flags & #Image       ;{ Image
+
+              imgWidth = ListEx()\Rows()\Column(Key$)\Image\Width + dpiX(4)
+              
+              Text$ = ListEx()\Rows()\Column(Key$)\Value
+              If Text$ <> ""
+                
+                If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+                
+                CompilerIf #Enable_MarkContent
+                  
+                  If ListEx()\Cols()\Flags & #MarkContent
+                    If FindMapElement(ListEx()\Mark(), ListEx()\Cols()\Key)
+                      Select IsMarked_(Text$, ListEx()\Mark()\Term, ListEx()\Cols()\Flags)
+                        Case #Condition1
+                          If ListEx()\Mark()\FontID <> #PB_Default : DrawingFont(ListEx()\Mark()\FontID) : EndIf
+                        Case #Condition2
+                          If ListEx()\Mark()\FontID <> #PB_Default : DrawingFont(ListEx()\Mark()\FontID) : EndIf
+                      EndSelect
+                    EndIf
+                  EndIf
+                  
+                CompilerEndIf
+                
+                If TextWidth(Text$) + imgWidth > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = TextWidth(Text$) + imgWidth : EndIf
+                If Flags & #CellFont : DrawingFont(FontID) : EndIf
+                
+              Else
+                
+                If imgWidth > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = imgWidth : EndIf
+
+              EndIf  
+              ;}
+            Else                                        ;{ Text
+              
+              Text$ = ListEx()\Rows()\Column(Key$)\Value
+              If Text$ <> ""
+
+                If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+                
+                CompilerIf #Enable_MarkContent
+                  
+                  If ListEx()\Cols()\Flags & #MarkContent
+                    If FindMapElement(ListEx()\Mark(), ListEx()\Cols()\Key)
+                      Select IsMarked_(Text$, ListEx()\Mark()\Term, ListEx()\Cols()\Flags)
+                        Case #Condition1
+                          If ListEx()\Mark()\FontID <> #PB_Default : DrawingFont(ListEx()\Mark()\FontID) : EndIf
+                        Case #Condition2
+                          If ListEx()\Mark()\FontID <> #PB_Default : DrawingFont(ListEx()\Mark()\FontID) : EndIf
+                      EndSelect
+                    EndIf
+                  EndIf
+                  
+                CompilerEndIf
+                
+                If TextWidth(Text$) > ListEx()\Cols()\MaxWidth : ListEx()\Cols()\MaxWidth = TextWidth(Text$) : EndIf
+                
+                If Flags & #CellFont : DrawingFont(FontID) : EndIf
+                
+              EndIf
+              ;}  
+            EndIf
+
+          EndIf
+          
+        Next ;}
+        
+      Next
+      
+      ListEx()\Size\Cols = 0
+      
+      ForEach ListEx()\Cols()
+        
+        If ListEx()\Cols()\Flags & #Hide : Continue : EndIf
+      
+        If ListEx()\Cols()\Flags & #FitColumn
+          ListEx()\Cols()\Width = ListEx()\Cols()\MaxWidth + (ListEx()\Col\Padding * 2)
+        EndIf  
+        
+        ListEx()\Cols()\X  = ListEx()\Size\Cols
+        ListEx()\Size\Cols + ListEx()\Cols()\Width
+        
+      Next
+
+
+      PopListPosition(ListEx()\Cols())
+      PopListPosition(ListEx()\Rows())
+
+      StopDrawing()
+    EndIf  
+  
   EndProcedure
   
   
@@ -1527,59 +1866,69 @@ Module ListEx
     
   EndProcedure
   
-  
-  Procedure   DrawProgressBar_(X.f, Y.f, Width.f, Height.f, State.i, Text.s, TextColor.i, Align.i)
-    Define.f Factor
-    Define.i pbWidth, pbHeight, textX, textY, Progress, Percent
+  CompilerIf #Enable_ProgressBar
     
-    If State < ListEx()\ProgressBar\Minimum : State = ListEx()\ProgressBar\Minimum : EndIf
-    If State > ListEx()\ProgressBar\Maximum : State = ListEx()\ProgressBar\Maximum : EndIf
-    
-    pbWidth  = Width  - dpiX(4)
-    pbHeight = Height - dpiY(4)
-    
-    If State > ListEx()\ProgressBar\Minimum
+    Procedure   DrawProgressBar_(X.f, Y.f, Width.f, Height.f, State.i, Text.s, TextColor.i, Align.i, FontID.i)
+      Define.f Factor
+      Define.i pbWidth, pbHeight, textX, textY, Progress, Percent
       
-      If State = ListEx()\ProgressBar\Maximum
-        Progress = pbWidth
-      Else
-        Factor   = pbWidth / (ListEx()\ProgressBar\Maximum - ListEx()\ProgressBar\Minimum)
-        Progress = (State - ListEx()\ProgressBar\Minimum) * Factor
+      If State < ListEx()\ProgressBar\Minimum : State = ListEx()\ProgressBar\Minimum : EndIf
+      If State > ListEx()\ProgressBar\Maximum : State = ListEx()\ProgressBar\Maximum : EndIf
+      
+      pbWidth  = Width  - dpiX(4)
+      pbHeight = Height - dpiY(4)
+      
+      If State > ListEx()\ProgressBar\Minimum
+        
+        If State = ListEx()\ProgressBar\Maximum
+          Progress = pbWidth
+        Else
+          Factor   = pbWidth / (ListEx()\ProgressBar\Maximum - ListEx()\ProgressBar\Minimum)
+          Progress = (State - ListEx()\ProgressBar\Minimum) * Factor
+        EndIf
+        
+        DrawingMode(#PB_2DDrawing_Gradient)
+        FrontColor(ListEx()\Color\Gradient)
+        BackColor(ListEx()\Color\ProgressBar)
+        LinearGradient(X + dpiX(2), Y + dpiY(2), X + Progress + dpiX(2), Y + pbHeight + dpiX(2))
+        Box(X + dpiX(2), Y + dpiY(2), Progress, pbHeight)
+  
       EndIf
       
-      DrawingMode(#PB_2DDrawing_Default)
-      Box(X + dpiX(2), Y + dpiY(2), Progress, pbHeight, ListEx()\Color\ProgressBar)
-
-    EndIf
+      Percent = ((State - ListEx()\ProgressBar\Minimum) * 100) /  (ListEx()\ProgressBar\Maximum - ListEx()\ProgressBar\Minimum)
+      
+      If Text
+        
+        DrawingFont(FontID)
+        
+        Text  = ReplaceString(Text, #Progress$, Str(Percent) + "%")
+        textX = GetAlignOffset_(Text, pbWidth, Align)
+        textY = (Height - TextHeight(Text)) / 2
+        
+        DrawingMode(#PB_2DDrawing_Transparent)
+        DrawText(X + textX, Y + textY, Text, TextColor)
+        
+      ElseIf ListEx()\ProgressBar\Flags & #ShowPercent
+        
+        DrawingFont(FontID)
+        
+        Text  = Str(Percent) + "%"
+        textX = Progress - TextWidth(Text)
+        textY = (Height - TextHeight(Text)) / 2
+        
+        If textX < dpiX(5) : textX = dpiX(5) : EndIf
+        
+        DrawingMode(#PB_2DDrawing_Transparent)
+        DrawText(X + textX, Y + textY, Text, TextColor)
+        
+      EndIf
+      
+      DrawingMode(#PB_2DDrawing_Outlined)
+      Box(X + dpiX(2),  Y + dpiY(2), pbWidth, pbHeight, ListEx()\Color\ButtonBorder)
+      
+    EndProcedure
     
-    Percent = ((State - ListEx()\ProgressBar\Minimum) * 100) /  (ListEx()\ProgressBar\Maximum - ListEx()\ProgressBar\Minimum)
-    
-    If Text
-      
-      Text  = ReplaceString(Text, #Progress$, Str(Percent) + "%")
-      textX = GetAlignOffset_(Text, pbWidth, Align)
-      textY = (Height - TextHeight(Text)) / 2
-      
-      DrawingMode(#PB_2DDrawing_Transparent)
-      DrawText(X + textX, Y + textY, Text, TextColor)
-      
-    ElseIf ListEx()\ProgressBar\Flags & #ShowPercent
-      
-      Text  = Str(Percent) + "%"
-      textX = Progress - TextWidth(Text)
-      textY = (Height - TextHeight(Text)) / 2
-      
-      If textX < dpiX(5) : textX = dpiX(5) : EndIf
-      
-      DrawingMode(#PB_2DDrawing_Transparent)
-      DrawText(X + textX, Y + textY, Text, TextColor)
-      
-    EndIf
-    
-    DrawingMode(#PB_2DDrawing_Outlined)
-    Box(X + dpiX(2),  Y + dpiY(2), pbWidth, pbHeight, ListEx()\Color\ButtonBorder)
-    
-  EndProcedure
+  CompilerEndIf
   
   Procedure   DrawButton_(X.f, Y.f, Width.f, Height.f, Text.s, ColorFlag.i, TextColor.i, FontID.i, *Image.Image_Structure)
     Define.f colX, rowY, imgX, imgY
@@ -1694,9 +2043,11 @@ Module ListEx
     
   EndProcedure
   
+ 
   Procedure   Draw_()
-    Define.f colX, rowY, textY, textX, colW0, colWidth, rowHeight, imgY, imgX
-    Define.i Flags, imgFlags, FrontColor, FocusColor, RowColor, Mark, Row
+    Define.f colX, rowY, textY, textX, colW0, colWidth, rowHeight, imgY, imgX, imgWidth
+    Define.i Flags, imgFlags, Align, Mark, Row
+    Define.i FrontColor, FocusColor, RowColor, FontID, RowFontID
     Define.s Key$, Text$
     
     AdjustScrollBars_()
@@ -1718,16 +2069,14 @@ Module ListEx
 
       colX     = ListEx()\Size\X    - ListEx()\Col\OffsetX
       colWidth = ListEx()\Size\Cols - ListEx()\Col\OffsetX
-      
+
       ;{ _____ Header _____
       If ListEx()\Flags & #NoRowHeader
+        
         rowY = ListEx()\Size\Y
+        
       Else
-        
-        DrawingFont(ListEx()\Header\FontID)
-        
-        textY = (ListEx()\Header\Height - TextHeight("Abc")) / 2 + 0.5
-        
+
         DrawingMode(#PB_2DDrawing_Default)
         Box(colX, rowY, ListEx()\Size\Cols, ListEx()\Header\Height, ListEx()\Color\HeaderBack)
         
@@ -1735,11 +2084,22 @@ Module ListEx
           
           If ListEx()\Cols()\Flags & #Hide : Continue : EndIf
           
+          If ListEx()\Cols()\Header\FontID = #PB_Default
+            DrawingFont(ListEx()\Header\FontID)
+          Else
+            DrawingFont(ListEx()\Cols()\Header\FontID)
+          EndIf
+
+          If ListEx()\Cols()\Header\BackColor <> #PB_Default
+            DrawingMode(#PB_2DDrawing_Default)
+            Box(colX, rowY, ListEx()\Cols()\Width, ListEx()\Header\Height, ListEx()\Cols()\Header\BackColor)
+          EndIf 
+          
           If CurrentColumn_() = ListEx()\Sort\Column And ListEx()\Cols()\Header\Sort & #SortArrows
             Arrow_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Header\Height, ListEx()\Cols()\Header\Direction) 
           EndIf
           
-          If ListEx()\Cols()\Header\Flags & #Image
+          If ListEx()\Cols()\Header\Flags & #Image ;{ Image
             
             imgFlags = ListEx()\Cols()\Header\Image\Flags
             
@@ -1755,13 +2115,32 @@ Module ListEx
           
             DrawingMode(#PB_2DDrawing_AlphaBlend)
             DrawImage(ListEx()\Cols()\Header\Image\ID, colX + imgX, rowY + imgY, ListEx()\Cols()\Header\Image\Width, ListEx()\Cols()\Header\Image\Height) 
-
+            
+            ListEx()\Cols()\MaxWidth = TextWidth(ListEx()\Cols()\Header\Titel) + ListEx()\Cols()\Header\Image\Width + dpiX(4)
+            
+          Else
+            
+            ListEx()\Cols()\MaxWidth = TextWidth(ListEx()\Cols()\Header\Titel)
+            ;}
+          EndIf          
+          
+          If ListEx()\Cols()\Header\Align = #PB_Default
+            Align = ListEx()\Header\Align
+          Else
+            Align = ListEx()\Cols()\Header\Align
+          EndIf
+          
+          If ListEx()\Cols()\Header\FrontColor = #PB_Default
+            FrontColor = ListEx()\Color\HeaderFront
+          Else
+            FrontColor = ListEx()\Cols()\Header\FrontColor
           EndIf
           
           If ListEx()\Cols()\Header\Titel
-            textX = GetAlignOffset_(ListEx()\Cols()\Header\Titel, ListEx()\Cols()\Width, ListEx()\Header\Align)
+            textX = GetAlignOffset_(ListEx()\Cols()\Header\Titel, ListEx()\Cols()\Width, Align)
+            textY = (ListEx()\Header\Height - TextHeight("Abc")) / 2 + 0.5
             DrawingMode(#PB_2DDrawing_Transparent)
-            DrawText(colX + textX, rowY + textY, ListEx()\Cols()\Header\Titel, ListEx()\Color\HeaderFront)
+            DrawText(colX + textX, rowY + textY, ListEx()\Cols()\Header\Titel, FrontColor)
           EndIf
           
           DrawingMode(#PB_2DDrawing_Outlined)
@@ -1774,8 +2153,9 @@ Module ListEx
       EndIf ;}
       
       DrawingFont(ListEx()\Row\FontID)
-
-      ;{ _____ Rows _____
+      FontID    = ListEx()\Row\FontID
+      
+      ; _____ Rows _____
       ListEx()\Row\OffSetY = 0
 
       ForEach ListEx()\Rows()
@@ -1785,7 +2165,8 @@ Module ListEx
           Continue
         EndIf
         
-        If ListEx()\Rows()\FontID : DrawingFont(ListEx()\Rows()\FontID) : EndIf
+        If ListEx()\Rows()\FontID : FontID = ListEx()\Rows()\FontID : EndIf
+        RowFontID = FontID
         
         rowHeight + ListEx()\Rows()\Height
         
@@ -1797,7 +2178,7 @@ Module ListEx
 
         ;{ Focus row
         FocusColor = BlendColor_(ListEx()\Color\Focus, ListEx()\Color\Back, 10)
-        If ListEx()\Flags & #MultiSelect And ListEx()\Strg = #True
+        If ListEx()\Flags & #MultiSelect And ListEx()\MultiSelect = #True
           If ListEx()\Rows()\State & #Selected
             Box(colX, rowY, ListEx()\Size\Cols, ListEx()\Rows()\Height, FocusColor)
           EndIf
@@ -1812,22 +2193,23 @@ Module ListEx
         Else
           Box(colX, rowY, ListEx()\Size\Cols, ListEx()\Rows()\Height, ListEx()\Color\Back)
         EndIf ;}
-        
-        ;{ Columns of current row
-        ForEach ListEx()\Cols()
+
+        ForEach ListEx()\Cols() ;{ Columns of current row
           
           If ListEx()\Cols()\Flags & #Hide : Continue : EndIf
-          
+
           Key$ = ListEx()\Cols()\Key
           If Key$ = "" : Key$ = Str(ListIndex(ListEx()\Cols())) : EndIf
           
-          If ListEx()\Cols()\FontID
-            DrawingFont(ListEx()\Cols()\FontID)
-          Else
-            DrawingFont(ListEx()\Rows()\FontID)
-          EndIf
+          Flags = ListEx()\Rows()\Column(Key$)\Flags
           
+          If ListEx()\Cols()\FontID : FontID = ListEx()\Cols()\FontID : EndIf
+
           If CurrentColumn_() = 0 And ListEx()\Flags & #NumberedColumn ;{ Numbering column 0
+            
+            If Flags & #CellFont : FontID = ListEx()\Rows()\Column(Key$)\FontID : EndIf
+            
+            DrawingFont(FontID)
             
             Text$    = Str(ListIndex(ListEx()\Rows()) + 1)
             textX    = GetAlignOffset_(Text$, ListEx()\Cols()\Width, #Right)
@@ -1842,15 +2224,29 @@ Module ListEx
             
             DrawingMode(#PB_2DDrawing_Outlined)
             Box(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height + dpiY(1), ListEx()\Color\HeaderGrid)
+            
+            If Flags & #CellFont : DrawingFont(RowFontID) : EndIf
             ;}
           Else  
             
-            Flags = ListEx()\Rows()\Column(Key$)\Flags
+            If ListEx()\Cols()\Flags & #Links
+              FrontColor = ListEx()\Color\Link
+            ElseIf ListEx()\Rows()\Column(Key$)\Flags & #FrontColor
+              FrontColor = ListEx()\Rows()\Column(Key$)\Color\Front
+            ElseIf ListEx()\Cols()\FrontColor <> #PB_Default
+              FrontColor = ListEx()\Cols()\FrontColor
+            Else
+              FrontColor = ListEx()\Color\Front
+            EndIf
             
-            If Flags & #BackColor                       ;{ Colored cell background
-              If ListIndex(ListEx()\Rows()) <> ListEx()\Row\Current
+            ;{ Colored cell background
+            If ListIndex(ListEx()\Rows()) <> ListEx()\Row\Current
+              If Flags & #BackColor                       
                 DrawingMode(#PB_2DDrawing_Default)
                 Box(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\Color\Back)  
+              ElseIf ListEx()\Cols()\BackColor <> #PB_Default
+                DrawingMode(#PB_2DDrawing_Default)
+                Box(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Cols()\BackColor)
               EndIf
             EndIf ;}
             
@@ -1876,12 +2272,12 @@ Module ListEx
                 ClipOutput(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height)
               CompilerEndIf
               
-              If ListEx()\Rows()\Column(Key$)\Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+              If Flags & #CellFont : FontID = ListEx()\Rows()\Column(Key$)\FontID : EndIf
               
               If ListEx()\Rows()\Column(Key$)\Flags & #FrontColor
-                Button_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\Value, #False, ListEx()\Rows()\Column(Key$)\Color\Front)
+                Button_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\Value, #False, ListEx()\Rows()\Column(Key$)\Color\Front, FontID)
               Else
-                Button_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\Value, #False, ListEx()\Rows()\Color\Front)
+                Button_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\Value, #False, ListEx()\Rows()\Color\Front, FontID)
               EndIf
               
               If Flags & #Image
@@ -1903,22 +2299,24 @@ Module ListEx
                 
               EndIf
               
-              If ListEx()\Rows()\Column(Key$)\Flags & #CellFont : DrawingFont(ListEx()\Row\FontID) : EndIf
+              If Flags & #CellFont : DrawingFont(RowFontID) : EndIf
               
               CompilerIf #PB_Compiler_OS <> #PB_OS_MacOS
                 UnclipOutput()
               CompilerEndIf  
               ;}
-            ElseIf ListEx()\Cols()\Flags & #ProgressBar ;{ ProgressBar
+            ElseIf ListEx()\Cols()\Flags & #ProgressBar ;  ProgressBar
+              CompilerIf #Enable_ProgressBar
+                
+                If Flags & #CellFont : FontID = ListEx()\Rows()\Column(Key$)\FontID : EndIf
+                
+                If ListEx()\Rows()\Column(Key$)\Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
               
-              If ListEx()\Rows()\Column(Key$)\Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
-              
-              If ListEx()\Rows()\Column(Key$)\Flags & #FrontColor
-                DrawProgressBar_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\State, ListEx()\Rows()\Column(Key$)\Value, ListEx()\Rows()\Column(Key$)\Color\Front, ListEx()\Cols()\Align)
-              Else
-                DrawProgressBar_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\State, ListEx()\Rows()\Column(Key$)\Value, ListEx()\Rows()\Color\Front, ListEx()\Cols()\Align)
-              EndIf
-              ;}
+                DrawProgressBar_(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height, ListEx()\Rows()\Column(Key$)\State, ListEx()\Rows()\Column(Key$)\Value, FrontColor, ListEx()\Cols()\Align, FontID)
+
+                If Flags & #CellFont : DrawingFont(RowFontID) : EndIf
+                
+              CompilerEndIf 
             ElseIf Flags & #Image                       ;{ Image
               
               CompilerIf #PB_Compiler_OS <> #PB_OS_MacOS
@@ -1930,12 +2328,13 @@ Module ListEx
               If imgFlags & #Center
                 imgX  = (ListEx()\Cols()\Width - ListEx()\Rows()\Column(Key$)\Image\Width) / 2
               ElseIf imgFlags & #Right
-                imgX  = ListEx()\Cols()\Width - ListEx()\Rows()\Column(Key$)\Image\Width - dpiX(4)
+                imgX  = ListEx()\Cols()\Width  - ListEx()\Rows()\Column(Key$)\Image\Width - dpiX(4)
               Else 
                 imgX = dpiX(4)
               EndIf
-
-              imgY  = (ListEx()\Rows()\Height - ListEx()\Rows()\Column(Key$)\Image\Height) / 2 + dpiY(1)
+              
+              imgWidth = ListEx()\Rows()\Column(Key$)\Image\Width + dpiX(4)
+              imgY     = (ListEx()\Rows()\Height - ListEx()\Rows()\Column(Key$)\Image\Height) / 2 + dpiY(1)
               
               DrawingMode(#PB_2DDrawing_AlphaBlend)
               DrawImage(ListEx()\Rows()\Column(Key$)\Image\ID, colX + imgX, rowY + imgY, ListEx()\Rows()\Column(Key$)\Image\Width, ListEx()\Rows()\Column(Key$)\Image\Height) 
@@ -1943,7 +2342,9 @@ Module ListEx
               Text$ = ListEx()\Rows()\Column(Key$)\Value
               If Text$ <> ""
                 
-                If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+                If Flags & #CellFont : FontID = ListEx()\Rows()\Column(Key$)\FontID : EndIf
+                
+                DrawingFont(FontID)
                 
                 textY = (ListEx()\Rows()\Height - TextHeight("Abc")) / 2 + dpiY(1)
                 
@@ -1984,7 +2385,7 @@ Module ListEx
                 
                 DrawText(colX + textX, rowY + textY, Text$, FrontColor)
                 
-                If Flags & #CellFont : DrawingFont(ListEx()\Row\FontID) : EndIf
+                If Flags & #CellFont : DrawingFont(RowFontID) : EndIf
                 
               EndIf  
               CompilerIf #PB_Compiler_OS <> #PB_OS_MacOS
@@ -1994,29 +2395,22 @@ Module ListEx
             Else                                        ;{ Text
               
               Text$ = ListEx()\Rows()\Column(Key$)\Value
-              
               If Text$ <> ""
                 
                 CompilerIf #PB_Compiler_OS <> #PB_OS_MacOS
                   ClipOutput(colX, rowY, ListEx()\Cols()\Width, ListEx()\Rows()\Height) 
                 CompilerEndIf
                 
-                If Flags & #CellFont : DrawingFont(ListEx()\Rows()\Column(Key$)\FontID) : EndIf
+                If Flags & #CellFont : FontID = ListEx()\Rows()\Column(Key$)\FontID : EndIf
+                
+                DrawingFont(FontID)
                 
                 textY = (ListEx()\Rows()\Height - TextHeight("Abc")) / 2 + dpiY(1)
                 
                 DrawingMode(#PB_2DDrawing_Transparent)
                 
                 textX = GetAlignOffset_(Text$, ListEx()\Cols()\Width, ListEx()\Cols()\Align)
-                
-                If ListEx()\Cols()\Flags & #Links
-                  FrontColor = ListEx()\Color\Link
-                ElseIf ListEx()\Rows()\Column(Key$)\Flags & #FrontColor
-                  FrontColor = ListEx()\Rows()\Column(Key$)\Color\Front
-                Else
-                  FrontColor = ListEx()\Color\Front
-                EndIf
-                
+
                 CompilerIf #Enable_MarkContent
                   
                   If ListEx()\Cols()\Flags & #MarkContent
@@ -2036,6 +2430,8 @@ Module ListEx
                 
                 DrawText(colX + textX, rowY + textY, Text$, FrontColor)
                 
+                If Flags & #CellFont : DrawingFont(RowFontID) : EndIf
+                
                 CompilerIf #PB_Compiler_OS <> #PB_OS_MacOS
                   UnclipOutput()
                 CompilerEndIf
@@ -2052,15 +2448,15 @@ Module ListEx
           EndIf
           
           colX + ListEx()\Cols()\Width
-          
-        Next ;}
+          ;}
+        Next
         
         rowY + ListEx()\Row\Height
         
         If rowY > ListEx()\Size\Height : Break : EndIf
         
-      Next ;}
-      
+      Next
+
       colX = ListEx()\Size\X - ListEx()\Col\OffsetX
       rowY = ListEx()\Size\Y
       
@@ -2149,7 +2545,6 @@ Module ListEx
     If IsGadget(ListEx()\HScrollNum) ;{ Horizontal Scrollbar
       
       If ListEx()\Size\Cols > ListEx()\Size\Width
-        
         If ListEx()\HScroll\Hide
           ListEx()\Size\Height = dpiY(GadgetHeight(ListEx()\CanvasNum) - #ScrollBar_Width)
           If ListEx()\VScroll\Hide
@@ -2185,14 +2580,18 @@ Module ListEx
           
         EndIf
         
-      ElseIf Not ListEx()\HScroll\Hide And ListEx()\Size\Cols < ListEx()\Size\Width
+      ElseIf ListEx()\Size\Cols < ListEx()\Size\Width
         
-        ListEx()\Size\Height = dpiY(GadgetHeight(ListEx()\CanvasNum))
-        ResizeGadget(ListEx()\VScrollNum, GadgetWidth(ListEx()\CanvasNum) - #ScrollBar_Width, 1, #ScrollBar_Width - 1, GadgetHeight(ListEx()\CanvasNum) - 2)
-        HideGadget(ListEx()\HScrollNum, #True)
-        ListEx()\HScroll\Hide = #True
+        If ListEx()\HScroll\Hide
+          
+        Else
+          ListEx()\Size\Height = dpiY(GadgetHeight(ListEx()\CanvasNum))
+          ResizeGadget(ListEx()\VScrollNum, GadgetWidth(ListEx()\CanvasNum) - #ScrollBar_Width, 1, #ScrollBar_Width - 1, GadgetHeight(ListEx()\CanvasNum) - 2)
+          HideGadget(ListEx()\HScrollNum, #True)
+          ListEx()\HScroll\Hide = #True
+        EndIf
         
-      EndIf
+      EndIf 
       ;}
     EndIf
     
@@ -2246,6 +2645,7 @@ Module ListEx
         ListEx()\Size\Width = dpiX(GadgetWidth(ListEx()\CanvasNum))
         ResizeGadget(ListEx()\HScrollNum, 1, GadgetHeight(ListEx()\CanvasNum) - #ScrollBar_Width, GadgetWidth(ListEx()\CanvasNum) - 1, #ScrollBar_Width - 2)
         HideGadget(ListEx()\VScrollNum, #True)
+        ListEx()\Row\Offset   = 0
         ListEx()\VScroll\Hide = #True
         
       EndIf
@@ -2260,8 +2660,11 @@ Module ListEx
     If IsGadget(ListEx()\HScrollNum)
       
       ScrollPos = ListEx()\Col\OffsetX
-      If ScrollPos < ListEx()\HScroll\MinPos : ScrollPos = ListEx()\HScroll\MinPos : EndIf
       
+      If ScrollPos < ListEx()\HScroll\MinPos : ScrollPos = ListEx()\HScroll\MinPos : EndIf
+      If ScrollPos > ListEx()\HScroll\MaxPos : ScrollPos = ListEx()\HScroll\MaxPos : EndIf
+      
+      ListEx()\Col\OffsetX      = ScrollPos
       ListEx()\HScroll\Position = ScrollPos
       
       SetGadgetState(ListEx()\HScrollNum, ScrollPos)
@@ -2287,202 +2690,19 @@ Module ListEx
   EndProcedure  
   
   
-  Procedure   SetVisible_(Row.i)
+  Procedure   SetRowFocus_(Row.i)
     Define.i PageRows
-
-    PageRows = GetPageRows_() - 1
-
-    If Row > ListEx()\Row\Offset + PageRows
-      ListEx()\Row\Offset = Row - PageRows
+    
+    PageRows = GetPageRows_()
+    If Row > PageRows + ListEx()\Row\Offset - 1
+      ListEx()\Row\Offset = Row - PageRows + 1
       SetVScrollPosition_()
     ElseIf Row < ListEx()\Row\Offset
-      ListEx()\Row\Offset = Row
+      ListEx()\Row\Offset = Row - 1
       SetVScrollPosition_()
     EndIf
     
   EndProcedure
-  
-  Procedure   SetFocus_(Row.i, Column.i=#PB_Default)
-    
-    If Row > ListSize(ListEx()\Rows()) : Row = ListSize(ListEx()\Rows()) - 1 : EndIf
-    If Row < 0 : Row = 0 : EndIf 
-    
-    If Column = #PB_Default
-      
-      If SelectElement(ListEx()\Rows(), Row)
-        ListEx()\Focus = #True
-        ListEx()\Row\Current = Row
-        ListEx()\Row\Focus   = ListEx()\Row\Current
-        SetVisible_(ListEx()\Row\Focus)
-      EndIf
-      
-    Else
-      
-      If SelectElement(ListEx()\Rows(), Row)
-        If SelectElement(ListEx()\Cols(), Column)
-          ListEx()\Focus = #True
-          ListEx()\Row\Current = Row
-          ListEx()\Row\Focus   = ListEx()\Row\Current
-          SetVisible_(ListEx()\Row\Focus)
-        EndIf 
-      EndIf 
-      
-    EndIf
-    
-  EndProcedure  
-  
-  
-  ;- _____ Sorting _____
-  
-  Procedure SetSortFocus_()
-    If ListIndex(ListEx()\Rows()) = ListEx()\Row\Focus
-      ListEx()\Rows()\Flags | #Focus
-    Else
-      ListEx()\Rows()\Flags & ~#Focus
-    EndIf
-  EndProcedure
-  
-  Procedure.f GetCashFloat_(String.s, Currency.s)
-
-    String = ReplaceString(String, ",", ".")
-    String = RemoveString(String, "")
-    
-    ProcedureReturn ValF(Trim(String)) 
-  EndProcedure
-  
-  Procedure.s SortDEU_(Text.s, Flags.i=#Lexikon) ; german charakters (DIN 5007)
-    
-    If Flags & #Namen
-      Text = ReplaceString(Text, "Ä", "Ae")
-      Text = ReplaceString(Text, "Ö", "Oe")
-      Text = ReplaceString(Text, "Ü", "Ue")
-      Text = ReplaceString(Text, "ä", "ae")
-      Text = ReplaceString(Text, "ö", "oe")
-      Text = ReplaceString(Text, "ü", "ue")
-      Text = ReplaceString(Text, "ß", "ss")
-    ElseIf Flags & #Lexikon Or Flags & #Deutsch
-      Text = ReplaceString(Text, "Ä", "A")
-      Text = ReplaceString(Text, "Ö", "O")
-      Text = ReplaceString(Text, "Ü", "U")
-      Text = ReplaceString(Text, "ä", "a")
-      Text = ReplaceString(Text, "ö", "o")
-      Text = ReplaceString(Text, "ü", "u")
-      Text = ReplaceString(Text, "ß", "ss")
-    EndIf
-    
-    ProcedureReturn Text
-  EndProcedure 
-  
-  Procedure   SortColumn_()
-    Define.s String$
-    
-    If ListEx()\Sort\Flags & #SortNumber       ;{ Sort number (integer)
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\iSort = Val(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
-      ;}
-    ElseIf ListEx()\Sort\Flags & #SortFloat    ;{ Sort number (float)
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\fSort = ValF(ReplaceString(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value, ",", "."))
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\fSort), #PB_Float)
-      ;}
-    ElseIf ListEx()\Sort\Flags & #SortDate     ;{ Sort date   (integer)
-
-      If ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
-        String$ = ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
-      Else  
-        String$ = ListEx()\Date\Mask
-      EndIf
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\iSort = ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
-      ;}
-    ElseIf ListEx()\Sort\Flags & #SortBirthday ;{ Sort birthday   (string)
-
-      If ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
-        String$ = ListEx()\Date\Column(ListEx()\Sort\Label)\Mask
-      Else  
-        String$ = ListEx()\Date\Mask
-      EndIf
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\Sort = FormatDate("%mm%dd", ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value))
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\Sort), #PB_String)
-      ;}  
-    ElseIf ListEx()\Sort\Flags & #SortCash     ;{ Sort cash   (float)
-
-      String$ = ListEx()\Country\Currency
-      If SelectElement(ListEx()\Cols(), ListEx()\Sort\Column)
-        If ListEx()\Cols()\Currency : String$ = ListEx()\Cols()\Currency : EndIf
-      EndIf
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\fSort = GetCashFloat_(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value, String$)
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\fSort), #PB_Float)
-      ;}
-    ElseIf ListEx()\Sort\Flags & #SortTime     ;{ Sort time   (integer)
-      
-      String$ = ListEx()\Country\TimeMask
-      If SelectElement(ListEx()\Cols(), ListEx()\Sort\Column)
-        If ListEx()\Cols()\Mask : String$ = ListEx()\Cols()\Mask : EndIf
-      EndIf
-      
-      ForEach ListEx()\Rows()
-        ListEx()\Rows()\iSort = ParseDate(String$, ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
-        SetSortFocus_()
-      Next
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\iSort), #PB_Integer)
-      ;}
-    Else                                       ;{ Sort text   (string)
-      
-      ForEach ListEx()\Rows()
-        If ListEx()\Sort\Flags & #Deutsch
-          ListEx()\Rows()\Sort = SortDEU_(ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value)
-        Else
-          ListEx()\Rows()\Sort = ListEx()\Rows()\Column(ListEx()\Sort\Label)\Value
-        EndIf
-        SetSortFocus_()
-      Next  
-      
-      SortStructuredList(ListEx()\Rows(), ListEx()\Sort\Direction, OffsetOf(ListEx_Rows_Structure\Sort), #PB_String)
-      ;}
-    EndIf
-    
-    ; Determine original focus line
-    If ListEx()\Focus And ListEx()\Row\Focus <> #NotValid
-      
-      ForEach ListEx()\Rows()
-        If ListEx()\Rows()\Flags & #Focus
-          ListEx()\Row\Focus = ListIndex(ListEx()\Rows())
-          SetVisible_(ListEx()\Row\Focus)
-          ListEx()\Rows()\Flags & ~#Focus
-          Break
-        EndIf
-      Next 
-      
-    EndIf 
-    
-  EndProcedure
-  
   
   ;- __________ Events __________
   
@@ -2635,6 +2855,9 @@ Module ListEx
          
           EndIf
           ;}
+        Else 
+          UpdateEventData_(#PB_EventType_LeftDoubleClick, Row, Column, ListEx()\Rows()\Column(Key$)\Value, ListEx()\Rows()\State, ListEx()\Rows()\ID)
+          PostEvent(#Event_Gadget, ListEx()\Window\Num, ListEx()\CanvasNum, #PB_EventType_LeftDoubleClick, Row)
         EndIf  
 
       EndIf
@@ -2688,19 +2911,33 @@ Module ListEx
   
   Procedure.i NextEditColumn_(Column.i)
     
-    If SelectElement(ListEx()\Cols(), Column)
+    If Column = #PB_Default
       
-      While NextElement(ListEx()\Cols())
-        
-        If ListEx()\Cols()\Flags & #Strings
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        ElseIf ListEx()\Cols()\Flags & #ComboBoxes
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        ElseIf ListEx()\Cols()\Flags & #Dates
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        EndIf
-        
-      Wend
+      If FirstElement(ListEx()\Cols())
+        Repeat
+          If ListEx()\Cols()\Flags & #Strings
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #ComboBoxes
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #Dates
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          EndIf
+        Until NextElement(ListEx()\Cols()) = #False
+      EndIf
+      
+    Else
+    
+      If SelectElement(ListEx()\Cols(), Column)
+        While NextElement(ListEx()\Cols())
+          If ListEx()\Cols()\Flags & #Strings
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #ComboBoxes
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #Dates
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          EndIf
+        Wend
+      EndIf
       
     EndIf
     
@@ -2709,19 +2946,33 @@ Module ListEx
   
   Procedure.i PreviousEditColumn_(Column.i)
     
-    If SelectElement(ListEx()\Cols(), Column)
+    If Column = #PB_Default
       
-      While PreviousElement(ListEx()\Cols())
-        
-        If ListEx()\Cols()\Flags & #Strings
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        ElseIf ListEx()\Cols()\Flags & #ComboBoxes
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        ElseIf ListEx()\Cols()\Flags & #Dates
-          ProcedureReturn ListIndex(ListEx()\Cols())
-        EndIf
-        
-      Wend
+      If LastElement(ListEx()\Cols())
+        Repeat
+          If ListEx()\Cols()\Flags & #Strings
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #ComboBoxes
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #Dates
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          EndIf
+        Until PreviousElement(ListEx()\Cols()) = #False
+      EndIf
+      
+    Else
+    
+      If SelectElement(ListEx()\Cols(), Column)
+        While PreviousElement(ListEx()\Cols())
+          If ListEx()\Cols()\Flags & #Strings
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #ComboBoxes
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          ElseIf ListEx()\Cols()\Flags & #Dates
+            ProcedureReturn ListIndex(ListEx()\Cols())
+          EndIf
+        Wend
+      EndIf
       
     EndIf
     
@@ -2729,9 +2980,9 @@ Module ListEx
   EndProcedure
   
   ;- ----------------------------
-
+  
   Procedure _KeyShiftTabHandler()
-    Define.i GNum, Column
+    Define.i GNum, Column, Row
     Define.i ActiveID = GetActiveGadget()
     
     If IsGadget(ActiveID)
@@ -2744,19 +2995,43 @@ Module ListEx
           Case ListEx()\StringNum
             CloseString_()
             Column = PreviousEditColumn_(ListEx()\String\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row - 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = PreviousEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
           Case ListEx()\ComboNum
             CloseComboBox_()
             Column = PreviousEditColumn_(ListEx()\ComboBox\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row - 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = PreviousEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\ComboBox\Row, Column)
             EndIf
           Case ListEx()\DateNum
             CloseDate_()
             Column = PreviousEditColumn_(ListEx()\Date\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row - 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = PreviousEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
         EndSelect
@@ -2768,7 +3043,7 @@ Module ListEx
   EndProcedure
   
   Procedure _KeyTabHandler()
-    Define.i GNum, Column
+    Define.i GNum, Column, Row
     Define.i ActiveID = GetActiveGadget()
     
     If IsGadget(ActiveID)
@@ -2776,35 +3051,50 @@ Module ListEx
       GNum = GetGadgetData(ActiveID)
       
       If FindMapElement(ListEx(), Str(GNum))  
-
+        
         Select ActiveID 
           Case ListEx()\StringNum
-
             CloseString_()
-            
             Column = NextEditColumn_(ListEx()\String\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row + 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = NextEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\String\Row, Column)
             EndIf
-            
           Case ListEx()\ComboNum
-            
             CloseComboBox_()
-            
             Column = NextEditColumn_(ListEx()\ComboBox\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row + 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = NextEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\ComboBox\Row, Column)
             EndIf
-            
           Case ListEx()\DateNum
-            
             CloseDate_()
-            
             Column = NextEditColumn_(ListEx()\Date\Col)
-            If Column <> #NotValid
+            If Column = #NotValid
+              Row = ListEx()\String\Row + 1
+              If SelectElement(ListEx()\Rows(), Row)
+                Column = NextEditColumn_(#PB_Default)
+                If Column <> #NotValid
+                  ManageEditGadgets_(Row, Column)
+                EndIf 
+              EndIf
+            Else
               ManageEditGadgets_(ListEx()\Date\Row, Column)
             EndIf
-            
         EndSelect
         
       EndIf
@@ -2872,36 +3162,85 @@ Module ListEx
     EndIf
   EndProcedure
   
-  
   Procedure _KeyDownHandler()
-    Define.i Key, Modifier, PageNum
     Define.i GNum = EventGadget()
+    Define.i PageRows, Key, Modifier
     
     If FindMapElement(ListEx(), Str(GNum))
       
       Key      = GetGadgetAttribute(GNum, #PB_Canvas_Key)
       Modifier = GetGadgetAttribute(GNum, #PB_Canvas_Modifiers)
       
-      Select Key 
-        Case #PB_Shortcut_Up       ;{ Up
-          SetFocus_(ListEx()\Row\Focus - 1)
+      Select Key
+        Case #PB_Shortcut_Left     ;{ Left
+          ListEx()\Col\OffsetX - 20
+          SetHScrollPosition_()
           ;}
+        Case #PB_Shortcut_Right    ;{ Right
+          ListEx()\Col\OffsetX + 20
+          SetHScrollPosition_()
+          ;}
+        Case #PB_Shortcut_Up       ;{ Up
+          ListEx()\Focus = #True
+          If PreviousElement(ListEx()\Rows())
+            ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+          ElseIf FirstElement(ListEx()\Rows())
+            ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+          EndIf
+          ListEx()\Row\Focus = ListEx()\Row\Current
+          SetRowFocus_(ListEx()\Row\Focus) ;}
         Case #PB_Shortcut_Down     ;{ Down
-          SetFocus_(ListEx()\Row\Focus + 1)
+          ListEx()\Focus = #True
+          If NextElement(ListEx()\Rows())
+            ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+          ElseIf LastElement(ListEx()\Rows())
+            ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+          EndIf
+          ListEx()\Row\Focus = ListEx()\Row\Current
+          SetRowFocus_(ListEx()\Row\Focus)
           ;}
         Case #PB_Shortcut_PageUp   ;{ PageUp
-          PageNum = GetPageRows_()
-          SetFocus_(ListEx()\Row\Focus - PageNum)
-          ;}
+          PageRows = GetPageRows_()
+          ListEx()\Row\Current = ListEx()\Row\Focus - PageRows
+          If ListEx()\Row\Current < 0 : ListEx()\Row\Current = 0 : EndIf
+          If SelectElement(ListEx()\Rows(), ListEx()\Row\Current)
+            ListEx()\Row\Focus = ListEx()\Row\Current
+            ListEx()\Row\Offset = ListEx()\Row\Focus
+            If ListEx()\Row\Offset > ListSize(ListEx()\Rows()) - PageRows
+              ListEx()\Row\Offset = ListSize(ListEx()\Rows()) - PageRows
+            EndIf
+            SetVScrollPosition_()
+          EndIf ;}
         Case #PB_Shortcut_PageDown ;{ PageDown
-          PageNum = GetPageRows_()
-          SetFocus_(ListEx()\Row\Focus + PageNum)
-          ;}
-        Case #PB_Shortcut_Home     ;{ Home/Pos1  
-          SetFocus_(0)
-          ;}
+          PageRows = GetPageRows_()
+          ListEx()\Row\Current = ListEx()\Row\Focus + PageRows
+          If ListEx()\Row\Current >= ListSize(ListEx()\Rows()) : ListEx()\Row\Current = ListSize(ListEx()\Rows()) - 1 : EndIf 
+          If SelectElement(ListEx()\Rows(), ListEx()\Row\Current)
+            ListEx()\Row\Focus = ListEx()\Row\Current
+            ListEx()\Row\Offset = ListEx()\Row\Focus
+            If ListEx()\Row\Offset >= ListSize(ListEx()\Rows()) - PageRows
+              ListEx()\Row\Offset = ListSize(ListEx()\Rows()) - PageRows
+            EndIf
+            SetVScrollPosition_()
+          EndIf ;}
+        Case #PB_Shortcut_Home     ;{ Home
+          If Modifier & #PB_Canvas_Control
+            If FirstElement(ListEx()\Rows())
+              ListEx()\Focus = #True
+              ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+              ListEx()\Row\Focus = ListEx()\Row\Current
+              SetRowFocus_(ListEx()\Row\Focus)
+            EndIf
+          EndIf ;}
         Case #PB_Shortcut_End      ;{ End
-          SetFocus_(ListSize(ListEx()\Rows())-1)
+          If Modifier & #PB_Canvas_Control
+            If LastElement(ListEx()\Rows())
+              ListEx()\Row\Current = ListIndex(ListEx()\Rows())
+              ListEx()\Row\Focus = ListEx()\Row\Current
+              SetRowFocus_(ListEx()\Row\Focus)
+            EndIf
+          EndIf ;}
+        Case #PB_Shortcut_Return   ;{ Return
           ;}
       EndSelect
       
@@ -2910,7 +3249,8 @@ Module ListEx
     EndIf
     
   EndProcedure
-
+  
+  
   Procedure _RightClickHandler()
     Define.i X, Y
     Define.i GNum = EventGadget()
@@ -2933,6 +3273,9 @@ Module ListEx
           
           If IsWindow(ListEx()\Window\Num) And IsMenu(ListEx()\PopUpID)
             DisplayPopupMenu(ListEx()\PopUpID, WindowID(ListEx()\Window\Num))
+          Else
+            UpdateEventData_(#PB_EventType_RightClick, ListEx()\Row\Current, #NotValid, "", #NotValid, ListEx()\Rows()\ID)
+            PostEvent(#Event_Gadget, ListEx()\Window\Num, ListEx()\CanvasNum, #PB_EventType_RightClick, ListEx()\Row\Current)
           EndIf
           
         EndIf
@@ -2944,7 +3287,7 @@ Module ListEx
 
   Procedure _LeftButtonDownHandler()
     Define.f X, Y, Width, Height
-    Define.i Flags, FontID
+    Define.i Flags, FontID, Row, StartRow, EndRow
     Define.s Key$, Value$
     Define   Image.Image_Structure
     Define   GNum.i = EventGadget()
@@ -2990,11 +3333,8 @@ Module ListEx
             
             SortColumn_()
             
-            If ListEx()\Focus And ListEx()\Row\Focus <> #NotValid
-              SetVisible_(ListEx()\Row\Focus)
-              ;ListEx()\Focus = #False
-              ;ListEx()\Row\Focus = 
-            EndIf
+            ListEx()\Focus = #False
+            ListEx()\Row\Focus = #NotValid
             
             UpdateRowY_()
             
@@ -3162,27 +3502,54 @@ Module ListEx
               DrawLink_(X, Y, ListEx()\Cols()\Width, ListEx()\Rows()\Height, Value$, ListEx()\Color\ActiveLink, ListEx()\Cols()\Align, FontID, @Image)
               ;}
             Else                                    ;{ Select row(s)
+              
               ListEx()\Focus = #True
-              ;{ Strg - Select
+              
+              ;{ MultiSelect
               If ListEx()\Flags & #MultiSelect And GetGadgetAttribute(GNum, #PB_Canvas_Modifiers) = #PB_Canvas_Control
-                If ListEx()\Strg = #False
+                If ListEx()\MultiSelect = #False
                   PushListPosition(ListEx()\Rows())
                   If SelectElement(ListEx()\Rows(), ListEx()\Row\Focus)
                     ListEx()\Rows()\State | #Selected
                   EndIf
                   PopListPosition(ListEx()\Rows())
-                  ListEx()\Strg = #True
+                  ListEx()\MultiSelect = #True
                 EndIf
                 ListEx()\Rows()\State ! #Selected
-              ElseIf ListEx()\Strg = #True
+              ElseIf ListEx()\Flags & #MultiSelect And GetGadgetAttribute(GNum, #PB_Canvas_Modifiers) = #PB_Canvas_Shift
+                If ListEx()\Row\Focus >= 0
+                  If ListEx()\Row\Current >= ListEx()\Row\Focus
+                    StartRow = ListEx()\Row\Focus
+                    EndRow   = ListEx()\Row\Current
+                  Else
+                    StartRow = ListEx()\Row\Current
+                    EndRow   = ListEx()\Row\Focus
+                  EndIf
+                  PushListPosition(ListEx()\Rows())
+                  ForEach ListEx()\Rows()
+                    Row = ListIndex(ListEx()\Rows())
+                    If Row >= StartRow And Row <= EndRow
+                      ListEx()\Rows()\State | #Selected
+                    Else
+                      ListEx()\Rows()\State & ~#Selected
+                    EndIf  
+                  Next
+                  PopListPosition(ListEx()\Rows())
+                  ListEx()\MultiSelect = #True
+                EndIf
+              ElseIf ListEx()\MultiSelect = #True
                 PushListPosition(ListEx()\Rows())
                 ForEach ListEx()\Rows()
                   ListEx()\Rows()\State & ~#Selected
                 Next
                 PopListPosition(ListEx()\Rows())
-                ListEx()\Strg = #False
+                ListEx()\MultiSelect = #False
               EndIf ;}
-              ListEx()\Row\Focus = ListEx()\Row\Current
+              
+              If SelectElement(ListEx()\Rows(), ListEx()\Row\Current)
+                ListEx()\Row\Focus = ListEx()\Row\Current
+              EndIf
+              
               Draw_() ; Draw Focus
              ;}
             EndIf
@@ -3246,6 +3613,9 @@ Module ListEx
         Draw_()
         ;}
       EndIf
+      
+      UpdateEventData_(#PB_EventType_LeftClick, ListEx()\Row\Current, ListEx()\Col\Current, "", #NotValid, ListEx()\Rows()\ID)
+      PostEvent(#Event_Gadget, ListEx()\Window\Num, ListEx()\CanvasNum, #PB_EventType_LeftClick, ListEx()\Row\Current)
       
     EndIf
     
@@ -3447,7 +3817,7 @@ Module ListEx
       
       Delta = GetGadgetAttribute(GadgetNum, #PB_Canvas_WheelDelta)
       
-      If IsGadget(ListEx()\VScrollNum)
+      If IsGadget(ListEx()\VScrollNum) And ListEx()\VScroll\Hide = #False
         
         ScrollPos = GetGadgetState(ListEx()\VScrollNum) - Delta
         
@@ -3486,7 +3856,7 @@ Module ListEx
       
       If ListEx()\HScroll\Hide = #False : ListEx()\Size\Height - dpiY(#ScrollBar_Width) : EndIf
       
-      If ListEx()\VScroll\Hide = #False Or ListEx()\HScroll\Hide
+      If ListEx()\VScroll\Hide = #False Or ListEx()\HScroll\Hide = #False
         
         If ListEx()\VScroll\Hide
           ResizeGadget(ListEx()\HScrollNum, 1, GadgetHeight(ListEx()\CanvasNum) - #ScrollBar_Width, GadgetWidth(ListEx()\CanvasNum) - 1, #ScrollBar_Width - 1)
@@ -3793,6 +4163,7 @@ Module ListEx
         
         If SelectElement(ListEx()\Cols(), Column)
           MarkContent_(Term, Color1, Color2, FontID)
+          If ListEx()\FitCols : FitColumns_() : EndIf
           Draw_()
         EndIf
         
@@ -3838,11 +4209,20 @@ Module ListEx
           Flags & ~#Left
         EndIf
         
-        ListEx()\Col\Number          = ListSize(ListEx()\Cols())
-        ListEx()\Cols()\Header\Titel = Title
-        ListEx()\Cols()\Width        = dpiX(Width)
-        ListEx()\Cols()\Currency     = ListEx()\Country\Currency
-        ListEx()\Cols()\Flags        = Flags
+        If Flags & #FitColumn : ListEx()\FitCols = #True : EndIf
+        
+        ListEx()\Col\Number               = ListSize(ListEx()\Cols())
+        ListEx()\Cols()\Header\Titel      = Title
+        ListEx()\Cols()\Header\Align      = #PB_Default
+        ListEx()\Cols()\Header\FontID     = #PB_Default
+        ListEx()\Cols()\Header\FrontColor = #PB_Default
+        ListEx()\Cols()\Header\BackColor  = #PB_Default
+        ListEx()\Cols()\Width             = dpiX(Width)
+        ListEx()\Cols()\Currency          = ListEx()\Country\Currency
+        ListEx()\Cols()\FrontColor        = #PB_Default
+        ListEx()\Cols()\BackColor         = #PB_Default
+        ListEx()\Cols()\Flags             = Flags
+
         If Label
           ListEx()\Cols()\Key = Label
         Else
@@ -3896,8 +4276,78 @@ Module ListEx
     
   EndProcedure
   
-  Procedure.i AddItem(GNum.i, Row.i=-1, Text.s="", RowID.s="", Flags.i=#False) 
-    Define.i i, nc, Result
+  Procedure.i AddCells(GNum.i, Row.i=-1, Labels.s="", Text.s="", RowID.s="", Flags.i=#False) 
+    Define.i i, Result, FitColumn, CountLabel, CountText
+    Define.s Text$, Label$
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      ;{ Add item
+      Select Row
+        Case #FirstItem
+          FirstElement(ListEx()\Rows())
+          Result = InsertElement(ListEx()\Rows()) 
+        Case #LastItem
+          LastElement(ListEx()\Rows())
+          Result = AddElement(ListEx()\Rows())
+        Default
+          If SelectElement(ListEx()\Rows(), Row)
+            Result = InsertElement(ListEx()\Rows()) 
+          Else
+            LastElement(ListEx()\Rows())
+            Result = AddElement(ListEx()\Rows())
+          EndIf
+      EndSelect ;}
+      
+      If Result
+      
+        ListEx()\Row\Number    = ListSize(ListEx()\Rows())
+        ListEx()\Rows()\ID     = RowID
+        ListEx()\Rows()\Height = ListEx()\Row\Height
+        
+        ListEx()\Rows()\FontID = ListEx()\Row\FontID
+        
+        ListEx()\Rows()\Color\Front = ListEx()\Color\Front
+        ListEx()\Rows()\Color\Back  = ListEx()\Color\Back
+        ListEx()\Rows()\Color\Grid  = ListEx()\Color\Grid
+          
+        If Text <> ""
+          
+          CountText  = CountString(Text,   #LF$) + 1
+          CountLabel = CountString(Labels, "|")  + 1
+          
+          If CountText <> CountLabel : ProcedureReturn #False : EndIf
+          
+          FitColumn = #False
+          
+          For i=1 To CountText
+            
+            Label$ = StringField(Labels, i, "|")
+            Text$  = StringField(Text,  i, #LF$)
+            
+            ListEx()\Rows()\Column(Label$)\Value = Text$
+
+          Next
+          
+        EndIf
+        
+      EndIf
+      
+      If ListEx()\FitCols : FitColumns_() : EndIf
+      
+      If ListEx()\ReDraw
+        UpdateRowY_()
+        AdjustScrollBars_()
+        Draw_()
+      EndIf
+
+    EndIf
+    
+    ProcedureReturn ListIndex(ListEx()\Rows())
+  EndProcedure
+  
+  Procedure.i AddItem(GNum.i, Row.i=-1, Text.s="", Label.s="", Flags.i=#False) 
+    Define.i i, nc, FitColumn, Result
     
     If FindMapElement(ListEx(), Str(GNum))
       
@@ -3921,7 +4371,7 @@ Module ListEx
       If Result
         
         ListEx()\Row\Number    = ListSize(ListEx()\Rows())
-        ListEx()\Rows()\ID     = RowID
+        ListEx()\Rows()\ID     = Label
         ListEx()\Rows()\Height = ListEx()\Row\Height
         
         ListEx()\Rows()\FontID   = ListEx()\Row\FontID
@@ -3942,6 +4392,8 @@ Module ListEx
             EndIf
           Next
         EndIf
+        
+        If ListEx()\FitCols : FitColumns_() : EndIf
         
         If ListEx()\ReDraw
           UpdateRowY_()
@@ -4003,12 +4455,52 @@ Module ListEx
     
   EndProcedure    
   
-  Procedure.i CountItems(GNum.i)
+  Procedure   CloseEdit(GNum.i)
     
     If FindMapElement(ListEx(), Str(GNum))
       
-      ProcedureReturn ListEx()\Row\Number
+      If ListEx()\String\Flag   ;{ Close String
+        CloseString_()
+      EndIf ;}
       
+      If ListEx()\ComboBox\Flag ;{ Close ComboBox
+        CloseComboBox_()
+      EndIf ;}
+      
+      If ListEx()\Date\Flag     ;{ Close DateGadget
+        CloseDate_()
+      EndIf ;}
+      
+      Draw_()
+      
+    EndIf
+      
+  EndProcedure
+  
+  Procedure.i CountItems(GNum.i, Flag.i=#False) ; [#Selected/#Checked/#Inbetween]
+    Define.i Count
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      Select Flag
+        Case #Selected
+          ForEach ListEx()\Rows()
+            If ListEx()\Rows()\State & #Selected : Count + 1 : EndIf
+          Next
+          ProcedureReturn Count
+        Case #Checked
+          ForEach ListEx()\Rows()
+            If ListEx()\Rows()\State & #Checked : Count + 1 : EndIf
+          Next
+          ProcedureReturn Count
+        Case #Inbetween
+          ForEach ListEx()\Rows()
+            If ListEx()\Rows()\State & #Inbetween : Count + 1 : EndIf
+          Next
+          ProcedureReturn Count
+        Default
+          ProcedureReturn ListSize(ListEx()\Rows())
+      EndSelect
     EndIf  
  
   EndProcedure  
@@ -4027,7 +4519,7 @@ Module ListEx
     
   EndProcedure  
   
-  Procedure   DisableReDraw(GNum.i, State.i=#False)
+  Procedure   DisableReDraw(GNum.i, State.i=#True)
     
     If FindMapElement(ListEx(), Str(GNum))
       
@@ -4087,6 +4579,7 @@ Module ListEx
     
   EndProcedure
   
+  
   Procedure.i Gadget(GNum.i, X.f, Y.f, Width.f, Height.f, ColTitle.s, ColWidth.f, ColLabel.s="", Flags.i=#False, WindowNum.i=#PB_Default)
     Define.i Result
     
@@ -4114,8 +4607,7 @@ Module ListEx
       If ColLabel = "" : ColLabel = "0" : EndIf
       
       If AddMapElement(ListEx(), Str(GNum))
-        
-        
+
         CompilerIf Defined(ModuleEx, #PB_Module)
           If WindowNum = #PB_Default  
             ListEx()\Window\Num = ModuleEx::GetGadgetWindow()
@@ -4241,23 +4733,30 @@ Module ListEx
         ;}
         
         ;{ Rows
+        ListEx()\Row\Focus   = #NotValid
         ListEx()\Row\Current = #NoFocus
         ListEx()\Row\FontID  = ListEx()\Header\FontID
         ListEx()\Size\Rows   = ListEx()\Row\Height ; Height of all rows
-        ListEx()\Row\Focus   = #NotValid
         ;}
         
         ;{ Column
+        ListEx()\Col\Padding = 5
         If AddElement(ListEx()\Cols())
-          ListEx()\Cols()\Header\Titel = ColTitle
-          ListEx()\Cols()\Width = dpiX(ColWidth)
-          ListEx()\Cols()\Key   = ColLabel
-          ListEx()\Col\Number   = 1        ; Number of columns
+          ListEx()\Cols()\Header\Titel      = ColTitle
+          ListEx()\Cols()\Header\Align      = #PB_Default
+          ListEx()\Cols()\Header\FontID     = #PB_Default
+          ListEx()\Cols()\Header\FrontColor = #PB_Default
+          ListEx()\Cols()\Header\BackColor  = #PB_Default
+          ListEx()\Cols()\Width             = dpiX(ColWidth)
+          ListEx()\Cols()\Key               = ColLabel
+          ListEx()\Cols()\FrontColor        = #PB_Default
+          ListEx()\Cols()\BackColor         = #PB_Default
+          ListEx()\Col\Number = 1      ; Number of columns
         EndIf
-        ListEx()\Size\Cols    = ListEx()\Cols()\Width ; Width of all columns
-        ListEx()\Sort\Column  = #NotValid
+        ListEx()\Size\Cols           = ListEx()\Cols()\Width ; Width of all columns
+        ListEx()\Sort\Column         = #NotValid
         ListEx()\AutoResize\MinWidth = ListEx()\Col\Width
-        ListEx()\AutoResize\Column = #PB_Ignore
+        ListEx()\AutoResize\Column   = #PB_Ignore
         ;} 
         
         ;{ Default Colors
@@ -4273,6 +4772,7 @@ Module ListEx
         ListEx()\Color\Button       = $E3E3E3
         ListEx()\Color\ButtonBorder = $A0A0A0
         ListEx()\Color\ProgressBar  = $32CD32
+        ListEx()\Color\Gradient     = $00FC7C
         ListEx()\Color\Edit         = $BE7D61
         ListEx()\Color\Link         = $8B0000
         ListEx()\Color\ActiveLink   = $FF0000
@@ -4315,19 +4815,19 @@ Module ListEx
 
         If IsGadget(ListEx()\StringNum) : SetGadgetFont(ListEx()\StringNum, ListEx()\Row\FontID) : EndIf
         
-        BindGadgetEvent(ListEx()\CanvasNum,  @_RightClickHandler(),      #PB_EventType_RightClick)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_LeftButtonDownHandler(),  #PB_EventType_LeftButtonDown)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_LeftButtonUpHandler(),    #PB_EventType_LeftButtonUp)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_LeftDoubleClickHandler(), #PB_EventType_LeftDoubleClick)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_MouseMoveHandler(),       #PB_EventType_MouseMove)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_MouseWheelHandler(),      #PB_EventType_MouseWheel)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_ResizeHandler(),          #PB_EventType_Resize)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_MouseLeaveHandler(),      #PB_EventType_MouseLeave)
-        BindGadgetEvent(ListEx()\CanvasNum,  @_KeyDownHandler(),         #PB_EventType_KeyDown)
+        BindGadgetEvent(ListEx()\CanvasNum, @_RightClickHandler(),      #PB_EventType_RightClick)
+        BindGadgetEvent(ListEx()\CanvasNum, @_LeftButtonDownHandler(),  #PB_EventType_LeftButtonDown)
+        BindGadgetEvent(ListEx()\CanvasNum, @_LeftButtonUpHandler(),    #PB_EventType_LeftButtonUp)
+        BindGadgetEvent(ListEx()\CanvasNum, @_LeftDoubleClickHandler(), #PB_EventType_LeftDoubleClick)
+        BindGadgetEvent(ListEx()\CanvasNum, @_MouseMoveHandler(),       #PB_EventType_MouseMove)
+        BindGadgetEvent(ListEx()\CanvasNum, @_MouseWheelHandler(),      #PB_EventType_MouseWheel)
+        BindGadgetEvent(ListEx()\CanvasNum, @_ResizeHandler(),          #PB_EventType_Resize)
+        BindGadgetEvent(ListEx()\CanvasNum, @_MouseLeaveHandler(),      #PB_EventType_MouseLeave)
+        BindGadgetEvent(ListEx()\CanvasNum, @_KeyDownHandler(),         #PB_EventType_KeyDown)
         
         BindGadgetEvent(ListEx()\HScrollNum, @_SynchronizeScrollCols(),  #PB_All)
         BindGadgetEvent(ListEx()\VScrollNum, @_SynchronizeScrollRows(),  #PB_All) 
-        
+
         Draw_()
         
       EndIf 
@@ -4386,6 +4886,40 @@ Module ListEx
     
   EndProcedure
   
+  Procedure.i GetColumnAttribute(GNum.i, Column.i, Attribute.i)
+    ; Attrib: #Align / #Width / #FontID
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      If SelectElement(ListEx()\Cols(), Column)
+        
+        Select Attribute
+          Case #Align
+            ProcedureReturn ListEx()\Cols()\Align 
+          Case #FontID
+            ProcedureReturn ListEx()\Cols()\FontID 
+          Case #Width
+            ProcedureReturn ListEx()\Cols()\Width
+        EndSelect
+      
+      EndIf
+      
+    EndIf
+    
+  EndProcedure  
+  
+  Procedure.s GetColumnLabel(GNum.i, Column.i)
+
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      If SelectElement(ListEx()\Cols(), Column)
+        ProcedureReturn ListEx()\Cols()\Key 
+      EndIf
+      
+    EndIf
+    
+  EndProcedure    
+  
   Procedure.i GetColumnState(GNum.i, Row.i, Column.i)
     
     If FindMapElement(ListEx(), Str(GNum))
@@ -4398,28 +4932,6 @@ Module ListEx
       
     EndIf   
  
-  EndProcedure
-  
-  Procedure.i GetColumnAttribute(GNum.i, Column.i, Attribute.i)
-    ; Attrib: #Align / #Width / #FontID
-    
-    If FindMapElement(ListEx(), Str(GNum))
-      
-      If SelectElement(ListEx()\Cols(), Column)
-        
-        Select Attribute
-          Case #Align
-            ProcedureReturn ListEx()\Cols()\Align  
-          Case #Width
-            ProcedureReturn ListEx()\Cols()\Width
-          Case #FontID
-            ProcedureReturn ListEx()\Cols()\FontID
-        EndSelect
-      
-      EndIf
-      
-    EndIf
-    
   EndProcedure
 
   Procedure.i GetItemData(GNum.i, Row.i)
@@ -4446,16 +4958,41 @@ Module ListEx
     
   EndProcedure  
   
-  Procedure.i GetItemState(GNum.i, Row.i, Column.i=#PB_Default)
+  Procedure.i GetRowFromLabel(GNum.i, Label.s)
+    Define.i Row = #PB_Default
+    
+    PushListPosition(ListEx()\Rows())
+    
+    ForEach ListEx()\Rows()
+      If ListEx()\Rows()\ID = Label
+        Row = ListIndex(ListEx()\Rows())
+        Break
+      EndIf
+    Next
+    
+    PopListPosition(ListEx()\Rows())
+    
+    ProcedureReturn Row
+  EndProcedure
+  
+  Procedure.s GetRowLabel(GNum.i, Row.i)
+    ProcedureReturn GetItemID(GNum, Row)
+  EndProcedure
+  
+  Procedure.i GetItemState(GNum.i, Row.i, Column.i=#PB_Ignore) ; [#Selected/#Checked/#Inbetween]
     
     If FindMapElement(ListEx(), Str(GNum))
       
       If SelectElement(ListEx()\Rows(), Row)
-        If Column = #PB_Default
+        If Column = #PB_Ignore
           ProcedureReturn ListEx()\Rows()\State
         Else
           If SelectElement(ListEx()\Cols(), Column)
-            ProcedureReturn ListEx()\Rows()\Column(ListEx()\Cols()\Key)\State
+            If ListEx()\Flags & #CheckBoxes And Column = 0
+              ProcedureReturn ListEx()\Rows()\State
+            Else  
+              ProcedureReturn ListEx()\Rows()\Column(ListEx()\Cols()\Key)\State
+            EndIf
           EndIf 
         EndIf
       EndIf
@@ -4492,7 +5029,30 @@ Module ListEx
     EndIf
     
   EndProcedure
-
+  
+  Procedure.i HideColumn(GNum.i, Column.i, State.i=#True)
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      If SelectElement(ListEx()\Cols(), Column)
+        If State
+          ListEx()\Cols()\Flags | #Hide 
+        Else
+          ListEx()\Cols()\Flags & ~#Hide
+        EndIf
+      EndIf
+      
+      If ListEx()\ReDraw
+        UpdateColumnX_()
+        AdjustScrollBars_()
+        Draw_()
+      EndIf
+      
+    EndIf
+    
+  EndProcedure
+  
+  
   Procedure   LoadColorTheme(GNum.i, File.s)
     
     If FindMapElement(ListEx(), Str(GNum))
@@ -4515,6 +5075,7 @@ Module ListEx
       UpdateRowY_()
       UpdateColumnX_()
       AdjustScrollBars_()
+      If ListEx()\FitCols : FitColumns_() : EndIf
       Draw_()
       
     EndIf  
@@ -4564,7 +5125,39 @@ Module ListEx
     EndIf  
    
   EndProcedure  
+  
+  Procedure   RemoveItemState(GNum.i, Row.i, State.i, Column.i=#PB_Ignore) ; [#Selected/#Checked/#Inbetween]
+    
+    If FindMapElement(ListEx(), Str(GNum))
 
+      If Row >= 0
+        
+        If SelectElement(ListEx()\Rows(), Row)
+          If Column = #PB_Ignore
+            
+            ListEx()\Rows()\State & ~State
+            
+          Else
+            
+            If ListEx()\Flags & #CheckBoxes And Column = 0
+              ListEx()\Rows()\State & ~State
+              If ListEx()\ReDraw : Draw_() : EndIf 
+            Else  
+              If SelectElement(ListEx()\Cols(), Column)
+                ListEx()\Rows()\Column(ListEx()\Cols()\Key)\State & ~State
+              EndIf 
+            EndIf
+            
+          EndIf
+          
+          If ListEx()\ReDraw : Draw_() : EndIf
+        EndIf
+        
+      EndIf
+    EndIf
+    
+  EndProcedure
+  
   Procedure   ResetChangedState(GNum.i)
     
     If FindMapElement(ListEx(), Str(GNum))
@@ -4587,6 +5180,52 @@ Module ListEx
     
   EndProcedure  
   
+  Procedure.i SelectItems(GNum.i, Flag.i=#All)
+    ; #All / #None
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      If ListEx()\Flags & #MultiSelect
+        
+        PushListPosition(ListEx()\Rows())
+        
+        ForEach ListEx()\Rows()
+          If Flag = #All
+            ListEx()\Rows()\State | #Selected
+          Else
+            ListEx()\Rows()\State & ~#Selected
+          EndIf
+        Next
+        
+        PopListPosition(ListEx()\Rows())
+        
+        ListEx()\MultiSelect = Flag
+        
+      Else
+        ProcedureReturn #False
+      EndIf
+      
+      If ListEx()\ReDraw : Draw_() : EndIf
+      
+    EndIf  
+      
+  EndProcedure
+  
+  Procedure   SetAttribute(GNum.i, Attrib.i, Value.i)
+    ; Attrib: #Padding
+    
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      Select Attrib
+        Case #Padding
+          ListEx()\Col\Padding = dpiX(Value)
+      EndSelect
+      
+      If ListEx()\ReDraw : Draw_() : EndIf
+      
+    EndIf
+    
+  EndProcedure  
   
   Procedure   SetAutoResizeColumn(GNum.i, Column.i, minWidth.f=#PB_Default, maxWidth.f=#PB_Default)
     
@@ -4599,6 +5238,7 @@ Module ListEx
       ListEx()\AutoResize\maxWidth = dpiX(maxWidth)
       If SelectElement(ListEx()\Cols(), Column) : ListEx()\AutoResize\Width = ListEx()\Cols()\Width : EndIf
       
+      If ListEx()\ReDraw : Draw_() : EndIf
     EndIf  
  
   EndProcedure  
@@ -4619,7 +5259,8 @@ Module ListEx
       
       If SelectElement(ListEx()\Rows(), Row)
         ListEx()\Rows()\Column(Label)\Value = Text
-        If ListEx()\ReDraw : Draw_() : EndIf
+        If ListEx()\FitCols : FitColumns_() : EndIf
+        If ListEx()\ReDraw  : Draw_() : EndIf
       EndIf
       
     EndIf
@@ -4639,7 +5280,7 @@ Module ListEx
     
   EndProcedure
   
-  Procedure   SetColor(GNum.i, ColorTyp.i, Value.i)
+  Procedure   SetColor(GNum.i, ColorTyp.i, Value.i, Column.i=#PB_Ignore)
     
     If FindMapElement(ListEx(), Str(GNum))
     
@@ -4649,13 +5290,27 @@ Module ListEx
         Case #ActiveLinkColor  
           ListEx()\Color\ActiveLink = Value
         Case #FrontColor
-          ListEx()\Color\Front = Value
+          If Column = #PB_Ignore
+            ListEx()\Color\Front = Value
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\FrontColor = Value
+            EndIf
+          EndIf 
         Case #BackColor
-          ListEx()\Color\Back = Value
+          If Column = #PB_Ignore
+            ListEx()\Color\Back = Value
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\BackColor = Value
+            EndIf
+          EndIf 
         Case #ButtonColor  
           ListEx()\Color\Button = Value
         Case #ProgressBarColor
           ListEx()\Color\ProgressBar = Value
+        Case #GradientColor
+          ListEx()\Color\Gradient    = Value
         Case #GridColor
           ListEx()\Color\Grid = Value
         Case #FocusColor
@@ -4691,10 +5346,11 @@ Module ListEx
           ListEx()\Color\Front        = 0
           ListEx()\Color\Back         = 16645114
           ListEx()\Color\Grid         = 13092807
-          ListEx()\Color\ProgressBar  = 11829830
           ListEx()\Color\HeaderFront  = 4270875
           ListEx()\Color\HeaderBack   = 14599344
           ListEx()\Color\HeaderGrid   = 8750469
+          ListEx()\Color\ProgressBar  = 11369795
+          ListEx()\Color\Gradient     = 13874833
           ListEx()\Color\AlternateRow = ListEx()\Color\Back
           
         Case #Theme_Green
@@ -4702,10 +5358,11 @@ Module ListEx
           ListEx()\Color\Front        = 0
           ListEx()\Color\Back         = 16383222
           ListEx()\Color\Grid         = 13092807
-          ListEx()\Color\ProgressBar  = 7451452
           ListEx()\Color\HeaderFront  = 2374163
-          ListEx()\Color\HeaderBack   = 9423456
+          ListEx()\Color\HeaderBack   = 6674533
           ListEx()\Color\HeaderGrid   = 8750469
+          ListEx()\Color\ProgressBar  = 2263842
+          ListEx()\Color\Gradient     = 7527538
           ListEx()\Color\AlternateRow = ListEx()\Color\Back
           
         Default
@@ -4713,7 +5370,6 @@ Module ListEx
           ListEx()\Color\Front        = $000000
           ListEx()\Color\Back         = $FFFFFF
           ListEx()\Color\Grid         = $E3E3E3
-          ListEx()\Color\ProgressBar  = $32CD32
           ListEx()\Color\HeaderFront  = $000000
           ListEx()\Color\HeaderBack   = $FAFAFA
           ListEx()\Color\HeaderGrid   = $A0A0A0
@@ -4753,14 +5409,14 @@ Module ListEx
         
         Select Attrib
           Case #Align
-            ListEx()\Cols()\Align = Value
+            ListEx()\Cols()\Align  = Value
           Case #Width
-            ListEx()\Cols()\Width = dpiX(Value)
+            ListEx()\Cols()\Width  = dpiX(Value)
             UpdateColumnX_()
           Case #FontID
-            ListEx()\Cols()\FontID  = Value
+            ListEx()\Cols()\FontID = Value
           Case #Font  
-            ListEx()\Cols()\FontID  = FontID(Value)
+            ListEx()\Cols()\FontID = FontID(Value)
         EndSelect
         
         If ListEx()\ReDraw : Draw_() : EndIf
@@ -4839,20 +5495,40 @@ Module ListEx
    
   EndProcedure
 
-  Procedure   SetFont(GNum.i, FontID.i) 
+  Procedure   SetFont(GNum.i, FontID.i, Type.i=#False, Column.i=#PB_Ignore) 
     
     If FindMapElement(ListEx(), Str(GNum))
       
-      ListEx()\Row\FontID    = FontID
-      ListEx()\Header\FontID = FontID
-      If IsGadget(ListEx()\StringNum) : SetGadgetFont(ListEx()\StringNum, ListEx()\Row\FontID) : EndIf
+      Select Type
+        Case #HeaderFont
+          If Column = #PB_Ignore
+            ListEx()\Header\FontID = FontID
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\Header\FontID = FontID
+            EndIf
+          EndIf
+        Case #StringFont
+          If IsGadget(ListEx()\StringNum)
+            SetGadgetFont(ListEx()\StringNum, ListEx()\Row\FontID)
+          EndIf
+        Default
+          If Column = #PB_Ignore
+            ListEx()\Row\FontID = FontID
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\FontID = FontID
+            EndIf
+          EndIf
+      EndSelect
       
+      If ListEx()\FitCols : FitColumns_() : EndIf
       If ListEx()\ReDraw : Draw_() : EndIf
     EndIf
     
   EndProcedure  
   
-  Procedure   SetHeaderAttribute(GNum.i, Attrib.i, Value.i)
+  Procedure   SetHeaderAttribute(GNum.i, Attrib.i, Value.i, Column.i=#PB_Ignore)
     ; Attrib: #Align / #Width / #FontID / #Font
     ; Value:  #Left / #Right / #Center
     
@@ -4860,18 +5536,51 @@ Module ListEx
       
       Select Attrib
         Case #Align
-          ListEx()\Header\Align = Value 
-        Case #Width
-          ListEx()\Cols()\Width = dpiX(Value)
-          UpdateColumnX_()
+          If Column = #PB_Ignore
+            ListEx()\Header\Align = Value
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\Header\Align = Value
+            EndIf
+          EndIf
+        Case #Height
+          ListEx()\Header\Height = dpiY(Value)
+          UpdateRowY_()
         Case #FontID
-          ListEx()\Header\FontID  = Value
+          If Column = #PB_Ignore
+            ListEx()\Header\FontID = Value
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\Header\FontID = Value
+            EndIf
+          EndIf 
         Case #Font
-          ListEx()\Header\FontID  = FontID(Value)
+          If Column = #PB_Ignore
+            ListEx()\Header\FontID = FontID(Value)
+          Else
+            If SelectElement(ListEx()\Cols(), Column)
+              ListEx()\Cols()\Header\FontID = FontID(Value)
+            EndIf
+          EndIf
       EndSelect
       
+      If ListEx()\FitCols : FitColumns_() : EndIf
+      If ListEx()\ReDraw : Draw_() : EndIf
+      
+    EndIf
+    
+  EndProcedure
+  
+  Procedure   SetHeaderHeight(GNum.i, Height.i)
+
+    If FindMapElement(ListEx(), Str(GNum))
+      
+      ListEx()\Header\Height = dpiY(Height)
+      UpdateRowY_()
+
       If ListEx()\ReDraw : Draw_() : EndIf
     EndIf
+    
   EndProcedure
   
   Procedure   SetHeaderSort(GNum.i, Column.i, Direction.i=#PB_Sort_Ascending, Flags.i=#True)
@@ -4908,7 +5617,13 @@ Module ListEx
       Select ColorTyp
         Case #FrontColor ;{ FrontColor
           If Row = #Header
-            ListEx()\Color\HeaderFront = Value
+            If Column = #PB_Ignore
+              ListEx()\Color\HeaderFront = Value
+            Else
+              If SelectElement(ListEx()\Cols(), Column)
+                ListEx()\Cols()\Header\FrontColor = Value
+              EndIf  
+            EndIf
           Else
             If SelectElement(ListEx()\Rows(), Row)
               If Column = #PB_Ignore
@@ -4919,12 +5634,18 @@ Module ListEx
                   ListEx()\Rows()\Column(Key$)\Color\Front = Value
                   ListEx()\Rows()\Column(Key$)\Flags | #FrontColor
                 EndIf
-              EndIf
+              EndIf 
             EndIf
           EndIf ;}
         Case #BackColor  ;{ BackColor
           If Row = #Header
-            ListEx()\Color\HeaderBack = Value
+            If Column = #PB_Ignore
+              ListEx()\Color\HeaderBack = Value
+            Else
+              If SelectElement(ListEx()\Cols(), Column)
+                ListEx()\Cols()\Header\BackColor = Value
+              EndIf 
+            EndIf
           Else
             If SelectElement(ListEx()\Rows(), Row)
               If Column = #PB_Ignore
@@ -4985,7 +5706,13 @@ Module ListEx
     If FindMapElement(ListEx(), Str(GNum))
       
       If Row = #Header
-        ListEx()\Header\FontID = FontID
+        If Column = #PB_Ignore
+          ListEx()\Header\FontID = FontID
+        Else
+          If SelectElement(ListEx()\Cols(), Column)
+            ListEx()\Cols()\Header\FontID = FontID
+          EndIf
+        EndIf
       Else
         If SelectElement(ListEx()\Rows(), Row)
           If Column = #PB_Ignore
@@ -5000,7 +5727,9 @@ Module ListEx
         EndIf
       EndIf
       
+      If ListEx()\FitCols : FitColumns_() : EndIf
       If ListEx()\ReDraw : Draw_() : EndIf
+      
     EndIf
     
   EndProcedure  
@@ -5017,31 +5746,43 @@ Module ListEx
     
   EndProcedure  
   
-  Procedure   SetItemImage(GNum.i, Row.i, Column.i, Width.f, Height.f, ImageID.i, Align.i=#Left)
+  Procedure   SetItemImage(GNum.i, Row.i, Column.i, Width.f, Height.f, Image.i, Align.i=#Left)
     
     If FindMapElement(ListEx(), Str(GNum))                    
       
       If Row = #Header
         
         If SelectElement(ListEx()\Cols(), Column)
-          ListEx()\Cols()\Header\Image\ID     = ImageID
-          ListEx()\Cols()\Header\Image\Width  = dpiX(Width)
-          ListEx()\Cols()\Header\Image\Height = dpiY(Height)
-          ListEx()\Cols()\Header\Image\Flags  = Align
-          ListEx()\Cols()\Header\Flags | #Image
-          If ListEx()\ReDraw : Draw_() : EndIf
+          If IsImage(Image)
+            ListEx()\Cols()\Header\Image\ID     = ImageID(Image)
+            ListEx()\Cols()\Header\Image\Width  = dpiX(Width)
+            ListEx()\Cols()\Header\Image\Height = dpiY(Height)
+            ListEx()\Cols()\Header\Image\Flags  = Align
+            ListEx()\Cols()\Header\Flags | #Image
+          Else
+            ListEx()\Cols()\Header\Flags & ~#Image
+          EndIf
+          If ListEx()\FitCols : FitColumns_() : EndIf
+          If ListEx()\ReDraw  : Draw_()       : EndIf
         EndIf
         
       Else
         
         If SelectElement(ListEx()\Rows(), Row)
           If SelectElement(ListEx()\Cols(), Column)
-            ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\ID     = ImageID
-            ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Width  = dpiX(Width)
-            ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Height = dpiY(Height)
-            ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Flags  = Align
-            ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Flags | #Image
-            If ListEx()\ReDraw : Draw_() : EndIf
+            
+            If IsImage(Image)
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\ID     = ImageID(Image)
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Width  = dpiX(Width)
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Height = dpiY(Height)
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Image\Flags  = Align
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Flags | #Image
+            Else
+              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\Flags & ~#Image
+            EndIf
+            
+            If ListEx()\FitCols : FitColumns_() : EndIf
+            If ListEx()\ReDraw  : Draw_()       : EndIf
           EndIf
         EndIf
         
@@ -5051,21 +5792,26 @@ Module ListEx
     
   EndProcedure
   
-  Procedure   SetItemState(GNum.i, Row.i, State.i, Column.i=#PB_Default)
+  Procedure   SetItemState(GNum.i, Row.i, State.i, Column.i=#PB_Ignore) ; [#Selected/#Checked/#Inbetween]
     
     If FindMapElement(ListEx(), Str(GNum))
 
-      If Row > #NotValid
+      If Row >= 0
         
         If SelectElement(ListEx()\Rows(), Row)
-          If Column = #PB_Default
+          If Column = #PB_Ignore
             ListEx()\Rows()\State = State
             If ListEx()\ReDraw : Draw_() : EndIf
           Else
-            If SelectElement(ListEx()\Cols(), Column)
-              ListEx()\Rows()\Column(ListEx()\Cols()\Key)\State = State
-              If ListEx()\ReDraw : Draw_() : EndIf
-            EndIf  
+            If ListEx()\Flags & #CheckBoxes And Column = 0
+              ListEx()\Rows()\State = State
+              If ListEx()\ReDraw : Draw_() : EndIf 
+            Else  
+              If SelectElement(ListEx()\Cols(), Column)
+                ListEx()\Rows()\Column(ListEx()\Cols()\Key)\State = State
+                If ListEx()\ReDraw : Draw_() : EndIf
+              EndIf 
+            EndIf
           EndIf
         EndIf
         
@@ -5090,33 +5836,40 @@ Module ListEx
         EndIf
       EndIf
       
+      If ListEx()\Cols()\Flags & #FitColumn : FitColumns_() : EndIf
+      
       If ListEx()\ReDraw : Draw_() : EndIf
+      
     EndIf
     
   EndProcedure  
   
-  Procedure   SetProgressBarAttribute(GNum.i, Attrib.i, Value.i)
+  CompilerIf #Enable_ProgressBar
     
-    If FindMapElement(ListEx(), Str(GNum))
+    Procedure   SetProgressBarAttribute(GNum.i, Attrib.i, Value.i)
       
-      Select Attrib
-        Case #Minimum
-          ListEx()\ProgressBar\Minimum  = Value
-        Case #Maximum
-          ListEx()\ProgressBar\Maximum = Value
-      EndSelect
+      If FindMapElement(ListEx(), Str(GNum))
+        
+        Select Attrib
+          Case #Minimum
+            ListEx()\ProgressBar\Minimum  = Value
+          Case #Maximum
+            ListEx()\ProgressBar\Maximum = Value
+        EndSelect
+        
+      EndIf
       
-    EndIf
-    
-  EndProcedure
+    EndProcedure
   
-  Procedure   SetProgressBarFlags(GNum.i, Flags.i)
+    Procedure   SetProgressBarFlags(GNum.i, Flags.i)
+      
+      If FindMapElement(ListEx(), Str(GNum))
+        ListEx()\ProgressBar\Flags = Flags
+      EndIf
+      
+    EndProcedure
     
-    If FindMapElement(ListEx(), Str(GNum))
-      ListEx()\ProgressBar\Flags = Flags
-    EndIf
-    
-  EndProcedure
+  CompilerEndIf
   
   Procedure   SetRowsHeight(GNum.i, Height.f)
 
@@ -5143,20 +5896,25 @@ Module ListEx
         
         ListEx()\Focus = #False
         
-        If ListEx()\Strg = #True
+        If ListEx()\MultiSelect = #True
           PushListPosition(ListEx()\Rows())
           ForEach ListEx()\Rows()
             ListEx()\Rows()\State & ~#Selected
           Next
           PopListPosition(ListEx()\Rows())
-          ListEx()\Strg = #False
+          ListEx()\MultiSelect = #False
         EndIf
         
         ListEx()\Row\Focus = #NotValid
         
       Else 
 
-        SetFocus_(Row)
+        If SelectElement(ListEx()\Rows(), Row)
+          ListEx()\Focus = #True
+          ListEx()\Row\Current = Row
+          ListEx()\Row\Focus = ListEx()\Row\Current
+          SetRowFocus_(ListEx()\Row\Focus)
+        EndIf
         
       EndIf
       
@@ -5204,12 +5962,9 @@ Module ListEx
         
         SortColumn_()
         
-        If ListEx()\Focus And ListEx()\Row\Focus <> #NotValid
-          SetVisible_(ListEx()\Row\Focus)
-          ;ListEx()\Focus = #False
-          ;ListEx()\Row\Focus = 
-        EndIf
-      
+        ListEx()\Focus = #False
+        ListEx()\Row\Focus = #NotValid
+        
         If ListEx()\ReDraw : Draw_() : EndIf
       EndIf
       
@@ -5264,23 +6019,28 @@ CompilerIf #PB_Compiler_IsMainFile
     ButtonGadget(#B_Green, 420,  80, 70, 20, "Green")
     ButtonGadget(#B_Blue,  420, 110, 70, 20, "Blue")
     
-    ;ListEx::Gadget(#List, 10, 10, 400, 230, "", 25, "", ListEx::#GridLines|ListEx::#CheckBoxes|ListEx::#AutoResize|ListEx::#ThreeState) ; ListEx::#NoRowHeader|ListEx::#MultiSelect|ListEx::#NumberedColumn|ListEx::#CheckBoxes|ListEx::#SingleClickEdit|ListEx::#AutoResize 
-    ListEx::Gadget(#List, 10, 10, 400, 230, "", 25, "", ListEx::#GridLines|ListEx::#NumberedColumn|ListEx::#AutoResize|ListEx::#ThreeState) ; ListEx::#NoRowHeader|ListEx::#MultiSelect|ListEx::#NumberedColumn|ListEx::#n|ListEx::#SingleClickEdit|ListEx::#AutoResize 
+    ListEx::Gadget(#List, 10, 10, 395, 230, "", 25, "", ListEx::#GridLines|ListEx::#CheckBoxes|ListEx::#AutoResize|ListEx::#MultiSelect|ListEx::#ThreeState) ; ListEx::#NoRowHeader|ListEx::#MultiSelect|ListEx::#NumberedColumn|ListEx::#CheckBoxes|ListEx::#SingleClickEdit|ListEx::#AutoResize 
+    
     ListEx::DisableReDraw(#List, #True) 
     
-    ListEx::AddColumn(#List, 1, "Link",    75, "link",   ListEx::#Links)
-    ListEx::AddColumn(#List, 2, "Edit",    85, "edit",   ListEx::#Editable) ; |ListEx::#Time
+    ListEx::AddColumn(#List, 1, "Link",    75, "link",   ListEx::#Links)    ; |ListEx::#FitColumn
+    ListEx::AddColumn(#List, 2, "Edit",    85, "edit",   ListEx::#Editable) ; |ListEx::#FitColumn
     ListEx::AddColumn(#List, ListEx::#LastItem, "Combo",   78, "combo",  ListEx::#ComboBoxes)
     ListEx::AddColumn(#List, ListEx::#LastItem, "Date",    76, "date",   ListEx::#Dates)
     ListEx::AddColumn(#List, ListEx::#LastItem, "Buttons", 60, "button", ListEx::#Buttons) ; ListEx::#Hide
-    
+
     ; --- Test ProgressBar ---
-    ;ListEx::AddColumn(#List, ListEx::#LastItem, "Progress", 60, "progress", ListEx::#ProgressBar)
-    ;ListEx::SetProgressBarFlags(#List, ListEx::#ShowPercent)
+    ;CompilerIf ListEx::#Enable_ProgressBar
+    ;  ListEx::AddColumn(#List, ListEx::#LastItem, "Progress", 60, "progress", ListEx::#ProgressBar)
+    ;  ListEx::SetProgressBarFlags(#List, ListEx::#ShowPercent)
+    ;CompilerEndIf
     
     ListEx::SetHeaderAttribute(#List, ListEx::#Align, ListEx::#Center)
-
+    
+    ;ListEx::SetItemColor(#List, ListEx::#Header, ListEx::#FrontColor, $0000FF, 1)
+    
     ListEx::SetFont(#List, FontID(#Font_Arial9))
+    ListEx::SetFont(#List, FontID(#Font_Arial9B), ListEx::#HeaderFont)
     
     ListEx::AddItem(#List, ListEx::#LastItem, "Image"    + #LF$ + "no Image" + #LF$ + #LF$ + #LF$ + "Push")
     ListEx::AddItem(#List, ListEx::#LastItem, "Thorsten" + #LF$ + "Hoeppner" + #LF$ + "male" + #LF$ + "18.07.1967" + #LF$ + "", "PureBasic")
@@ -5293,7 +6053,7 @@ CompilerIf #PB_Compiler_IsMainFile
     ListEx::AddItem(#List, ListEx::#LastItem, "Ava"      + #LF$ + "Evans"    + #LF$ + #LF$ + #LF$ + "Push")
     ListEx::AddItem(#List, ListEx::#LastItem, "Thomas"   + #LF$ + "Roberts"  + #LF$ + #LF$ + #LF$ + "Push")
     ListEx::AddItem(#List, ListEx::#LastItem, "Harriet"  + #LF$ + "Smith"    + #LF$ + #LF$ + #LF$ + "Push")
-    
+
     ListEx::SetItemState(#List, 3, ListEx::#Inbetween)
     
     ListEx::DisableReDraw(#List, #False) 
@@ -5303,13 +6063,7 @@ CompilerIf #PB_Compiler_IsMainFile
     ListEx::AttachPopupMenu(#List, #PopupMenu)
     
     ListEx::AddComboBoxItems(#List, 3, "male" + #LF$ + "female")
-    
-;     If LoadImage(#Image, "Test.png")
-;       ListEx::SetItemImage(#List, 0, 1, 16, 16, ImageID(#Image))
-;       ListEx::SetItemImage(#List, 1, 5, 14, 14, ImageID(#Image), ListEx::#Center)
-;       ListEx::SetItemImage(#List, ListEx::#Header, 2, 14, 14, ImageID(#Image), ListEx::#Right)
-;     EndIf
-    
+
     ListEx::SetAutoResizeColumn(#List, 2, 50)
     
     ListEx::SetColumnAttribute(#List, 1, ListEx::#FontID, FontID(#Font_Arial9U))
@@ -5317,23 +6071,34 @@ CompilerIf #PB_Compiler_IsMainFile
     
     ListEx::SetHeaderSort(#List, 2, ListEx::#Ascending, ListEx::#Deutsch)
     
-    ListEx::SetItemColor(#List,  3, ListEx::#FrontColor, $228B22, 2)
+    ListEx::SetColor(#List, ListEx::#FrontColor, $82004B, 2) ; front color for column 2
+    
+    ListEx::SetItemColor(#List,  5, ListEx::#FrontColor, $228B22, 2)
     ListEx::SetItemFont(#List, 0, FontID(#Font_Arial9B), 2)
     
     ListEx::SetAutoResizeFlags(#List, ListEx::#ResizeHeight)
     
-    ListEx::MarkContent(#List, 1, "CHOICE{male|female}[C3]", $D30094, $9314FF, FontID(#Font_Arial9B))
+    CompilerIf ListEx::#Enable_MarkContent
+      ListEx::MarkContent(#List, 1, "CHOICE{male|female}[C3]", $D30094, $9314FF, FontID(#Font_Arial9B))
+    CompilerEndIf
     
     ListEx::SetColorTheme(#List, ListEx::#Theme_Blue)
-    
     ListEx::SetColor(#List, ListEx::#AlternateRowColor, $FBF7F5)
     
-    ; --- Test ProgressBar ---
-    ;ListEx::SetCellState(#List, 1, "progress", 75) ; or SetItemState(#List, 1, 75, 5)
-    ;ListEx::SetCellState(#List, 2, "progress", 50) ; or SetItemState(#List, 2, 50, 5)
-    ;ListEx::SetCellState(#List, 3, "progress", 25) ; or SetItemState(#List, 3, 25, 5)
+    If LoadImage(#Image, "Delete.png")
+      ListEx::SetItemImage(#List, 0, 1, 16, 16, #Image)
+      ListEx::SetItemImage(#List, 1, 5, 14, 14, #Image, ListEx::#Center)
+      ListEx::SetItemImage(#List, ListEx::#Header, 2, 14, 14, #Image, ListEx::#Right)
+    EndIf
     
-    ; ListEx::SetState(#List, 9)
+    ; --- Test ProgressBar ---
+    ;CompilerIf ListEx::#Enable_ProgressBar
+    ;  ListEx::SetCellState(#List, 1, "progress", 100) ; or SetItemState(#List, 1, 75, 5)
+    ;  ListEx::SetCellState(#List, 2, "progress", 50) ; or SetItemState(#List, 2, 50, 5)
+    ;  ListEx::SetCellState(#List, 3, "progress", 25) ; or SetItemState(#List, 3, 25, 5)
+    ;CompilerEndIf
+    
+    ;ListEx::SetState(#List, 9)
     
     Repeat
       Event = WaitWindowEvent()
@@ -5402,3 +6167,12 @@ CompilerIf #PB_Compiler_IsMainFile
   EndIf
   
 CompilerEndIf
+
+; IDE Options = PureBasic 5.71 LTS (Windows - x64)
+; CursorPosition = 6087
+; FirstLine = 887
+; Folding = EBAAAAAAAAAAAAAAAQAKAAxBAAYDAxBAAAAAAAAGJ9BAAAAAAI9
+; Markers = 587,3164
+; EnableXP
+; DPIAware
+; EnableUnicode

@@ -1,0 +1,3 @@
+[Delete.png] 
+License: http://creativecommons.org/licenses/GPL/2.0/
+Source: GNOME-Colors (http://code.google.com/p/gnome-colors/)
