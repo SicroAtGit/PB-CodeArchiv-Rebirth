@@ -13,7 +13,7 @@
 ;/
 ;/ Editable and sortable ListGadget
 ;/
-;/ ï¿½ 2019 Thorsten1867 (03/2019)
+;/ © 2019 Thorsten1867 (03/2019)
 ;/
 
 ; Last Update: 23.08.2019
