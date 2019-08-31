@@ -38,10 +38,9 @@
 ; SOFTWARE.
 ;}
 
-; Last Update: 20.02.2019
-
-; [20.02.2019] Added:   AddGotoLabel() / AddGotoAction() / TextField() / ButtonField() / ChoiceField() 
-; [20.02.2019] Changed: Internal structure completely revised and adapted to the structure of PDF documents.
+; Last Update: 26.08.2019
+; 
+; [26.08.2019] Bugfix: PDF::Image()
 
 
 ; ----- Description -----
@@ -96,6 +95,7 @@
   
   ; ----- Advanced Commands -----
   
+  ; PDF::AddEntryTOC()                 - Add TOC entry
   ; PDF::EmbedFile()                   - Embeds a file into the pdf.
   ; PDF::EmbedFont()                   - Embeds a font into the pdf and returns the font name.
   ; PDF::EmbedJavaScript()             - Add JavaScript
@@ -103,22 +103,21 @@
   ; PDF::EnableFooter()                - Enable/disable Footer (procedure)
   ; PDF::EnableHeader()                - Enable/disable Header (procedure)
   ; PDF::EnableTOCNums()               - Enable/disable adding page numbers to table of contents
-  ; PDF::AddEntryTOC()                 - Add TOC entry
   ; PDF::EscapeText()                  - Format a text string (=> masked string).
+  ; PDF::FooterProcedure()             - Set footer procedure.
   ; PDF::GetErrorCode()                - Return the error code.
   ; PDF::GetErrorMessage()             - Return the error message.    
   ; PDF::GetNumbering()                - Return if numbering is #True/#False. Usefull for TOC functions
   ; PDF::GetObjectNum()                - Get object number
   ; PDF::GetScaleFactor()              - Get scale factor for used unit.
   ; PDF::GetWordSpacing()              - Get word spacing.  
+  ; PDF::HeaderProcedure()             - Set header procedure.
   ; PDF::ImageMemory()                 - Puts an image (Memory) in the page.
   ; PDF::InsertTOC()                   - Insert table of contents.
   ; PDF::Link()                        - Puts a link on a rectangular area of the page.
   ; PDF::SetAliasTotalPages()          - Defines an alias for the total number of pages.
   ; PDF::SetColorCMYK()                - Set CMYK color for text, draw and fill (#TextColor / #DrawColor / #FillColor).
   ; PDF::SetEncryption()               - Enable encryption and set passworts and permission
-  ; PDF::SetFooterProcedure()          - Set footer procedure.
-  ; PDF::SetHeaderProcedure()          - Set header procedure.
   ; PDF::SetOpenAction()               - Set page and zoom for opening the document
   ; PDF::SetPageCompression()          - Enable/disable compression for pages
   ; PDF::SetPageLayout()               - Define display mode for pages in the viewer
@@ -199,7 +198,7 @@ DeclareModule PDF
   
   ;{ ===== Constants =====
   #Bullet$ = "•"
-  #NoLink = -1
+  #NoLink  = -1
   ;{ ----- AcroForms:   TextField() / ChoiceField() -----
   #Form_CheckBox          = 0
   #Form_SingleLine        = 0
@@ -456,6 +455,7 @@ DeclareModule PDF
   Declare   EnableFooter(ID.i, Flag.i=#True)
   Declare   EnableHeader(ID.i, Flag.i=#True)
   Declare   EnableTOCNums(ID.i, Flag.i=#True)
+  Declare   FooterProcedure(*ProcAddress, *StructAddress=#Null)
   Declare.i GetErrorCode(ID.i)
   Declare.s GetErrorMessage(ID.i)
   Declare.f GetFontSize(ID.i, Type.i=#Point)
@@ -471,8 +471,9 @@ DeclareModule PDF
   Declare.f GetScaleFactor(ID.i)
   Declare.f GetStringWidth(ID.i, String.s)
   Declare.f GetWordSpacing(ID.i)
+  Declare   HeaderProcedure(*ProcAddress, *StructAddress=#Null)
   Declare   Image(ID.i, FileName.s, X.f=#PB_Default, Y.f=#PB_Default, Width.f=#PB_Default, Height.f=#PB_Default, Link.i=#NoLink)
-  Declare   ImageMemory(ID.i, ImageName.s, *Memory, Size.i, Format.i, X.f=#PB_Default, Y.f=#PB_Default, Width.f=#PB_Default, Height.f=#PB_Default, Link.i=#NoLink)
+  ;Declare   ImageMemory(ID.i, ImageName.s, *Memory, Size.i, Format.i, X.f=#PB_Default, Y.f=#PB_Default, Width.f=#PB_Default, Height.f=#PB_Default, Link.i=#NoLink)
   Declare   InsertTOC(ID.i, Page.i=1, Label.s="", LabelFontSize.i=20, EntryFontSize.i=10, FontFamily.s="Times")
   Declare   Ln(ID.i, Height.f=#PB_Default)
   Declare.s MultiCell(ID.i, Text.s, Width.f, Height.f, Border.i=#False, Align.s="", Fill.i=#False, Indent.i=0, maxLine.i=0)
@@ -580,6 +581,9 @@ Module PDF
   #Error  = -1
   #Owner = 1
   #User  = 2
+  
+  #JSON = 1
+  
   CompilerIf #PB_Compiler_Processor=#PB_Processor_x86
     #pbPDF_Version = "pbPDF V" + #Version + " for PureBasic X86"
   CompilerElse
@@ -687,6 +691,22 @@ Module PDF
 ;- ============================================================================  
   
   ;{ ___ Internal Structures ___
+  Structure Header_Structure     ;{ Internal\Header\...
+    *ProcPtr
+    *StrucPtr
+  EndStructure ;}
+  
+  Structure Footer_Structure ;{ Internal\Footer\... 
+    *ProcPtr
+    *StrucPtr
+  EndStructure ;}
+  
+  Structure Internal_Structure ;{ Internal\...
+    Header.Header_Structure
+    Footer.Footer_Structure
+  EndStructure ;}
+  
+  
   Structure Memory_Structure          ;{ -> Internal *
     *Memory
     Size.i
@@ -914,11 +934,13 @@ Module PDF
     *StrucPtr
     PageBreak.i
     Flag.i    ; #True / #False
-  EndStructure;}  
+  EndStructure ;}  
   
   Structure PDF_Image_Structure      ;{ PDF()\objImages(FileName)\... | PDF()\objFonts()\... | PDF()\objFiles()\... | PDF()\objJavaScript()\...
     Number.i
     Object.s
+    Width.f
+    Height.f
     File.s
   EndStructure ;}
   
@@ -1052,6 +1074,7 @@ Module PDF
     
   EndStructure ;}
   
+  Global Internal.Internal_Structure
   Global NewMap PDF.PDF_Structure()
   
 ;- ============================================================================
@@ -1339,8 +1362,6 @@ Module PDF
     Define.i i, Size, strgSize, sSize, eSize
     Define.s strgArray
     Define   *MemPtr
-    
-    Debug sStrg + " / " + estrg
     
     sSize = Len(sStrg)
     eSize = Len(eStrg)
@@ -2222,8 +2243,10 @@ Module PDF
     Define *MemPtr
     
     If *Memory And Size
-      
+
       *MemPtr = *Memory
+      Debug "MaxMem: " + Str(*Memory + Size)
+      *Header\Size = 0
       
       *Header\Signature = Hex(EndianQ(PeekQ(*MemPtr)), #PB_Quad)
       *MemPtr + 8
@@ -2252,16 +2275,20 @@ Module PDF
               CopyMemory(*MemPtr, *Header\PalPtr, BlockLen)
             EndIf
           Case "IDAT"
-            *Header\Size    = BlockLen
-            *Header\Memory  = AllocateMemory(BlockLen)
-            If *Header\Memory : CopyMemory(*MemPtr, *Header\Memory, BlockLen) : EndIf
-            FreeMemory(*Memory)
-            Break
+            If *Header\Size > 0
+              *Header\Memory = ReAllocateMemory(*Header\Memory, *Header\Size + BlockLen)
+            Else
+              *Header\Memory = AllocateMemory(BlockLen)
+            EndIf
+            If *Header\Memory : CopyMemory(*MemPtr, *Header\Memory + *Header\Size, BlockLen) : EndIf
+            *Header\Size + BlockLen
         EndSelect
         *MemPtr + BlockLen
+        If *MemPtr >= *Memory + Size : Break : EndIf
         CRC = uint32(PeekL(*MemPtr))
         *MemPtr + 4
-      Until BlockTyp = "IEND" Or *MemPtr >= *Memory + Size 
+      Until BlockTyp = "IEND" Or *MemPtr >= *Memory + Size
+      
     Else
       PDF()\Error = #ERROR_PROBLEM_READING_IMAGE_FILE_IN_MEMORY
     EndIf
@@ -2415,24 +2442,27 @@ Module PDF
         objStrg + "/Length "+Str(Header\Size) + #LF$
         objOutDictionary_(objStrg, #LF$)
         objOutStream_(Header\Memory, Header\Size)
- 
+        
+        ; ===== Automatic width and height calculation if needed
+        
+        If Width = 0 And Height = 0 ;{ Put image at 72 dpi
+          Width  = Header\Width  / PDF()\ScaleFactor
+          Height = Header\Height / PDF()\ScaleFactor
+          ;}
+        EndIf
+        
+        If Width  = 0 : Width  = Height * Header\Width  / Header\Height : EndIf
+        If Height = 0 : Height = Width  * Header\Height / Header\Width  : EndIf
+        
+        PDF()\objImages()\Width  = Width
+        PDF()\objImages()\Height = Height
+       
       EndIf
 
-      ; ===== Automatic width and height calculation if needed
-      
-      If Width = 0 And Height = 0 ;{ Put image at 72 dpi
-        Width  = Header\Width  / PDF()\ScaleFactor
-        Height = Header\Height / PDF()\ScaleFactor
-        ;}
-      EndIf
-      
-      If Width  = 0 : Width  = Height * Header\Width  / Header\Height : EndIf
-      If Height = 0 : Height = Width  * Header\Height / Header\Width  : EndIf
-  
-      objOutPage_("q " + strF_(Width * PDF()\ScaleFactor, 2) + " 0 0 " + strF_(Height * PDF()\ScaleFactor, 2) + " " + strF_(X * PDF()\ScaleFactor, 2) + " " + strF_((PDF()\Page\Height - (Y + Height)) * PDF()\ScaleFactor, 2) + " cm /I" + Str(PDF()\objImages()\Number) + " Do Q")
+      objOutPage_("q " + strF_(PDF()\objImages()\Width * PDF()\ScaleFactor, 2) + " 0 0 " + strF_(PDF()\objImages()\Height * PDF()\ScaleFactor, 2) + " " + strF_(X * PDF()\ScaleFactor, 2) + " " + strF_((PDF()\Page\Height - (Y + PDF()\objImages()\Height)) * PDF()\ScaleFactor, 2) + " cm /I" + Str(PDF()\objImages()\Number) + " Do Q")
       
       CompilerIf #Enable_Annotations
-        If Link > #NoLink : AddAnnot_(Link, X, Y, Width, Height) : EndIf
+        If Link > #NoLink : AddAnnot_(Link, X, Y, PDF()\objImages()\Width, PDF()\objImages()\Height) : EndIf
       CompilerEndIf
       
     EndIf
@@ -2975,13 +3005,13 @@ Module PDF
         PDF()\Font\SizePt  = Size
         PDF()\Font\Size    = Size / PDF()\ScaleFactor
         PDF()\Font\Unicode = PDF()\Fonts()\Unicode
-        
-        If PDF()\pageNum > 0
-          objOutPage_("BT /F" + Str(PDF()\Fonts()\Number) + " " + strF_(PDF()\Font\SizePt, 2) + " Tf ET")
-        EndIf
-        
+
       EndIf
       
+    EndIf
+    
+    If PDF()\pageNum > 0
+      objOutPage_("BT /F" + Str(PDF()\Fonts()\Number) + " " + strF_(PDF()\Font\SizePt, 2) + " Tf ET")
     EndIf
     
   EndProcedure
@@ -3560,7 +3590,7 @@ Module PDF
     
     If Orientation = "" : Orientation = PDF()\Document\Orientation : EndIf
     PDF()\Page\Orientation = Left(UCase(Orientation), 1)
-    
+
     ;{ Close previous page
     If PDF()\pageNum > 0
       
@@ -3569,44 +3599,35 @@ Module PDF
         PDF()\Page\Angle = 0
         objOutPage_("Q" + #LF$)
   	  EndIf ;}
-     
-  	  ;{ Footer Procedure
+  	  
+  	  ;{ Backup Font & Colors & LineWidth
+      FontFamiliy = PDF()\Font\Family
+      FontStyle   = PDF()\Font\Style
+      Underline   = PDF()\Font\Underline
+      FontSize    = PDF()\Font\SizePt
+      DrawColor   = PDF()\Color\Draw
+      FillColor   = PDF()\Color\Fill
+      TextColor   = PDF()\Color\Text
+      ColorFlag   = PDF()\Color\Flag
+      LineWidth   = PDF()\LineWidth
+      ;}
+  	  
+      ;{ Footer Procedure
+      
       If PDF()\Footer\Flag And PDF()\Footer\ProcPtr
         
         PDF()\Footer\PageBreak = #False
-        
-        ;{ Backup Font & Colors & LineWidth
-        FontFamiliy = PDF()\Font\Family
-        FontStyle   = PDF()\Font\Style
-        Underline   = PDF()\Font\Underline
-        FontSize    = PDF()\Font\SizePt
-        DrawColor   = PDF()\Color\Draw
-        FillColor   = PDF()\Color\Fill
-        TextColor   = PDF()\Color\Text
-        ColorFlag   = PDF()\Color\Flag
-        LineWidth   = PDF()\LineWidth
-        ;}
-        
+
         ;{ Call Footer Procedure
         If PDF()\Footer\StrucPtr <> #Null
           CallFunctionFast(PDF()\Footer\ProcPtr, PDF()\Footer\StrucPtr)
         Else
           CallFunctionFast(PDF()\Footer\ProcPtr)
         EndIf ;}
-        
-        ;{ Restore Font & Colors & LineWidth
-        PDF()\LineWidth   = LineWidth
-        PDF()\Color\Draw  = DrawColor
-        PDF()\Color\Fill  = FillColor
-        PDF()\Color\Text  = TextColor
-        PDF()\Color\Flag  = ColorFlag
-        PDF()\Font\Family = FontFamiliy
-        PDF()\Font\Style  = FontStyle
-        PDF()\Font\SizePt = FontSize
-        PDF()\Font\Underline = Underline
-        ;}
-        
+
         PDF()\Footer\PageBreak = #True
+        
+        SetFont_(FontFamiliy, FontStyle, FontSize)
         
       ElseIf PDF()\Footer\Numbering
         
@@ -3618,8 +3639,22 @@ Module PDF
         
         PDF()\Footer\PageBreak = #True
         
+        SetFont_(FontFamiliy, FontStyle, FontSize)
+        
       EndIf ;}
-     
+      
+      ;{ Restore Font & Colors & LineWidth
+      PDF()\LineWidth      = LineWidth
+      PDF()\Color\Draw     = DrawColor
+      PDF()\Color\Fill     = FillColor
+      PDF()\Color\Text     = TextColor
+      PDF()\Color\Flag     = ColorFlag
+      PDF()\Font\Family    = FontFamiliy
+      PDF()\Font\Style     = FontStyle
+      PDF()\Font\SizePt    = FontSize
+      PDF()\Font\Underline = Underline
+      ;}
+      
     EndIf ;}
     
     PDF()\pageNum = objNew_(#objPage) ; New Page Object
@@ -3627,8 +3662,6 @@ Module PDF
     ; --- Page defaults ---
     PDF()\Page\X = PDF()\Margin\Left
     PDF()\Page\Y = PDF()\Margin\Right
-    
-    PDF()\Font\Family = ""
     
     If Trim(Format) ;{ Change page format
       ptWidth  = ValF(StringField(Format, 1, ","))
@@ -3673,6 +3706,7 @@ Module PDF
     If PDF()\Color\Draw <> "0 G" :  objStrg + PDF()\Color\Draw + #LF$ : EndIf  
     If PDF()\Color\Fill <> "0 g" :  objStrg + PDF()\Color\Fill + #LF$ : EndIf
     objOutPage_(objStrg)
+    
     If Trim(PDF()\Font\Family) <> ""
       SetFont_(PDF()\Font\Family, FontStyle, FontSize)
     EndIf
@@ -5966,7 +6000,7 @@ Module PDF
     EndIf
     
   EndProcedure
-    
+
   Procedure   InsertTOC(ID.i, Page.i=1, Label.s="", LabelFontSize.i=20, EntryFontSize.i=10, FontFamily.s="Times")
     Define.i StartTOC, Level, strgWidth, i, j, Num, NumTOC
     Define.f Width, Height, PageCellSize
@@ -6050,7 +6084,7 @@ Module PDF
     EndIf
     
   EndProcedure    
-  
+    
   Procedure.s MultiCell(ID.i, Text.s, Width.f, Height.f, Border.i=#False, Align.s="", Fill.i=#False, Indent.i=0, maxLine.i=0) ; [*]
     
     If FindMapElement(PDF(), Str(ID))
@@ -6232,6 +6266,20 @@ Module PDF
   
   ;- ----- Basic Commands -----------------
   
+  Procedure HeaderProcedure(*ProcAddress, *StructAddress=#Null)
+    
+    Internal\Header\ProcPtr  = *ProcAddress
+    Internal\Header\StrucPtr = *StructAddress
+
+  EndProcedure   
+  
+  Procedure FooterProcedure(*ProcAddress, *StructAddress=#Null)
+
+    Internal\Footer\ProcPtr  = *ProcAddress
+    Internal\Footer\StrucPtr = *StructAddress 
+    
+  EndProcedure 
+   
   Procedure.i Create(ID.i, Orientation.s="P", Unit.s="", Format.s="")  ; [*]
     Define objRes.i
     
@@ -6253,7 +6301,7 @@ Module PDF
       PDF()\Page\TOCNum = 1 ; ?
       PDF()\Error       = #False
       
-     ;{ Scale factor
+      ;{ Scale factor
       Select Unit
         Case "pt"
           PDF()\ScaleFactor = 1
@@ -6312,6 +6360,12 @@ Module PDF
       PDF()\PageBreak\Auto    = #True
       PDF()\PageBreak\Margin  = PDF()\Margin\Left * 2
       PDF()\PageBreak\Trigger = PDF()\Page\Height - PDF()\PageBreak\Margin
+      
+      PDF()\Header\ProcPtr    = Internal\Header\ProcPtr
+      PDF()\Header\StrucPtr   = Internal\Header\StrucPtr
+      PDF()\Footer\ProcPtr    = Internal\Footer\ProcPtr
+      PDF()\Footer\StrucPtr   = Internal\Footer\StrucPtr
+      PDF()\Footer\PageBreak  = #True
       
       ; ----- Begin document -----
 
@@ -6605,11 +6659,11 @@ CompilerIf #PB_Compiler_IsMainFile
   
   ; ========== Create PDF ==========
   
-  PDF::SetFooterProcedure(#PDF, @Footer())
-  ;PDF::SetAliasTotalPages(#PDF, "{tp}")
+  PDF::FooterProcedure(@Footer())
   
   If PDF::Create(#PDF)
-    
+
+    PDF::SetAliasTotalPages(#PDF, "{tp}")
     ;PDF::SetPageCompression(#PDF, #True)
     ;PDF::SetEncryption(#PDF, "Test", "pbPDF")
     
@@ -6635,6 +6689,15 @@ CompilerIf #PB_Compiler_IsMainFile
     PDF::TruncateCell(#PDF, "That is a long text to test it.", 43, 6, #True, PDF::#NextLine) 
     ;}
     
+    ;{ ----- Example: AutoPageBreak ----- 
+    PDF::AddPage(#PDF)
+    PDF::BookMark(#PDF, "Example: AutoPageBreak", 0, 0)
+    PDF::SetFont(#PDF, "Arial", "", 11)
+    For i=1 To 60
+      PDF::Cell(#PDF, "("+Str(i)+") all work And no play makes jack a dull boy ", 100, 5, #False,  PDF::#NextLine)
+    Next  
+    ;}
+    
     ;{ ----- Example: Bulleted Text ----- 
     PDF::AddPage(#PDF)
     PDF::BookMark(#PDF, "Example: Bulleted Text", 0, 0)
@@ -6644,7 +6707,7 @@ CompilerIf #PB_Compiler_IsMainFile
     PDF::SetPosXY(#PDF, 90 + 10 * 2, 10)
     For n=1 To 10 : PDF::MultiCellList(#PDF, Text, 90, 6, #False, PDF::#Justified, #False, Str(n)+")") : Next
     ;}
-    
+
     ;{ ----- Example: Table ----- 
     PDF::AddPage(#PDF)
     PDF::BookMark(#PDF, "Example: Table", 0, 0)
@@ -6872,6 +6935,7 @@ CompilerIf #PB_Compiler_IsMainFile
     
     RunProgram(File$)
   EndIf
+  ;}
   
   DataSection
     begindata:
@@ -6886,5 +6950,3 @@ CompilerIf #PB_Compiler_IsMainFile
   EndDataSection
 
 CompilerEndIf 
-
-;- ========================
