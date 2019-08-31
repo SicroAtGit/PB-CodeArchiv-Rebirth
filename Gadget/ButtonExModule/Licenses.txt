@@ -1,4 +1,4 @@
-[Delete.png] 
+[Delete.png]
 
 Source: GNOME-Colors (http://code.google.com/p/gnome-colors/)
 License: http://creativecommons.org/licenses/GPL/2.0/
