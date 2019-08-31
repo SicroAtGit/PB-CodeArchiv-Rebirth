@@ -825,3 +825,4 @@ CompilerIf #PB_Compiler_IsMainFile
 
     CloseWindow(#Window)
   EndIf 
+CompilerEndIf
