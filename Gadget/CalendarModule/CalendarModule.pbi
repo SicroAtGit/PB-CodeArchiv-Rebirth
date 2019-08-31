@@ -16,9 +16,11 @@
 ;/ © 2019 Thorsten1867 (07/2019)
 ;/
 
-; Last Update: 20.07.2019
+; Last Update: 31.08.2019
 ;
 ; BugFixes
+;
+; Code adapted by Sicro to use the "official" Date64 module
 ;
 
 ;{ ===== MIT License =====
@@ -83,8 +85,8 @@
 ;}
 
 
-XIncludeFile "CanvasTooltipModule.pbi"
-XIncludeFile "Date64Module.pbi"
+XIncludeFile "../TooltipExModule/TooltipExModule.pbi"
+XIncludeFile "../../Date/Date64.pbi"
 
 DeclareModule Calendar
   
@@ -495,31 +497,31 @@ Module Calendar
   CompilerIf Defined(Date64, #PB_Module)
     
     Procedure.q AddDate_(Date.q, Type.i, Value.i)
-      ProcedureReturn Date64::AddDate_(Date, Type, Value)
+      ProcedureReturn Date64::AddDate64(Date, Type, Value)
     EndProcedure
     
     Procedure.q Date_(Year.i, Month.i, Day.i=1, Hour.i=0, Minute.i=0, Second.i=0)
-      ProcedureReturn Date64::Date_(Year, Month, Day, Hour, Minute, Second)
+      ProcedureReturn Date64::Date64(Year, Month, Day, Hour, Minute, Second)
     EndProcedure
     
     Procedure.i Day_(Date.q)
-      ProcedureReturn Date64::Day_(Date)
+      ProcedureReturn Date64::Day64(Date)
     EndProcedure
     
     Procedure.i DayOfWeek_(Date.q)
-      ProcedureReturn Date64::DayOfWeek_(Date)
+      ProcedureReturn Date64::DayOfWeek64(Date)
     EndProcedure
     
     Procedure.s FormatDate_(Mask.s, Date.q)
-      ProcedureReturn Date64::FormatDate_(Mask, Date)
+      ProcedureReturn Date64::FormatDate64(Mask, Date)
     EndProcedure
     
     Procedure.i Month_(Date.q)
-      ProcedureReturn Date64::Month_(Date)
+      ProcedureReturn Date64::Month64(Date)
     EndProcedure
     
     Procedure.i Year_(Date.q)
-      ProcedureReturn Date64::Year_(Date)
+      ProcedureReturn Date64::Year64(Date)
     EndProcedure
     
   CompilerElse
