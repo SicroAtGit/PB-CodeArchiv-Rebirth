@@ -1,8 +1,8 @@
-﻿;   Description: 
+﻿;   Description: Add support for iCal files
 ;            OS: Windows, Linux, Mac
-; English-Forum: 
+; English-Forum: https://www.purebasic.fr/english/viewtopic.php?f=27&t=73180
 ;  French-Forum: 
-;  German-Forum: 
+;  German-Forum: https://www.purebasic.fr/german/viewtopic.php?f=8&t=31579
 ; -----------------------------------------------------------------------------
 
 ;/ ===========================

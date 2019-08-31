@@ -2,4 +2,4 @@
 ;            OS: Windows, Linux, Mac
 ; English-Forum: 
 ;  French-Forum: 
-;  German-Forum: 
+;  German-Forum: https://www.purebasic.fr/german/viewtopic.php?f=10&t=30667
