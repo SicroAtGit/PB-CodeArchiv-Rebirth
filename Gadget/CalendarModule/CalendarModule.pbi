@@ -85,7 +85,7 @@
 ;}
 
 
-XIncludeFile "../TooltipExModule/TooltipExModule.pbi"
+XIncludeFile "../CanvasTooltipModule/CanvasTooltipModule.pbi"
 XIncludeFile "../../Date/Date64.pbi"
 
 DeclareModule Calendar
