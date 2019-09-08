@@ -159,6 +159,13 @@ output$ = "##############################################" + #CRLF$ +
 ;-Create ASM Code Output Window
 ; =============================
 
+Procedure UpdateWindow()
+  ResizeGadget(#Editor_Output, #PB_Ignore, #PB_Ignore, WindowWidth(#Window_Main), WindowHeight(#Window_Main) - 40)
+  ResizeGadget(#Button_OpenStandardEditor, 5, GadgetHeight(#Editor_Output) + 5, WindowWidth(#Window_Main) / 2 - 8, #PB_Ignore)
+  ResizeGadget(#Button_CopyToClipboard, GadgetWidth(#Button_OpenStandardEditor) + 10, GadgetHeight(#Editor_Output) + 5,
+               WindowWidth(#Window_Main) / 2 - 8, #PB_Ignore)
+EndProcedure
+ 
 ; Display the ASM code in an EditorGadget
 If Not OpenWindow(#Window_Main, #PB_Ignore, #PB_Ignore, 500, 500, #Program_Name, #PB_Window_SystemMenu | #PB_Window_SizeGadget |
                                                                                  #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget)
@@ -170,6 +177,9 @@ ButtonGadget(#Button_OpenStandardEditor, 5, GadgetHeight(#Editor_Output) + 5, Wi
 ButtonGadget(#Button_CopyToClipboard, GadgetWidth(#Button_OpenStandardEditor) + 10, GadgetHeight(#Editor_Output) + 5,
              WindowWidth(#Window_Main) / 2 - 8, 30, "Copy To Clipboard")
 SetGadgetText(#Editor_Output, output$)
+
+BindEvent(#PB_Event_SizeWindow, @UpdateWindow(), #Window_Main)
+
 Repeat
   event = WaitWindowEvent()
   Select event
@@ -187,10 +197,5 @@ Repeat
         Case #Button_CopyToClipboard
           SetClipboardText(output$)
       EndSelect
-    Case #PB_Event_SizeWindow
-      ResizeGadget(#Editor_Output, #PB_Ignore, #PB_Ignore, WindowWidth(#Window_Main), WindowHeight(#Window_Main) - 40)
-      ResizeGadget(#Button_OpenStandardEditor, 5, GadgetHeight(#Editor_Output) + 5, WindowWidth(#Window_Main) / 2 - 8, #PB_Ignore)
-      ResizeGadget(#Button_CopyToClipboard, GadgetWidth(#Button_OpenStandardEditor) + 10, GadgetHeight(#Editor_Output) + 5,
-                   WindowWidth(#Window_Main) / 2 - 8, #PB_Ignore)
   EndSelect
 Until event = #PB_Event_CloseWindow
