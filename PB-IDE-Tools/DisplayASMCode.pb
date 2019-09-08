@@ -28,7 +28,7 @@
 ; SOFTWARE.
 
 ; Tool Settings:
-; - Arguments: "%HOME" "%FILE" "%TEMPFILE"
+; - Arguments: "%FILE" "%TEMPFILE"
 ; - Event:     Menu Or Shortcut
 
 EnableExplicit
@@ -69,10 +69,10 @@ Define program, file, event, isCompilerError
 
 outputFilePathForStandardProgram$ = GetTemporaryDirectory() + RemoveString(#Program_Name, " ") + "-Output.txt"
 
-compilerHomePath$ = ProgramParameter(0) ; "%HOME"
-compilerFilePath$ = compilerHomePath$ + "compilers/pbcompiler"
-codeFilePath$     = ProgramParameter(1) ; "%FILE"
-codeTempFilePath$ = ProgramParameter(2) ; "%TEMPFILE"
+compilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
+compilerHomePath$ = GetPathPart(compilerFilePath$)
+codeFilePath$     = ProgramParameter(0) ; "%FILE"
+codeTempFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
 
 If codeFilePath$ = ""
   ; The code has not yet been saved
@@ -81,7 +81,7 @@ If codeFilePath$ = ""
 EndIf
 
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  asmCodeFilePath$ = compilerHomePath$ + "compilers/purebasic.asm"
+  asmCodeFilePath$ = compilerHomePath$ + "purebasic.asm"
 CompilerElse
   asmCodeFilePath$ = GetPathPart(codeFilePath$) + "purebasic.asm"
 CompilerEndIf
