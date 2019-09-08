@@ -7,7 +7,7 @@
 
 ; MIT License
 ;
-; Copyright (c) 2018 Sicro
+; Copyright (c) 2018-2019 Sicro
 ;
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,12 @@
 
 EnableExplicit
 
+; =============
+;-Include Codes
+; =============
+
+XIncludeFile "../System/OpenStandardProgram.pbi"
+
 ; ================
 ;-Define Constants
 ; ================
@@ -47,32 +53,6 @@ Enumeration Gadget
   #Button_OpenStandardEditor
   #Button_CopyToClipboard
 EndEnumeration
-
-; =================
-;-Define Procedures
-; =================
-
-Procedure OpenWithStandardProgram(filePath$)
-  
-  Protected result
-  
-  ; Avoid problems with paths containing spaces
-  filePath$ = #DQUOTE$ + filePath$ + #DQUOTE$
-  
-  CompilerSelect #PB_Compiler_OS
-    CompilerCase #PB_OS_Windows
-      ; https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-shellexecutew
-      result = Bool(ShellExecute_(0, "open", filePath$, #Null, #Null, #SW_SHOW) > 32)
-    CompilerCase #PB_OS_Linux
-      ; https://portland.freedesktop.org/doc/xdg-open.html
-      result = Bool(RunProgram("xdg-open", filePath$, GetCurrentDirectory()))
-    CompilerCase #PB_OS_MacOS
-      result = Bool(RunProgram("open", filePath$, GetCurrentDirectory()))
-  CompilerEndSelect
-  
-  ProcedureReturn result
-  
-EndProcedure
 
 ; ======================
 ;-Define Local Variables
