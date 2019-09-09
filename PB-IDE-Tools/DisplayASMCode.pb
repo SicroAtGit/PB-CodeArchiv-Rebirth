@@ -59,7 +59,7 @@ EndEnumeration
 ; ======================
 
 Define compilerHomePath$, compilerFilePath$, workingDirectoryPath$, codeFilePath$, codeTempFilePath$,
-       asmCodeFilePath$, exeFilePath$, outputFilePathForStandardProgram$
+       asmCodeFilePath$, exeFilePath$, outputFilePathForStandardProgram$, compilerParameters$
 Define asmCode$, output$, compilerOutput$
 Define program, file, event, isCompilerError
 
@@ -95,6 +95,18 @@ CompilerElse
   workingDirectoryPath$ = GetPathPart(codeFilePath$)
 CompilerEndIf
 
+compilerParameters$ = "--commented"
+compilerParameters$ + " --executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$
+If Val(GetEnvironmentVariable("PB_TOOL_Debugger"))
+  compilerParameters$ + " --debugger"
+EndIf
+If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
+  compilerParameters$ + " --thread"
+EndIf
+If GetEnvironmentVariable("PB_TOOL_SubSystem")
+  compilerParameters$ + " --subsystem " + GetEnvironmentVariable("PB_TOOL_SubSystem")
+EndIf
+
 ; =======================
 ;-Delete Old Output Files
 ; =======================
@@ -109,7 +121,7 @@ DeleteFile(exeFilePath$)
 
 ; Run the PB compiler to create the ASM code file
 program = RunProgram(compilerFilePath$,
-                     #DQUOTE$ + codeFilePath$ + #DQUOTE$ + " --commented --executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$,
+                     #DQUOTE$ + codeFilePath$ + #DQUOTE$ + " " + compilerParameters$,
                      workingDirectoryPath$,
                      #PB_Program_Open | #PB_Program_Read)
 
