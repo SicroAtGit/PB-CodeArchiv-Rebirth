@@ -30,6 +30,8 @@
 ; Tool Settings:
 ; - Arguments: "%FILE"
 ; - Event:     Menu Or Shortcut
+; For MacOS, the field "Commandline" must contain the full path to the executable
+; file, e.g.: .../Program.app/Contents/MacOS/Program
 
 Define CodeFilePath$ = ProgramParameter(0)
 

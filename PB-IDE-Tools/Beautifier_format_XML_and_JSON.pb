@@ -27,6 +27,11 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+; Tool Settings:
+; - Event: Menu Or Shortcut
+; For MacOS, the field "Commandline" must contain the full path to the executable
+; file, e.g.: .../Program.app/Contents/MacOS/Program
+
 Enumeration FormWindow
   #frmMain
 EndEnumeration
