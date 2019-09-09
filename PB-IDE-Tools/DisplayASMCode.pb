@@ -165,9 +165,13 @@ If isCompilerError Or asmCode$ = ""
   End
 EndIf
 
-output$ = "##############################################" + #CRLF$ +
+output$ = "Compiler File Path: "  + compilerFilePath$   + #CRLF$ +
+          "Compiler Parameters: " + compilerParameters$ + #CRLF$ +
+          #CRLF$ +
+          "##############################################" + #CRLF$ +
           compilerOutput$ + #CRLF$ +
           "##############################################" + #CRLF$ +
+          #CRLF$ +
           asmCode$
 
 ; =============================
