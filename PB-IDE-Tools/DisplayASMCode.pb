@@ -165,6 +165,9 @@ If isCompilerError Or asmCode$ = ""
   End
 EndIf
 
+; Remove the ASM file only if no error occurred to avoid removing error traces
+DeleteFile(asmCodeFilePath$)
+
 output$ = "Compiler File Path: "  + compilerFilePath$   + #CRLF$ +
           "Compiler Parameters: " + compilerParameters$ + #CRLF$ +
           #CRLF$ +
