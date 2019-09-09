@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
+  Declare  Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False, includeCommentTokens=#True)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -82,7 +82,7 @@ Module PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False)
+  Procedure Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False, includeCommentTokens=#True)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -95,6 +95,8 @@ Module PBLexer
     ;               |                            (Optional - default is 200)
     ;               | includeWhitespaceTokens -- Specifies whether white-space tokens should be created
     ;               |                            (Optional - default is #False)
+    ;               |    includeCommentTokens -- Specifies whether comment tokens should be created
+    ;               |                            (Optional - default is #True)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | On success the handle of the created lexer, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -127,7 +129,7 @@ Module PBLexer
       
       Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b", #False, "Identifier")
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", #False, "Comment")
+      Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", Bool(includeCommentTokens <> #True), "Comment")
       
       regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e(?:[ \t]*[+\-][ \t]*)?[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
