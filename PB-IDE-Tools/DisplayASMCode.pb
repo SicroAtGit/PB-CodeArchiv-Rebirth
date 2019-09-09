@@ -147,17 +147,20 @@ EndIf
 
 ; If an error has occurred, output detailed information
 If isCompilerError Or asmCode$ = ""
-  MessageRequester(#ErrorWindowTitle, "Tool could not create the asm output!" + #CRLF$ +
-                                      #CRLF$ +
+  MessageRequester(#ErrorWindowTitle, "Tool could not create the asm output!" +
+                                      #CRLF$ + #CRLF$ +
                                       "Note that the PB compiler only generates ASM output if the PB code is syntaxically correct!" +
                                       #CRLF$ + #CRLF$ +
                                       "-------------------------------------" +
                                       #CRLF$ + #CRLF$ +
                                       "Compiler File Path:"        + #CRLF$ + compilerFilePath$     + #CRLF$ + #CRLF$ +
+                                      "Compiler Parameters:"       + #CRLF$ + compilerParameters$   + #CRLF$ + #CRLF$ +
                                       "Compiler Working Dir Path:" + #CRLF$ + workingDirectoryPath$ + #CRLF$ + #CRLF$ +
-                                      "Code File Path:"            + #CRLF$ + codeFilePath$         + #CRLF$ + #CRLF$ +
-                                      "ASM Code File Path:"        + #CRLF$ + asmCodeFilePath$      + #CRLF$ + #CRLF$ +
-                                      "EXE File Path:"             + #CRLF$ + exeFilePath$,
+                                      "ASM Code File Path:"        + #CRLF$ + asmCodeFilePath$      +
+                                      #CRLF$ + #CRLF$ +
+                                      "-------------------------------------" +
+                                      #CRLF$ + #CRLF$ +
+                                      "Compiler Output:"           + #CRLF$ + compilerOutput$,
                    #PB_MessageRequester_Error)
   End
 EndIf
