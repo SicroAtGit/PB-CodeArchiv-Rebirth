@@ -184,6 +184,17 @@ If Not OpenWindow(#Window_Main, #PB_Ignore, #PB_Ignore, 500, 500, #Program_Name,
   MessageRequester(#ErrorWindowTitle, "The program window could not be created!", #PB_MessageRequester_Error)
   End
 EndIf
+
+CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
+  If Not IsMenu(#Window_Main)
+    CreateMenu(0, WindowID(#Window_Main))
+  EndIf
+  
+  ;MenuItem(#PB_Menu_About, "")
+  ;MenuItem(#PB_Menu_Preferences, "")
+  MenuItem(#PB_Menu_Quit, "")
+CompilerEndIf
+
 EditorGadget(#Editor_Output, 0, 0, WindowWidth(#Window_Main), WindowHeight(#Window_Main) - 40)
 ButtonGadget(#Button_OpenStandardEditor, 5, GadgetHeight(#Editor_Output) + 5, WindowWidth(#Window_Main) / 2 - 8, 30, "Open Standard Editor")
 ButtonGadget(#Button_CopyToClipboard, GadgetWidth(#Button_OpenStandardEditor) + 10, GadgetHeight(#Editor_Output) + 5,
@@ -209,5 +220,15 @@ Repeat
         Case #Button_CopyToClipboard
           SetClipboardText(output$)
       EndSelect
+    Case #PB_Event_Menu
+      CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
+        ; MacOS 'Application' menu
+        Select EventMenu()
+          Case #PB_Menu_About
+          Case #PB_Menu_Preferences
+          Case #PB_Menu_Quit
+            Break
+        EndSelect
+      CompilerEndIf
   EndSelect
 Until event = #PB_Event_CloseWindow
