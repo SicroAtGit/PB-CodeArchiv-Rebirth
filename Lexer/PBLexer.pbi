@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False, includeCommentTokens=#True)
+  Declare  Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#True)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -82,7 +82,7 @@ Module PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(*string, maxTokenValueLength=1000, includeWhitespaceTokens=#False, includeCommentTokens=#True)
+  Procedure Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#True)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ Module PBLexer
     ;               |                            Too low values can cause the substring to be too short and some tokens can
     ;               |                            no longer be read out completely. It is also possible that some tokens are
     ;               |                            not recognized at all, because the RegEx of the token no longer matches
-    ;               |                            (Optional - default is 1000)
+    ;               |                            (Optional - default is 250)
     ;               | includeWhitespaceTokens -- Specifies whether white-space tokens should be created
     ;               |                            (Optional - default is #False)
     ;               |    includeCommentTokens -- Specifies whether comment tokens should be created
