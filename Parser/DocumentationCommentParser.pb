@@ -374,8 +374,7 @@ Procedure$ ProcessProcedureParameters(*lexer)
     While PBLexer::NextToken(*lexer)
         tokenValue$ = PBLexer::TokenValue(*lexer)
         
-        If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Keyword Or
-           PBLexer::TokenValue(*lexer) = ","
+        If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Keyword
             ; The leading keywords should be separated from the variable name
             ; by a whitespace character
             tokenValue$ + " "
