@@ -32,20 +32,45 @@
 ; For MacOS, the field "Commandline" must contain the full path to the executable
 ; file, e.g.: .../Program.app/Contents/MacOS/Program
 
-CompilerSelect #PB_Compiler_OS
-  CompilerCase #PB_OS_Windows
-    #NewLine$ = #CRLF$
-  CompilerDefault
-    #NewLine$ = #LF$
-CompilerEndSelect
+Procedure$ DetermineNewLineFormat(ClipBoardText$)
+  Protected i
+  Protected Character$, Result$
+  
+  Repeat
+    i + 1
+    Character$ = Mid(ClipBoardText$, i, 1)
+    
+    Select Character$
+        
+      Case #CR$
+        If Mid(ClipBoardText$, i + 1, 1) = #LF$
+          Result$ = #CRLF$
+        Else
+          Result$ = #CR$
+        EndIf
+        Break
+        
+      Case #LF$
+        Result$ = #LF$
+        Break
+        
+    EndSelect
+    
+  Until Character$ = ""
+  
+  ProcedureReturn Result$
+EndProcedure
 
 Define ClipBoardText$ = GetClipboardText()
+Define NewLineFormat$
 
 If Left(ClipBoardText$, 1) = ";"
   ; The text in the clipboard has apparently already been converted
   End
 EndIf
 
-ClipBoardText$ = "; " + ReplaceString(ClipBoardText$, #NewLine$, #NewLine$ + "; ")
+NewLineFormat$ = DetermineNewLineFormat(ClipBoardText$)
+
+ClipBoardText$ = "; " + ReplaceString(ClipBoardText$, NewLineFormat$, NewLineFormat$ + "; ")
 
 SetClipboardText(ClipBoardText$)
