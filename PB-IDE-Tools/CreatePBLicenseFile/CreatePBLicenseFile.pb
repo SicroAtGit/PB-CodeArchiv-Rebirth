@@ -16,6 +16,7 @@ EnableExplicit
 
 XIncludeFile "../../Lexer/PBLexer.pbi"
 XIncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
+XIncludeFile "../../Preprocessor/PBPreprocessor.pbi"
 
 ; =============================================================================
 ;- Define Structures
@@ -29,7 +30,6 @@ EndStructure
 ;- Declare Procedures
 ; =============================================================================
 
-Declare$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
 Declare$ GetLicenseText(LibraryName$)
 Declare  ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
                         Map Functions.FunctionsMapStruc(),
@@ -165,48 +165,6 @@ MessageRequester(#Program_Name, "The license file was successfully created.",
 ; =============================================================================
 ;- Define Procedures
 ; =============================================================================
-
-Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
-  
-  Protected File, StringFormat
-  Protected TempCodeFilePath$, Content$, Parameters$
-  
-  If CodeFilePath$ = ""
-    ProcedureReturn ""
-  EndIf
-    
-  TempCodeFilePath$ = GetTemporaryDirectory() + "TempCodeFile"
-  
-  Parameters$ = #DQUOTE$ + CodeFilePath$ + #DQUOTE$ +
-               " --preprocess " + #DQUOTE$ + TempCodeFilePath$ + #DQUOTE$
-  
-  If Not RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
-                    #PB_Program_Wait | #PB_Program_Hide)
-    ProcedureReturn ""
-  EndIf
-  
-  File = ReadFile(#PB_Any, TempCodeFilePath$)
-  If Not File
-    ProcedureReturn ""
-  EndIf
-  
-  StringFormat = ReadStringFormat(File)
-  Select StringFormat
-    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
-    Default
-      ; ReadString() supports fewer string formats than ReadStringFormat(), so
-      ; in case of an unsupported format it is necessary to fall back to a
-      ; supported format
-      StringFormat = #PB_UTF8
-  EndSelect
-  
-  Content$ = ReadString(File, StringFormat | #PB_File_IgnoreEOL)
-  
-  CloseFile(File)
-  
-  ProcedureReturn Content$
-  
-EndProcedure
 
 Procedure$ GetLicenseText(LibraryName$)
   
