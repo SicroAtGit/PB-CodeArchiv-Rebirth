@@ -17,6 +17,7 @@ EnableExplicit
 XIncludeFile "../../Lexer/PBLexer.pbi"
 XIncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
 XIncludeFile "../../Preprocessor/PBPreprocessor.pbi"
+XIncludeFile "../../File/GetFileContentAsString.pbi"
 
 ; =============================================================================
 ;- Define Structures
@@ -30,7 +31,6 @@ EndStructure
 ;- Declare Procedures
 ; =============================================================================
 
-Declare$ GetLicenseText(LibraryName$)
 Declare  ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
                         Map Functions.FunctionsMapStruc(),
                         Map NeededThirdPartyLibrary.b())
@@ -58,6 +58,7 @@ NewMap Functions.FunctionsMapStruc()
 Define File, i
 Define PBFunctionName$, Default_ThirdParty_Library$, ThirdParty_Library$
 Define Result$, LicenseTextFilePath$, CodeFilePath$, CompilerFilePath$
+Define LicenseText$
 
 ; =============================================================================
 ;- Set Variables
@@ -127,10 +128,19 @@ ScanPBCodeFile(CodeFilePath$, CompilerFilePath$, Functions(),
 
 ForEach NeededThirdPartyLibrary()
   
+  LicenseTextFilePath$ = GetPathPart(ProgramFilename()) + "Licenses"
+  LicenseTextFilePath$ = EnsureTrailingSlashExists(LicenseTextFilePath$)
+  LicenseTextFilePath$ + MapKey(NeededThirdPartyLibrary())
+  
+  LicenseText$ = GetFileContentAsString(LicenseTextFilePath$)
+  If LicenseText$ = ""
+    LicenseText$ = "Error: License file not found"
+  EndIf
+  
   Result$ + "--------------------------" + #CRLF$ +
             MapKey(NeededThirdPartyLibrary()) + #CRLF$ +
             "--------------------------" + #CRLF$ + #CRLF$ +
-            GetLicenseText(MapKey(NeededThirdPartyLibrary())) + #CRLF$ + #CRLF$
+            LicenseText$ + #CRLF$ + #CRLF$
   
 Next
 
@@ -165,37 +175,6 @@ MessageRequester(#Program_Name, "The license file was successfully created.",
 ; =============================================================================
 ;- Define Procedures
 ; =============================================================================
-
-Procedure$ GetLicenseText(LibraryName$)
-  
-  Protected FilePath$, FileContent$
-  Protected File, StringFormat
-  
-  FilePath$ = GetPathPart(ProgramFilename()) + "Licenses"
-  FilePath$ = EnsureTrailingSlashExists(FilePath$)
-  
-  File = ReadFile(#PB_Any, FilePath$ + LibraryName$)
-  If File = 0
-    ProcedureReturn "Error: License file not found"
-  EndIf
-  
-  StringFormat = ReadStringFormat(File)
-  Select StringFormat
-    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
-    Default
-      ; ReadString() supports fewer string formats than ReadStringFormat(), so
-      ; in case of an unsupported format it is necessary to fall back to a
-      ; supported format
-      StringFormat = #PB_UTF8
-  EndSelect
-  
-  FileContent$ = ReadString(File, StringFormat | #PB_File_IgnoreEOL)
-  
-  CloseFile(File)
-  
-  ProcedureReturn FileContent$
-  
-EndProcedure
 
 Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
                          Map Functions.FunctionsMapStruc(),
