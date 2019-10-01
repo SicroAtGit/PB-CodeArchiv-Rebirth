@@ -201,11 +201,17 @@ Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
                          Map Functions.FunctionsMapStruc(),
                          Map NeededThirdPartyLibrary.b())
   
-  Protected CodeFileContent$, IdentifierName$
+  Protected CodeFileContent$, IdentifierName$, CompilerSubsystem$
+  Protected CompilerEnableThread
   Protected *Lexer
   
+  CompilerSubsystem$   = GetEnvironmentVariable("PB_TOOL_SubSystem")
+  CompilerEnableThread = Val(GetEnvironmentVariable("PB_TOOL_Thread"))
+  
   CodeFileContent$ = GetContentOfPreProcessedFile(CodeFilePath$,
-                                                  CompilerFilePath$)
+                                                  CompilerFilePath$, #False,
+                                                  CompilerEnableThread,
+                                                  CompilerSubsystem$)
   If CodeFileContent$ = ""
     ProcedureReturn #False
   EndIf

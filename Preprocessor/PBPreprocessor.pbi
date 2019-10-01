@@ -27,7 +27,10 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
+Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
+                                        CompilerEnableDebugger,
+                                        CompilerEnableThread,
+                                        CompilerSubsystem$)
   
   Protected File, StringFormat
   Protected TempCodeFilePath$, Content$, Parameters$
@@ -40,6 +43,18 @@ Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
   
   Parameters$ = #DQUOTE$ + CodeFilePath$ + #DQUOTE$ +
                " --preprocess " + #DQUOTE$ + TempCodeFilePath$ + #DQUOTE$
+  
+  If CompilerEnableDebugger
+    Parameters$ + " --debugger"
+  EndIf
+  
+  If CompilerEnableThread
+    Parameters$ + " --thread"
+  EndIf
+  
+  If CompilerSubsystem$
+    Parameters$ + " --subsystem " + CompilerSubsystem$
+  EndIf
   
   If Not RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
                     #PB_Program_Wait | #PB_Program_Hide)
