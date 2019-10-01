@@ -4,161 +4,84 @@
 ; For MacOS, the field "Commandline" must contain the full path to the executable
 ; file, e.g.: .../Program.app/Contents/MacOS/Program
 
+; =============================================================================
+;- Compiler Settings
+; =============================================================================
+
 EnableExplicit
 
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  XIncludeFile "..\..\FileSystem\IsAbsolutePath.pbi"
-  XIncludeFile "..\..\FileSystem\EnsureTrailingSlashExists.pbi"
-CompilerElse
-  XIncludeFile "../../FileSystem/IsAbsolutePath.pbi"
-  XIncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
-CompilerEndIf
+; =============================================================================
+;- Include Files
+; =============================================================================
 
-Structure FunctionStruc
-  FunctionName$
+XIncludeFile "../../Lexer/PBLexer.pbi"
+XIncludeFile "../../FileSystem/EnsureTrailingSlashExists.pbi"
+
+; =============================================================================
+;- Define Structures
+; =============================================================================
+
+Structure FunctionsMapStruc
   List DependsOnLibrary$()
 EndStructure
+
+; =============================================================================
+;- Declare Procedures
+; =============================================================================
+
+Declare$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
+Declare$ GetLicenseText(LibraryName$)
+Declare  ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
+                        Map Functions.FunctionsMapStruc(),
+                        Map NeededThirdPartyLibrary.b())
+
+; =============================================================================
+;- Define Maps
+; =============================================================================
 
 ; Only the map keys are used. The smallest data type has been selected for the
 ; map values To avoid unnecessary memory wastage.
 NewMap NeededThirdPartyLibrary.b()
 
-Procedure$ RemoveLeadingTabsAndWhiteSpacesFromString(String$)
-  
-  Repeat
-    
-    Select Left(String$, 1)
-      Case " "   : String$ = LTrim(String$)
-      Case #TAB$ : String$ = LTrim(String$, #TAB$)
-      Default    : Break
-    EndSelect
-    
-  ForEver
-  
-  ProcedureReturn String$
-  
-EndProcedure
+NewMap Functions.FunctionsMapStruc()
 
-Procedure CheckForAnyFunctionOfAnyLibraryInUse(CodeLine$, List Function.FunctionStruc(), Map NeededThirdPartyLibrary.b())
-  
-  ForEach Function()
-    
-    If FindString(CodeLine$, Function()\FunctionName$ + "(")
-      
-      ForEach Function()\DependsOnLibrary$()
-        AddMapElement(NeededThirdPartyLibrary(), Function()\DependsOnLibrary$())
-      Next
-      
-    EndIf
-    
-  Next
-  
-EndProcedure
+; =============================================================================
+;- Define Constants
+; =============================================================================
 
-Procedure$ ExtractStringBetweenFirstQuotesPair(String$)
-  
-  Protected StartPos, EndPos, Length
-  
-  StartPos = FindString(String$, #DQUOTE$)
-  StartPos + 1 ; Jump to the first character after the quote
-  
-  EndPos = FindString(String$, #DQUOTE$, StartPos)
-  
-  Length = EndPos - StartPos
-  
-  ProcedureReturn Mid(String$, StartPos, Length)
-  
-EndProcedure
+#Program_Name = "CreateLicenseFileForPBThirdPartyLibs"
 
-Procedure ScanPBCodeFileRecursivly(FilePath$, List Function.FunctionStruc(), Map NeededThirdPartyLibrary.b())
-  
-  Protected File, BOM
-  Protected CodeLine$, CurrentDirectoryOfIncludes$, PathOfIncludeFile$
-  
-  File = ReadFile(#PB_Any, FilePath$, #PB_File_SharedRead)
-  If File = 0 : ProcedureReturn : EndIf
-  
-  BOM = ReadStringFormat(File)
-  
-  While Not Eof(File)
-    
-    CodeLine$ = ReadString(File, BOM)
-    
-    ; Skip IDE settings at the end of the code
-    If Left(CodeLine$, 25) = "; IDE Options = PureBasic"
-      Break
-    EndIf
-    
-    CodeLine$ = RemoveLeadingTabsAndWhiteSpacesFromString(CodeLine$)
-    
-    CheckForAnyFunctionOfAnyLibraryInUse(CodeLine$, Function(), NeededThirdPartyLibrary())
-    
-    ; IncludePath support
-    If Left(LCase(CodeLine$), 11) = "includepath"
-      CurrentDirectoryOfIncludes$ = ExtractStringBetweenFirstQuotesPair(CodeLine$)
-      If Not IsAbsolutePath(CurrentDirectoryOfIncludes$)
-        ; Create absolute path
-        CurrentDirectoryOfIncludes$ = GetPathPart(FilePath$) + CurrentDirectoryOfIncludes$
-      EndIf
-      CurrentDirectoryOfIncludes$ = EnsureTrailingSlashExists(CurrentDirectoryOfIncludes$)
-      Continue
-    EndIf
-    
-    ; IncludeFile/XIncludeFile support
-    CodeLine$ = ReplaceString(CodeLine$, "XIncludeFile", "IncludeFile")
-    If Left(LCase(CodeLine$), 11) = "includefile"
-      PathOfIncludeFile$ = ExtractStringBetweenFirstQuotesPair(CodeLine$)
-      If Not IsAbsolutePath(PathOfIncludeFile$)
-        ; Create absolute path
-        PathOfIncludeFile$ = CurrentDirectoryOfIncludes$ + PathOfIncludeFile$
-      EndIf
-      ScanPBCodeFileRecursivly(PathOfIncludeFile$, Function(), NeededThirdPartyLibrary())
-    EndIf
-    
-  Wend
-  
-  CloseFile(File)
-  
-EndProcedure
+; =============================================================================
+;- Define Variables
+; =============================================================================
 
-Procedure$ GetLicenseText(LibraryName$)
-  
-  Protected FilePath$, FileContent$
-  Protected File
-  
-  FilePath$ = GetPathPart(ProgramFilename()) + "Licenses"
-  FilePath$ = EnsureTrailingSlashExists(FilePath$)
-  
-  File = ReadFile(#PB_Any, FilePath$ + LibraryName$)
-  If File = 0
-    ProcedureReturn "Error: License file not found"
-  EndIf
-  
-  FileContent$ = ReadString(File, #PB_File_IgnoreEOL)
-  
-  CloseFile(File)
-  
-  ProcedureReturn FileContent$
-  
-EndProcedure
+Define File, i
+Define PBFunctionName$, Default_ThirdParty_Library$, ThirdParty_Library$
+Define Result$, LicenseTextFilePath$, CodeFilePath$, CompilerFilePath$
 
-NewList Function.FunctionStruc()
+; =============================================================================
+;- Set Variables
+; =============================================================================
 
-Define File
-Define PBFunctionName$, Default_ThirdParty_Library$, ThirdParty_Library$, Result$, LicenseTextFilePath$
-Define i
+CodeFilePath$     = ProgramParameter(0)
+CompilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
 
-#PROGRAM_NAME = "CreateLicenseFileForPBThirdPartyLibs"
+; =============================================================================
+;- Main Code
+; =============================================================================
+
 SetCurrentDirectory(GetPathPart(ProgramFilename()))
 
 If Not OpenPreferences("PBLibrariesInfo.pref")
-  MessageRequester(#PROGRAM_NAME, "Error: OpenPreferences()", #PB_MessageRequester_Error)
+  MessageRequester(#Program_Name, "Error: OpenPreferences()",
+                   #PB_MessageRequester_Error)
   End
 EndIf
 
 If Not ExaminePreferenceGroups()
   ClosePreferences()
-  MessageRequester(#PROGRAM_NAME, "Error: ExaminePreferenceGroups()", #PB_MessageRequester_Error)
+  MessageRequester(#Program_Name, "Error: ExaminePreferenceGroups()",
+                   #PB_MessageRequester_Error)
   End
 EndIf
 
@@ -184,11 +107,11 @@ While NextPreferenceGroup()
       EndIf
     EndIf
     
-    If AddElement(Function())
-      Function()\FunctionName$ = PBFunctionName$
+    If AddMapElement(Functions(), PBFunctionName$)
       For i = CountString(ThirdParty_Library$, ",") + 1 To 1 Step -1
-        If AddElement(Function()\DependsOnLibrary$())
-          Function()\DependsOnLibrary$() = StringField(ThirdParty_Library$, i, ",")
+        If AddElement(Functions()\DependsOnLibrary$())
+          Functions()\DependsOnLibrary$() = StringField(ThirdParty_Library$, i,
+                                                        ",")
         EndIf
       Next
     EndIf
@@ -199,7 +122,8 @@ Wend
 
 ClosePreferences()
 
-ScanPBCodeFileRecursivly(ProgramParameter(0), Function(), NeededThirdPartyLibrary())
+ScanPBCodeFile(CodeFilePath$, CompilerFilePath$, Functions(),
+               NeededThirdPartyLibrary())
 
 ForEach NeededThirdPartyLibrary()
   
@@ -211,23 +135,142 @@ ForEach NeededThirdPartyLibrary()
 Next
 
 If Result$ = ""
-  MessageRequester(#PROGRAM_NAME, "The code doesn't use functions which depends on third-party libraries.", #PB_MessageRequester_Info)
+  MessageRequester(#Program_Name,
+                   "The code doesn't use functions which depends on third-party libraries.",
+                   #PB_MessageRequester_Info)
   End
 EndIf
 
-LicenseTextFilePath$ = SaveFileRequester(#PROGRAM_NAME, "ThirdPartyLibs_Licenses.txt", "", 0)
+LicenseTextFilePath$ = SaveFileRequester(#Program_Name,
+                                         "ThirdPartyLibs_Licenses.txt", "", 0)
 If LicenseTextFilePath$ = ""
-  MessageRequester(#PROGRAM_NAME, "The file save request was canceled.", #PB_MessageRequester_Error)
+  MessageRequester(#Program_Name, "The file save request was canceled.",
+                   #PB_MessageRequester_Error)
   End
 EndIf
 
 File = CreateFile(#PB_Any, LicenseTextFilePath$)
 If File = 0
-  MessageRequester(#PROGRAM_NAME, "The license file could not be created.", #PB_MessageRequester_Error)
+  MessageRequester(#Program_Name, "The license file could not be created.",
+                   #PB_MessageRequester_Error)
   End
 EndIf
 
 WriteString(File, "Third-party libraries in use:" + #CRLF$ + #CRLF$)
 WriteString(File, Result$)
 CloseFile(File)
-MessageRequester(#PROGRAM_NAME, "The license file was successfully created.", #PB_MessageRequester_Info)
+MessageRequester(#Program_Name, "The license file was successfully created.",
+                 #PB_MessageRequester_Info)
+
+; =============================================================================
+;- Define Procedures
+; =============================================================================
+
+Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$)
+  
+  Protected File, StringFormat
+  Protected TempCodeFilePath$, Content$, Parameters$
+  
+  If CodeFilePath$ = ""
+    ProcedureReturn ""
+  EndIf
+    
+  TempCodeFilePath$ = GetTemporaryDirectory() + "TempCodeFile"
+  
+  Parameters$ = #DQUOTE$ + CodeFilePath$ + #DQUOTE$ +
+               " --preprocess " + #DQUOTE$ + TempCodeFilePath$ + #DQUOTE$
+  
+  If Not RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
+                    #PB_Program_Wait | #PB_Program_Hide)
+    ProcedureReturn ""
+  EndIf
+  
+  File = ReadFile(#PB_Any, TempCodeFilePath$)
+  If Not File
+    ProcedureReturn ""
+  EndIf
+  
+  StringFormat = ReadStringFormat(File)
+  Select StringFormat
+    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
+    Default
+      ; ReadString() supports fewer string formats than ReadStringFormat(), so
+      ; in case of an unsupported format it is necessary to fall back to a
+      ; supported format
+      StringFormat = #PB_UTF8
+  EndSelect
+  
+  Content$ = ReadString(File, StringFormat | #PB_File_IgnoreEOL)
+  
+  CloseFile(File)
+  
+  ProcedureReturn Content$
+  
+EndProcedure
+
+Procedure$ GetLicenseText(LibraryName$)
+  
+  Protected FilePath$, FileContent$
+  Protected File, StringFormat
+  
+  FilePath$ = GetPathPart(ProgramFilename()) + "Licenses"
+  FilePath$ = EnsureTrailingSlashExists(FilePath$)
+  
+  File = ReadFile(#PB_Any, FilePath$ + LibraryName$)
+  If File = 0
+    ProcedureReturn "Error: License file not found"
+  EndIf
+  
+  StringFormat = ReadStringFormat(File)
+  Select StringFormat
+    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
+    Default
+      ; ReadString() supports fewer string formats than ReadStringFormat(), so
+      ; in case of an unsupported format it is necessary to fall back to a
+      ; supported format
+      StringFormat = #PB_UTF8
+  EndSelect
+  
+  FileContent$ = ReadString(File, StringFormat | #PB_File_IgnoreEOL)
+  
+  CloseFile(File)
+  
+  ProcedureReturn FileContent$
+  
+EndProcedure
+
+Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
+                         Map Functions.FunctionsMapStruc(),
+                         Map NeededThirdPartyLibrary.b())
+  
+  Protected CodeFileContent$, IdentifierName$
+  Protected *Lexer
+  
+  CodeFileContent$ = GetContentOfPreProcessedFile(CodeFilePath$,
+                                                  CompilerFilePath$)
+  If CodeFileContent$ = ""
+    ProcedureReturn #False
+  EndIf
+  
+  *Lexer = PBLexer::Create(@CodeFileContent$, 250, #False, #False)
+  If Not *Lexer
+    ProcedureReturn #False
+  EndIf
+  
+  While PBLexer::NextToken(*Lexer)
+    If PBLexer::TokenType(*Lexer) = PBLexer::#TokenType_Identifier
+      IdentifierName$ = PBLexer::TokenValue(*Lexer)
+      If PBLexer::NextToken(*Lexer) And PBLexer::TokenValue(*Lexer) = "("
+        If FindMapElement(Functions(), IdentifierName$)
+          ForEach Functions()\DependsOnLibrary$()
+            AddMapElement(NeededThirdPartyLibrary(),
+                          Functions()\DependsOnLibrary$())
+          Next
+        EndIf
+      EndIf
+    EndIf
+  Wend
+  
+  PBLexer::Free(*Lexer)
+  
+EndProcedure
