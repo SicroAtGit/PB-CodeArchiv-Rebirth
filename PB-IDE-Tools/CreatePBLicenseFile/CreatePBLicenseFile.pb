@@ -49,7 +49,7 @@ NewMap Functions.FunctionsMapStruc()
 ;- Define Constants
 ; =============================================================================
 
-#Program_Name = "CreateLicenseFileForPBThirdPartyLibs"
+#Program_Name = "CreatePBLicenseFile"
 
 ; =============================================================================
 ;- Define Variables
