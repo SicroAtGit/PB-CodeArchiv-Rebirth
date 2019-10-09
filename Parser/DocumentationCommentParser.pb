@@ -87,7 +87,6 @@ DeclareModule DocumentationCommentParser
     
     Declare$ GetStringInsideOf(string$, startString$, endString$)
     Declare$ RemoveAnyLeadingSpaces(string$)
-    Declare$ GetFileContent(filePath$)
     
 EndDeclareModule
 
@@ -98,6 +97,7 @@ Module DocumentationCommentParser
     ; =========================================================================
     
     IncludeFile "../FileSystem/IsAbsolutePath.pbi"
+    IncludeFile "../File/GetFileContentAsString.pbi"
     
     ; =========================================================================
     ;- Define local variables
@@ -149,7 +149,7 @@ Module DocumentationCommentParser
         Debug "Parse file: " + filePath$, 1
         Debug "", 1
         
-        code$ = GetFileContent(filePath$)
+        code$ = GetFileContentAsString(filePath$)
         If code$ = ""
             Debug ">>> File could not be read!", 1
             Debug "", 1
@@ -547,29 +547,6 @@ Module DocumentationCommentParser
         Wend
         
         PBLexer::Free(*lexer)
-        
-        ProcedureReturn result$
-    EndProcedure
-    
-    Procedure$ GetFileContent(filePath$)
-        Protected file, stringFormat
-        Protected result$
-        
-        file = ReadFile(#PB_Any, filePath$)
-        If Not file
-            ProcedureReturn ""
-        EndIf
-        stringFormat = ReadStringFormat(file)
-        Select stringFormat
-            Case #PB_Ascii, #PB_UTF8, #PB_Unicode
-            Default
-                ; ReadString() supports fewer string formats than
-                ; ReadStringFormat(), so in case of an unsupported format it
-                ; is necessary to fall back to a supported format
-                stringFormat = #PB_UTF8
-        EndSelect
-        result$ = ReadString(file, stringFormat|#PB_File_IgnoreEOL)
-        CloseFile(file)
         
         ProcedureReturn result$
     EndProcedure
