@@ -63,9 +63,11 @@ DeclareModule DocumentationCommentParser
     ;- Declare procedure
     ; =========================================================================
     
+    Declare  ParseFile(filePath$, Map procedures.DocumentationCommentStruc())
+    
     Declare  ProcessToken(*lexer, currentDirectory$,
                           Map procedures.DocumentationCommentStruc())
-    Declare  Parse(filePath$, Map procedures.DocumentationCommentStruc())
+    Declare  ProcessParsing(filePath$, Map procedures.DocumentationCommentStruc())
     
     Declare$ ProcessIncludePathKeyword(*lexer, currentDirectory$)
     Declare  ProcessIncludeFileKeyword(*lexer, currentDirectory$,
@@ -115,6 +117,20 @@ Module DocumentationCommentParser
     ;- Define procedures
     ; =========================================================================
     
+    Procedure ParseFile(filePath$, Map procedures.DocumentationCommentStruc())
+        Shared constants$(), macros$(), xIncludedFilePaths(),
+               currentDocumentationComment
+        
+        ClearMap(procedures())
+        ClearMap(constants$())
+        ClearMap(macros$())
+        ClearMap(xIncludedFilePaths())
+        ResetStructure(@currentDocumentationComment, DocumentationCommentStruc)
+        
+        ProcedureReturn ProcessParsing(filePath$,
+                                       procedures.DocumentationCommentStruc())
+    EndProcedure
+    
     Procedure ProcessToken(*lexer, currentDirectory$,
                            Map procedures.DocumentationCommentStruc())
         Select PBLexer::TokenType(*lexer)
@@ -141,7 +157,7 @@ Module DocumentationCommentParser
         EndSelect
     EndProcedure
     
-    Procedure Parse(filePath$, Map procedures.DocumentationCommentStruc())
+    Procedure ProcessParsing(filePath$, Map procedures.DocumentationCommentStruc())
         Protected code$
         Protected *lexer
         
@@ -255,7 +271,7 @@ Module DocumentationCommentParser
         Debug "  Value: " + filePath$, 1
         Debug "--------------------", 1
         
-        Parse(filePath$, procedures.DocumentationCommentStruc())
+        ProcessParsing(filePath$, procedures.DocumentationCommentStruc())
     EndProcedure
     
     Procedure ProcessXIncludeFileKeyword(*lexer, currentDirectory$,
@@ -283,7 +299,7 @@ Module DocumentationCommentParser
         If Not FindMapElement(xIncludedFilePaths(), filePath$)
             AddMapElement(xIncludedFilePaths(), filePath$)
             Debug "--------------------", 1
-            Parse(filePath$, procedures.DocumentationCommentStruc())
+            ProcessParsing(filePath$, procedures.DocumentationCommentStruc())
         Else
             ; The file has already been included and the include keyword does
             ; not allow more than one inclusion of the same file, therefore
@@ -567,7 +583,7 @@ CompilerIf #PB_Compiler_IsMainFile
                          #PB_MessageRequester_Error)
         End
     EndIf
-    DocumentationCommentParser::Parse(filePath$, procedures())
+    DocumentationCommentParser::ParseFile(filePath$, procedures())
     
     ; Output a list of all documentation comments which have been found
     ForEach procedures()
