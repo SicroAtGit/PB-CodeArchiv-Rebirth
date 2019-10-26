@@ -358,11 +358,21 @@ Module DocumentationCommentParser
     
     Procedure$ ProcessProcedureParameters(*lexer)
         Protected tokenValue$, parameters$
+        Protected roundedBracketsCounter = 1
         
         While PBLexer::NextToken(*lexer)
             tokenValue$ = PBLexer::TokenValue(*lexer)
             
-            If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Keyword
+            If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Newline
+                Continue
+                
+            ElseIf PBLexer::TokenValue(*lexer) = "("
+                roundedBracketsCounter + 1
+                
+            ElseIf PBLexer::TokenValue(*lexer) = ")"
+                roundedBracketsCounter - 1
+                
+            ElseIf PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Keyword
                 ; The leading keywords should be separated from the variable
                 ; name by a whitespace character
                 tokenValue$ + " "
@@ -373,12 +383,7 @@ Module DocumentationCommentParser
                 
             EndIf
             
-            If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Newline Or
-               PBLexer::TokenValue(*lexer) = ":"
-                
-                ; Remove the already passed ")"
-                parameters$ = Left(parameters$, Len(parameters$) - 1)
-                
+            If roundedBracketsCounter = 0
                 Break
             EndIf
             
