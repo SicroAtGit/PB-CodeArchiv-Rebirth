@@ -198,6 +198,7 @@ EndIf
 
 ; Remove the ASM file only if no error occurred to avoid removing error traces
 DeleteFile(asmCodeFilePath$)
+DeleteFile(exeFilePath$)
 
 output$ = "Compiler File Path: "  + compilerFilePath$   + #CRLF$ +
           "Compiler Parameters: " + compilerParameters$ + #CRLF$ +
