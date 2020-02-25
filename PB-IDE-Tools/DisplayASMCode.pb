@@ -7,7 +7,7 @@
 
 ; MIT License
 ;
-; Copyright (c) 2018-2019 Sicro
+; Copyright (c) 2018-2020 Sicro
 ;
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -99,12 +99,19 @@ CompilerEndIf
 
 compilerParameters$ = "--commented"
 compilerParameters$ + " --executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$
+
 If Val(GetEnvironmentVariable("PB_TOOL_Debugger"))
   compilerParameters$ + " --debugger"
 EndIf
+
 If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
   compilerParameters$ + " --thread"
 EndIf
+
+If Val(GetEnvironmentVariable("PB_TOOL_Unicode"))
+  compilerParameters$ + " --unicode"
+EndIf
+
 If GetEnvironmentVariable("PB_TOOL_SubSystem")
   compilerParameters$ + " --subsystem " + GetEnvironmentVariable("PB_TOOL_SubSystem")
 EndIf
