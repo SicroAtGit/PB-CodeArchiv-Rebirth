@@ -100,10 +100,6 @@ CompilerEndIf
 
 compilerParameters$ = "--commented"
 
-If Val(GetEnvironmentVariable("PB_TOOL_Debugger"))
-  compilerParameters$ + " --debugger"
-EndIf
-
 If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
   compilerParameters$ + " --thread"
 EndIf
