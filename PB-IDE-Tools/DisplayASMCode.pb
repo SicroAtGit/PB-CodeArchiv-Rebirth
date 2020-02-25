@@ -61,9 +61,10 @@ EndEnumeration
 ; ======================
 
 Define compilerHomePath$, compilerFilePath$, workingDirectoryPath$, codeFilePath$, codeTempFilePath$,
-       asmCodeFilePath$, exeFilePath$, outputFilePathForStandardProgram$, compilerParameters$
+       asmCodeFilePath$, exeFilePath$, outputFilePathForStandardProgram$, compilerParameters$,
+       compilerUserParameters$
 Define asmCode$, output$, compilerOutput$
-Define program, file, event, isCompilerError
+Define program, file, event, isCompilerError, countOfParameters, i, isLibrary
 
 ; ==============================
 ;-Set Values For Local Variables
@@ -98,7 +99,6 @@ CompilerElse
 CompilerEndIf
 
 compilerParameters$ = "--commented"
-compilerParameters$ + " --executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$
 
 If Val(GetEnvironmentVariable("PB_TOOL_Debugger"))
   compilerParameters$ + " --debugger"
@@ -115,6 +115,28 @@ EndIf
 If GetEnvironmentVariable("PB_TOOL_SubSystem")
   compilerParameters$ + " --subsystem " + GetEnvironmentVariable("PB_TOOL_SubSystem")
 EndIf
+
+Procedure$ ProcessParameter(parameter$, exeFilePath$, *isLibrary.Integer)
+  Select LCase(parameter$)
+    Case "-dl", "--dylib", "-so", "--sharedobject"
+      parameter$ = parameter$ + " " + #DQUOTE$ + exeFilePath$ + #DQUOTE$
+      *isLibrary\i = #True
+    Case "/dll"
+      parameter$ = "--executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$ + parameter$
+      *isLibrary\i = #True
+  EndSelect
+  ProcedureReturn parameter$
+EndProcedure
+
+; Get user parameters
+countOfParameters = CountProgramParameters()
+For i = 2 To countOfParameters - 1
+  compilerUserParameters$ + " " + ProcessParameter(ProgramParameter(i), exeFilePath$, @isLibrary)
+Next
+If Not isLibrary
+  compilerParameters$ + " --executable " + #DQUOTE$ + exeFilePath$ + #DQUOTE$
+EndIf
+compilerParameters$ + compilerUserParameters$
 
 ; =======================
 ;-Delete Old Output Files
