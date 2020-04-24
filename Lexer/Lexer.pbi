@@ -216,13 +216,13 @@ Module Lexer
           ; Check whether a new line of code begins
           If ExamineRegularExpression(\newLineRegEx, string$) And NextRegularExpressionMatch(\newLineRegEx)
             \stringLineNumber + 1
-            \lastNewLineCharacterEndPosition = \stringOffset + RegularExpressionMatchLength(\newLineRegEx)
+            \lastNewLineCharacterEndPosition = \stringOffset + RegularExpressionMatchLength(\newLineRegEx) - 1
           EndIf
           ForEach \tokenDefinitionsList()
             ; Compare current string with all defined tokens
             If ExamineRegularExpression(\tokenDefinitionsList()\regEx, string$) And NextRegularExpressionMatch(\tokenDefinitionsList()\regEx)
               found = #True
-              \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition + 1
+              \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition
               \stringOffset + RegularExpressionMatchLength(\tokenDefinitionsList()\regEx)
               If Not \tokenDefinitionsList()\skipToken
                 \currentTokenType        = \tokenDefinitionsList()\tokenType
@@ -242,7 +242,7 @@ Module Lexer
             \currentTokenType   = #TokenType_Unkown
             \currentTokenName$  = "Unkown"
             \currentTokenValue$ = Left(string$, 1)
-            \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition + 1
+            \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition
             \stringOffset       + 1
             result = #True
             Break
