@@ -75,6 +75,7 @@ DeclareModule PBLexer
     #TokenType_StringTypeSuffix
   EndEnumeration
   #TokenType_Unkown = -1
+  #TokenType_EndOfString = -2
 EndDeclareModule
 
 Module PBLexer

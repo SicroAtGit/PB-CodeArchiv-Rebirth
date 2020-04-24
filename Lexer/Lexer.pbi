@@ -57,6 +57,7 @@ DeclareModule Lexer
   ;- > Definition of constants
   ; ------------------------------------------------------------------------------------------------------------------------
   #TokenType_Unkown = -1
+  #TokenType_EndOfString = -2
 EndDeclareModule
 
 Module Lexer
@@ -204,7 +205,14 @@ Module Lexer
           ; only a limited length of the string is passed
           string$ = PeekS(\string + (\stringOffset - 1) * SizeOf(Character), \maxTokenValueLength)
           
-          If string$ = "" : Break : EndIf
+          If string$ = ""
+            \currentTokenType        = #TokenType_EndOfString
+            \currentTokenName$       = "EndOfString"
+            \currentTokenValue$      = ""
+            \currentTokenValueLength = 0
+            Break
+          EndIf
+          
           ; Check whether a new line of code begins
           If ExamineRegularExpression(\newLineRegEx, string$) And NextRegularExpressionMatch(\newLineRegEx)
             \stringLineNumber + 1
