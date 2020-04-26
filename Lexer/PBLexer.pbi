@@ -74,8 +74,8 @@ DeclareModule PBLexer
     #TokenType_DoubleColon ; ModuleName::ObjectName
     #TokenType_StringTypeSuffix
   EndEnumeration
-  #TokenType_Unkown = -1
-  #TokenType_EndOfString = -2
+  #TokenType_Unkown      = Lexer::#TokenType_Unkown
+  #TokenType_EndOfString = Lexer::#TokenType_EndOfString
 EndDeclareModule
 
 Module PBLexer
