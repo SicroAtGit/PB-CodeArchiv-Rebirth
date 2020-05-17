@@ -27,13 +27,14 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+XIncludeFile "../File/GetFileContentAsString.pbi"
+
 Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
                                         CompilerEnableDebugger = #False,
                                         CompilerEnableThread = #False,
                                         CompilerSubsystem$ = "")
   
-  Protected File, StringFormat
-  Protected TempCodeFilePath$, Content$, Parameters$
+  Protected TempCodeFilePath$, Parameters$
   
   If CodeFilePath$ = ""
     ProcedureReturn ""
@@ -61,25 +62,6 @@ Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
     ProcedureReturn ""
   EndIf
   
-  File = ReadFile(#PB_Any, TempCodeFilePath$)
-  If Not File
-    ProcedureReturn ""
-  EndIf
-  
-  StringFormat = ReadStringFormat(File)
-  Select StringFormat
-    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
-    Default
-      ; ReadString() supports fewer string formats than ReadStringFormat(), so
-      ; in case of an unsupported format it is necessary to fall back to a
-      ; supported format
-      StringFormat = #PB_UTF8
-  EndSelect
-  
-  Content$ = ReadString(File, StringFormat | #PB_File_IgnoreEOL)
-  
-  CloseFile(File)
-  
-  ProcedureReturn Content$
+  ProcedureReturn GetFileContentAsString(TempCodeFilePath$)
   
 EndProcedure

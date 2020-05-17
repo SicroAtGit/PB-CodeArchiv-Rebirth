@@ -40,6 +40,7 @@ EnableExplicit
 ; =============
 
 XIncludeFile "../System/OpenStandardProgram.pbi"
+XIncludeFile "../File/GetFileContentAsString.pbi"
 
 ; ================
 ;-Define Constants
@@ -165,12 +166,7 @@ Else
   isCompilerError = #True
 EndIf
 
-; Read the ASM code file
-file = ReadFile(#PB_Any, asmCodeFilePath$)
-If file
-  asmCode$ + ReadString(file, #PB_File_IgnoreEOL)
-  CloseFile(file)
-EndIf
+asmCode$ = GetFileContentAsString(asmCodeFilePath$)
 
 ; If an error has occurred, output detailed information
 If isCompilerError Or asmCode$ = ""
