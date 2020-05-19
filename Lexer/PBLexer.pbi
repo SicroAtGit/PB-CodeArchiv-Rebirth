@@ -45,7 +45,7 @@ DeclareModule PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Declaration of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Declare  Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#True)
+  Declare  Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#False)
   Declare  Free(*lexer)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
@@ -82,7 +82,7 @@ Module PBLexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of procedures
   ; ------------------------------------------------------------------------------------------------------------------------
-  Procedure Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#True)
+  Procedure Create(*string, maxTokenValueLength=250, includeWhitespaceTokens=#False, includeCommentTokens=#False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Creates a new lexer
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ Module PBLexer
     ;               | includeWhitespaceTokens -- Specifies whether white-space tokens should be created
     ;               |                            (Optional - default is #False)
     ;               |    includeCommentTokens -- Specifies whether comment tokens should be created
-    ;               |                            (Optional - default is #True)
+    ;               |                            (Optional - default is #False)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Return value: | On success the handle of the created lexer, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------

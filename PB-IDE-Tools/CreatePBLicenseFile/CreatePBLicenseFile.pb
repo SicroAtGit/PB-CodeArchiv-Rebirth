@@ -195,7 +195,7 @@ Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
     ProcedureReturn #False
   EndIf
   
-  *Lexer = PBLexer::Create(@CodeFileContent$, 250, #False, #False)
+  *Lexer = PBLexer::Create(@CodeFileContent$)
   If Not *Lexer
     ProcedureReturn #False
   EndIf

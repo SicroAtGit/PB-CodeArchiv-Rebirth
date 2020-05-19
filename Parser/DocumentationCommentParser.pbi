@@ -172,7 +172,7 @@ Module DocumentationCommentParser
             ProcedureReturn #False
         EndIf
         
-        *lexer = PBLexer::Create(@code$)
+        *lexer = PBLexer::Create(@code$, 250, #False, #True)
         If Not *lexer
             Debug ">>> Lexer could not be created!", 1
             Debug "", 1
