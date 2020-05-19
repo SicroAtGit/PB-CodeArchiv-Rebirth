@@ -42,7 +42,8 @@ DeclareModule Lexer
   ; ------------------------------------------------------------------------------------------------------------------------
   Declare  Create(*string, maxTokenValueLength=200)
   Declare  Free(*lexer)
-  Declare  DefineNewToken(*lexer, tokenType, tokenValueRegEx$, skipToken=#False, tokenName$="")
+  Declare  DefineNewToken(*lexer, tokenType, tokenValueRegEx$, skipToken=#False, tokenName$="",
+                          regExFlags=#PB_RegularExpression_NoCase)
   Declare  NextToken(*lexer)
   Declare$ TokenName(*lexer)
   Declare  TokenType(*lexer)
@@ -134,7 +135,8 @@ Module Lexer
     EndIf
   EndProcedure
   
-  Procedure DefineNewToken(*lexer.LexerStruc, tokenType, tokenValueRegEx$, skipToken=#False, tokenName$="")
+  Procedure DefineNewToken(*lexer.LexerStruc, tokenType, tokenValueRegEx$, skipToken=#False, tokenName$="",
+                           regExFlags=#PB_RegularExpression_NoCase)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Description:  | Defines a new token for the lexer
     ; ----------------------------------------------------------------------------------------------------------------------
@@ -152,6 +154,8 @@ Module Lexer
     ;               |                     but only to display the token type as a string, because string comparsions are
     ;               |                     slow
     ;               |                     (Optional - default is "")
+    ;               |       regExFlags -- Defines the regular expression flags
+    ;               |                     (Optional - default is #PB_RegularExpression_NoCase)
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Notes:        | Keep the number of token definitions small. Large token definitions lists slow down the lexer very
     ;               | quickly
@@ -164,7 +168,7 @@ Module Lexer
         \tokenDefinitionsList()\tokenType  = tokenType
         \tokenDefinitionsList()\tokenName$ = tokenName$
         \tokenDefinitionsList()\skipToken  = skipToken
-        \tokenDefinitionsList()\regEx      = CreateRegularExpression(#PB_Any, "^(?:"+tokenValueRegEx$+")", #PB_RegularExpression_NoCase)
+        \tokenDefinitionsList()\regEx      = CreateRegularExpression(#PB_Any, "^(?:"+tokenValueRegEx$+")", regExFlags)
         If \tokenDefinitionsList()\regEx = 0
           Debug "===================================================================================="
           Debug "In the procedure '" + #PB_Compiler_Procedure + "' the creation of this RegEx failed:"
