@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2019 Sicro
+; Copyright (c) 2019-2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -133,7 +133,7 @@ Module PBLexer
       
       regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e(?:[ \t]*[+\-][ \t]*)?[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
-               "\$[0-9A-F]+" + ; Hexadecimal numbers
+               "[0-9A-F]+" + ; Hexadecimal numbers
                "|" +
                "'.*?'" ; 'a'
       Lexer::DefineNewToken(*lexer, #TokenType_Number, regEx$, #False, "Number")
