@@ -74,7 +74,7 @@ DeclareModule PBLexer
     #TokenType_DoubleColon ; ModuleName::ObjectName
     #TokenType_StringTypeSuffix
   EndEnumeration
-  #TokenType_Unkown      = Lexer::#TokenType_Unkown
+  #TokenType_Unknown     = Lexer::#TokenType_Unknown
   #TokenType_EndOfString = Lexer::#TokenType_EndOfString
 EndDeclareModule
 
@@ -187,7 +187,7 @@ Module PBLexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Parameter:    | *lexer -- The handle of the lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Return value: | Token type. On error: #TokenType_Unkown
+    ; Return value: | Token type. On error: #TokenType_Unknown
     ; ----------------------------------------------------------------------------------------------------------------------
     ProcedureReturn Lexer::TokenType(*lexer)
   EndProcedure

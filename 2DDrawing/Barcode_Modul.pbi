@@ -227,7 +227,7 @@ Module Barcode
   
   Procedure Generate_Code128_Checksum(Code128.s)
     
-    Protected.i Sum, ascii, lenght
+    Protected.i Sum, ascii, length
     Protected.b a, b, c, d, e, f, weighting, value, checksum
     Protected.s Mode, ASCII_String, part, String, NewString
     Protected Dim CodepageA.s(106)
@@ -265,12 +265,12 @@ Module Barcode
       EndIf
       If FindString(Parts(), "<CODE C>")
         NewString.s = RemoveString(Parts(), "<CODE C>")
-        lenght.i = StringByteLength(NewString.s, #PB_Unicode)
+        length.i = StringByteLength(NewString.s, #PB_Unicode)
         If Len(NewString.s) % 2 > 0
           ProcedureReturn 129  ; Check whether number of digits is even
         EndIf
         Parts() = "<CODE C>"
-        For e = 1 To lenght.i Step 4
+        For e = 1 To length.i Step 4
           String.s = PeekS(@NewString + f, 2, #PB_Unicode)
           AddElement(Parts())
           Parts() = String.s
@@ -322,11 +322,11 @@ Module Barcode
             Parts() = ReplaceString(Parts(), CodepageC(a), Chr(a + 32))
           Next a        
       EndSelect
-      ; Bulid ASCII string
+      ; Build ASCII string
       ASCII_String.s + Parts()
     Next
     ; Code length
-    lenght.i = Len(ASCII_String)
+    length.i = Len(ASCII_String)
     ; Start code
     If PeekS(@ASCII_String.s, 1, #PB_Unicode) = Chr(135)
       Sum.i + 103
@@ -336,7 +336,7 @@ Module Barcode
       Sum.i + 105
     EndIf
     ; Calculate check digit
-    For a = 2 To lenght.i * 2 - 2 Step 2
+    For a = 2 To length.i * 2 - 2 Step 2
       weighting.b + 1
       ascii.i = Asc(PeekS(@ASCII_String + a, 1, #PB_Unicode))
       Sum.i + (ascii.i - 32) * weighting
@@ -411,7 +411,7 @@ Module Barcode
     Protected EAN8_Start.s   = "101"
     Protected EAN8_Center.s  = "01010" 
     Protected EAN8_Stop.s    = "101"   
-    ; EAN8 sequenzes part #1
+    ; EAN8 sequences part #1
     Protected Dim EAN8_Sequence_part1.s(9)
     EAN8_Sequence_part1(0) = "0001101"
     EAN8_Sequence_part1(1) = "0011001"
@@ -423,7 +423,7 @@ Module Barcode
     EAN8_Sequence_part1(7) = "0111011"
     EAN8_Sequence_part1(8) = "0110111"
     EAN8_Sequence_part1(9) = "0001011"
-    ; EAN8 sequenzes part #2
+    ; EAN8 sequences part #2
     Protected Dim EAN8_Sequence_part2.s(9)
     EAN8_Sequence_part2(0) = "1110010"
     EAN8_Sequence_part2(1) = "1100110"
@@ -496,7 +496,7 @@ Module Barcode
     Protected EAN13_Start.s   = "101"
     Protected EAN13_Center.s  = "01010" 
     Protected EAN13_Stop.s    = "101"   
-    ; EAN13 sequenzes part #1
+    ; EAN13 sequences part #1
     Protected Dim EAN13_Sequence_part1.s(1,9)
     EAN13_Sequence_part1(0,0) = "0001101"
     EAN13_Sequence_part1(0,1) = "0011001"
@@ -518,7 +518,7 @@ Module Barcode
     EAN13_Sequence_part1(1,7) = "0010001"
     EAN13_Sequence_part1(1,8) = "0001001"
     EAN13_Sequence_part1(1,9) = "0010111"
-    ; EAN13 sequenzes part #2
+    ; EAN13 sequences part #2
     Protected Dim EAN13_Sequence_part2.s(9)
     EAN13_Sequence_part2(0) = "1110010"
     EAN13_Sequence_part2(1) = "1100110"
@@ -572,7 +572,7 @@ Module Barcode
   
   Procedure.s Generate_Code128_Sequence(Code128.s)
     
-    Protected.i lenght
+    Protected.i length
     Protected.b a, b, c, d, e, f
     Protected.s Code128_Sequence, Mode, ASCII_String, part, String, NewString
     Protected Dim CodepageA.s(106)
@@ -615,12 +615,12 @@ Module Barcode
       EndIf
       If FindString(Parts(), "<CODE C>")
         NewString.s = RemoveString(Parts(), "<CODE C>")
-        lenght.i = StringByteLength(NewString.s, #PB_Unicode)
+        length.i = StringByteLength(NewString.s, #PB_Unicode)
         If Len(NewString.s) % 2 > 0
           ProcedureReturn "29"  ; Check whether the number of digits is even
         EndIf
         Parts() = "<CODE C>"
-        For e = 1 To lenght.i Step 4
+        For e = 1 To length.i Step 4
           String.s = PeekS(@NewString + f, 2, #PB_Unicode)
           AddElement(Parts())
           Parts() = String.s

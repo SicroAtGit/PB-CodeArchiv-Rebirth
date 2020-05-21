@@ -56,7 +56,7 @@ DeclareModule Lexer
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of constants
   ; ------------------------------------------------------------------------------------------------------------------------
-  #TokenType_Unkown = -1
+  #TokenType_Unknown = -1
   #TokenType_EndOfString = -2
 EndDeclareModule
 
@@ -146,13 +146,12 @@ Module Lexer
     ;               |                     This number is used later when iterating the tokens to determine the type of the
     ;               |                     current token
     ;               | tokenValueRegEx$ -- A regular expression that matches the desired token
-    ;               |                     (T #PB_RegularExpression_NoCase)
     ;               |        skipToken -- Specifies whether the token found is to be skipped or returned
     ;               |                     Possible values are: #True or #False
     ;               |                     (Optional - default is #False) 
     ;               |       tokenName$ -- A string to be used as token name. The token name is the same as the token type,
     ;               |                     but as a string. The token name is not intended to determine the type of a token,
-    ;               |                     but only to display the token type as a string, because string comparsions are
+    ;               |                     but only to display the token type as a string, because string comparisons are
     ;               |                     slow
     ;               |                     (Optional - default is "")
     ;               |       regExFlags -- Defines the regular expression flags
@@ -239,8 +238,8 @@ Module Lexer
           If Not found
             ; The current string contains characters that do not match any of the defined tokens. In this case, a token of
             ; type "Unknown" is created
-            \currentTokenType   = #TokenType_Unkown
-            \currentTokenName$  = "Unkown"
+            \currentTokenType   = #TokenType_Unknown
+            \currentTokenName$  = "Unknown"
             \currentTokenValue$ = Left(string$, 1)
             \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition
             \stringOffset       + 1
@@ -272,7 +271,7 @@ Module Lexer
     ; ----------------------------------------------------------------------------------------------------------------------
     ; Parameter:    | *lexer -- The handle of the lexer
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Return value: | Token type. On error: #TokenType_Unkown
+    ; Return value: | Token type. On error: #TokenType_Unknown
     ; ----------------------------------------------------------------------------------------------------------------------
     If *lexer
       ProcedureReturn *lexer\currentTokenType
@@ -417,7 +416,7 @@ CompilerIf #PB_Compiler_IsMainFile
   ;- > Iterate through all tokens
   ; ------------------------------------------------------------------------------------------------------------------------
   While Lexer::NextToken(*lexer)
-    If Lexer::TokenType(*lexer) <> Lexer::#TokenType_Unkown
+    If Lexer::TokenType(*lexer) <> Lexer::#TokenType_Unknown
       Debug RSet(Lexer::TokenName(*lexer), 17) + " (" + Str(Lexer::TokenType(*lexer)) + "): " + Lexer::TokenValue(*lexer)
     Else
       ; Character found that does not match any RegEx of the defined token types. Possibly a syntax error or the character

@@ -1,4 +1,4 @@
-﻿;   Description: Part of Libnodave, a free communication libray for Siemens S7 200/300/400 
+﻿;   Description: Part of Libnodave, a free communication library for Siemens S7 200/300/400 
 ;            OS: Windows
 ; English-Forum: 
 ;  French-Forum: 
@@ -42,7 +42,7 @@ CompilerEndIf
 ;
 ;/ PureBasic Version 2.0 by Michael Kastner (mk-soft)
 ;
-; Part of Libnodave, a free communication libray For Siemens S7 200/300/400 via
+; Part of Libnodave, a free communication library For Siemens S7 200/300/400 via
 ; the MPI adapter 6ES7 972-0CA22-0XAC
 ; or  MPI adapter 6ES7 972-0CA23-0XAC
 ; or  TS  adapter 6ES7 972-0CA33-0XAC
@@ -108,7 +108,7 @@ EnableExplicit
 #daveSysFlags      = $5  ; System flags of 200 family
 #daveAnaIn         = $6  ; analog inputs of 200 family
 #daveAnaOut        = $7  ; analog outputs of 200 family
-#daveP             = $80 ; direct access to peripheral adresses
+#daveP             = $80 ; direct access to peripheral addresses
 #daveInputs        = $81
 #daveOutputs       = $82
 #daveFlags         = $83
@@ -134,7 +134,7 @@ EnableExplicit
 #daveResMultipleBitsNotSupported = 6     ; CPU tells it does not support to read a bit block with a
                                          ; length other than 1 bit.
 #daveResItemNotAvailable200      = 3     ; means a a piece of data is not available in the CPU, e.g.
-                                         ; when trying to read a non existing DB or bit bloc of length<>1
+                                         ; when trying to read a non existing DB or bit block of length<>1
                                          ; This code seems to be specific to 200 family.
 #daveResItemNotAvailable         = 10    ; means a a piece of data is not available in the CPU, e.g.
                                          ; when trying to read a non existing DB
@@ -158,7 +158,7 @@ EnableExplicit
 #daveDebugSpecialChars   = $2     ; Show when special chars are read
 #daveDebugRawWrite       = $4     ; Show the single bytes written
 #daveDebugListReachables = $8     ; Show the steps when determine devices in MPI net
-#daveDebugInitAdapter    = $10    ; Show the steps when Initilizing the MPI adapter
+#daveDebugInitAdapter    = $10    ; Show the steps when initializing the MPI adapter
 #daveDebugConnect        = $20    ; Show the steps when connecting a PLC
 #daveDebugPacket         = $40
 #daveDebugByte           = $80

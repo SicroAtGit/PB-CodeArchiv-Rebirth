@@ -1,4 +1,4 @@
-﻿;   Description: Gets informations from executable file
+﻿;   Description: Gets information from executable file
 ;            OS: Windows
 ; English-Forum: 
 ;  French-Forum: 
@@ -133,7 +133,7 @@ Module FileInfo
               ;Case #VFT2_DRV_VERSIONED_PRINTER
               ; RetVal = "Versioned Printer Driver"
             Case #VFT2_UNKNOWN
-              RetVal$ = "Unkown by the system"
+              RetVal$ = "Unknown by the system"
           EndSelect
         Case #VFT_FONT
           Select *Pointer\dwFileSubtype
@@ -144,12 +144,12 @@ Module FileInfo
             Case #VFT2_FONT_VECTOR
               RetVal$ = "Vector Font"
             Case #VFT2_UNKNOWN
-              RetVal$ = "Unkown by the system"
+              RetVal$ = "Unknown by the system"
           EndSelect
         Case #VFT_STATIC_LIB
           RetVal$ = "Static-link Library"
         Case #VFT_UNKNOWN
-          RetVal$ = "Unkown by the system"
+          RetVal$ = "Unknown by the system"
         Case #VFT_VXD
           RetVal$ = "Virtual Device"
       EndSelect

@@ -1,4 +1,4 @@
-﻿;   Description: Formated number
+﻿;   Description: Formatted number
 ;            OS: Windows, Linux, Mac
 ; English-Forum: 
 ;  French-Forum: 

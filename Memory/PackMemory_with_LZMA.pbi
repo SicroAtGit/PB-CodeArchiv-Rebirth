@@ -235,7 +235,7 @@ Module        PBM
       Case 7    : Result = "Zu packender Speicher >2GB"
       Case 100  : Result = "InitPBM() muss ausgeführt worden sein."
       Default
-        Result = "unkown"
+        Result = "unknown"
     EndSelect
     
     ProcedureReturn Result

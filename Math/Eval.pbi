@@ -268,7 +268,7 @@ Module Eval
       Case #err_bracket :ProcedureReturn "missing bracket"
       Case #warning_overflow:ProcedureReturn "warning: overflow"        
     EndSelect    
-    ProcedureReturn "unkown error"
+    ProcedureReturn "unknown error"
   EndProcedure
   
   Macro _createMul(type)

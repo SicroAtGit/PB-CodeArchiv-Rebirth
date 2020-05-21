@@ -129,7 +129,7 @@ CompilerIf #PB_Compiler_IsMainFile
   
     ; Programm.exe -mt "Test"
   
-    Debug ProgramParameterParser::GetValue("version", "v", "UnkownVersion")
+    Debug ProgramParameterParser::GetValue("version", "v", "UnknownVersion")
     Debug ProgramParameterParser::GetValue("open", "")
     Debug ProgramParameterParser::GetValue("save", "")
     Debug ProgramParameterParser::GetValue("message", "m")
