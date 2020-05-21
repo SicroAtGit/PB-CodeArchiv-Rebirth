@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2017 Sicro
+; Copyright (c) 2017, 2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -40,20 +40,21 @@ Procedure$ GetAbsolutePath(RelativePath$)
     Slash$ = "/"
   CompilerEndIf
   
-  RelativePath$ = RTrim(RelativePath$, Slash$)
-  
   AbsolutePath$ = GetCurrentDirectory()
   
   CountOfSlashes = CountString(RelativePath$, Slash$)
   For i = 1 To CountOfSlashes + 1
     PathPart$ = StringField(RelativePath$, i, Slash$)
     Select PathPart$
-      Case ".", ""
+      Case "."
         Continue
       Case ".."
         AbsolutePath$ = GetParentDirectory(AbsolutePath$)
       Default
-        AbsolutePath$ + PathPart$ + Slash$
+        If Right(AbsolutePath$, 1) <> Slash$
+          AbsolutePath$ + Slash$
+        EndIf
+        AbsolutePath$ + PathPart$
     EndSelect
   Next
   
@@ -74,6 +75,7 @@ CompilerIf #PB_Compiler_IsMainFile
   
   Debug GetCurrentDirectory()
   Debug GetAbsolutePath(RelativePath$)
+  Debug GetAbsolutePath(RelativePath$ + "File")
   Debug GetAbsolutePath(".")
   Debug GetAbsolutePath("")
   
