@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2019 Sicro
+; Copyright (c) 2019-2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 ;- Include code files
 ; =============================================================================
 
-IncludeFile "../Lexer/PBLexer.pbi"
+XIncludeFile "../Lexer/PBLexer.pbi"
 
 DeclareModule DocumentationCommentParser
     
@@ -98,8 +98,8 @@ Module DocumentationCommentParser
     ;- Include code files
     ; =========================================================================
     
-    IncludeFile "../FileSystem/IsAbsolutePath.pbi"
-    IncludeFile "../File/GetFileContentAsString.pbi"
+    XIncludeFile "../FileSystem/IsAbsolutePath.pbi"
+    XIncludeFile "../File/GetFileContentAsString.pbi"
     
     ; =========================================================================
     ;- Define local variables
