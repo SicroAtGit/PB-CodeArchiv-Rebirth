@@ -160,7 +160,7 @@ Module Lexer
     ; Notes:        | Keep the number of token definitions small. Large token definitions lists slow down the lexer very
     ;               | quickly
     ; ----------------------------------------------------------------------------------------------------------------------
-    ; Return value: | None
+    ; Return value: | On success #True, otherwise #False
     ; ----------------------------------------------------------------------------------------------------------------------
     Protected result
     With *lexer
@@ -176,11 +176,9 @@ Module Lexer
           Debug "    Error message:  " + RegularExpressionError()
           Debug "===================================================================================="
           DeleteElement(\tokenDefinitionsList()) ; Delete the invalid token definition from the token definitions list
-          result = #False
+        Else
+          result = #True
         EndIf
-        result = #True
-      Else
-        result = #False
       EndIf
     EndWith
     ProcedureReturn result
