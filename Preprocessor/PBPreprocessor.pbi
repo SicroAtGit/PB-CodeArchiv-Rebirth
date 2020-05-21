@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2019 Sicro
+; Copyright (c) 2019-2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,9 @@
 ; SOFTWARE.
 
 Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
-                                        CompilerEnableDebugger,
-                                        CompilerEnableThread,
-                                        CompilerSubsystem$)
+                                        CompilerEnableDebugger = #False,
+                                        CompilerEnableThread = #False,
+                                        CompilerSubsystem$ = "")
   
   Protected File, StringFormat
   Protected TempCodeFilePath$, Content$, Parameters$
