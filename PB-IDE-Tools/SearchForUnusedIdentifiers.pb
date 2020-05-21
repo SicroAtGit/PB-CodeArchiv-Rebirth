@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2019 Sicro
+; Copyright (c) 2019-2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +37,7 @@
 ;- Inclusions of code files
 ; ==========================================================================================================================
 IncludeFile "../Lexer/PBLexer.pbi"
+IncludeFile "../Preprocessor/PBPreprocessor.pbi"
 
 ; ==========================================================================================================================
 ;- Compiler settings
@@ -53,9 +54,8 @@ EnableExplicit
 ; ==========================================================================================================================
 ;- Declaration of procedures
 ; ==========================================================================================================================
-Declare$ GetContentOfPreProcessedFile(codeFilePath$, compilerFilePath$)
-Declare  IsNativeIdentifier(Map nativeIdentifiersMap(), identifier$)
-Declare  DoEvents()
+Declare IsNativeIdentifier(Map nativeIdentifiersMap(), identifier$)
+Declare DoEvents()
 
 ; ==========================================================================================================================
 ;- Definition of variables and maps
@@ -198,42 +198,6 @@ Until DoEvents() = #PB_Event_CloseWindow
 ; ==========================================================================================================================
 ;- Definition of procedures
 ; ==========================================================================================================================
-Procedure$ GetContentOfPreProcessedFile(codeFilePath$, compilerFilePath$)
-  ; ------------------------------------------------------------------------------------------------------------------------
-  ; Description:  | Executes the preprocessing operation of the PB Compiler on the file and returns the content of the
-  ;               | resulting file
-  ;               | Supported BOMs: Ascii, UTF8, Unicode
-  ;               | In case of a unsupported BOM the file will be readed as UTF8
-  ; ------------------------------------------------------------------------------------------------------------------------
-  ; Parameter:    |     codeFilePath$ -- Path of the code file
-  ;               | compilerFilePath$ -- Path of the PB Compiler
-  ; ------------------------------------------------------------------------------------------------------------------------
-  ; Return value: | File content or an empty string on error
-  ; ------------------------------------------------------------------------------------------------------------------------
-  Protected file, stringFormat
-  Protected tempCodeFilePath$, content$
-  tempCodeFilePath$ = GetTemporaryDirectory() + "TempCodeFile"
-  If Not RunProgram(compilerFilePath$, ~"\"" + codeFilePath$ + ~"\" --preprocess \"" + tempCodeFilePath$ + ~"\"",
-                    GetPathPart(codeFilePath$), #PB_Program_Wait | #PB_Program_Hide)
-    ProcedureReturn ""
-  EndIf
-  file = ReadFile(#PB_Any, tempCodeFilePath$)
-  If Not file
-    ProcedureReturn ""
-  EndIf
-  stringFormat = ReadStringFormat(file)
-  Select stringFormat
-    Case #PB_Ascii, #PB_UTF8, #PB_Unicode
-    Default
-      ; ReadString() supports fewer string formats than ReadStringFormat(), so in case of an
-      ; unsupported format it is necessary to fall back to a supported format
-      stringFormat = #PB_UTF8
-  EndSelect
-  content$ = ReadString(file, stringFormat|#PB_File_IgnoreEOL)
-  CloseFile(file)
-  ProcedureReturn content$
-EndProcedure
-
 Procedure IsNativeIdentifier(Map nativeIdentifiersMap(), identifier$)
   ; ------------------------------------------------------------------------------------------------------------------------
   ; Description:  | Checks whether the passed identifier is a native identifier
