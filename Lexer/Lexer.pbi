@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2019 Sicro
+; Copyright (c) 2019-2020 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,6 @@ DeclareModule Lexer
   Declare  StringOffset(*lexer, value=-1)
   Declare  StringLineNumber(*lexer)
   Declare  StringColumnNumber(*lexer)
-  Declare$ TokenDefinitionsListTuningInfo(*lexer)
   
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of constants
@@ -69,7 +68,6 @@ Module Lexer
     skipToken.i
     tokenName$
     tokenType.i
-    countOfMatches.i
   EndStructure
   
   Structure LexerStruc
@@ -85,12 +83,6 @@ Module Lexer
     currentTokenType.i
     currentTokenValue$
     currentTokenValueLength.i
-  EndStructure
-  
-  Structure TokenDefinitionsListTuningInfoListStruc
-    countOfMatches.i
-    tokenName$
-    tokenType.i
   EndStructure
   
   ; ------------------------------------------------------------------------------------------------------------------------
@@ -220,7 +212,6 @@ Module Lexer
             ; Compare current string with all defined tokens
             If ExamineRegularExpression(\tokenDefinitionsList()\regEx, string$) And NextRegularExpressionMatch(\tokenDefinitionsList()\regEx)
               found = #True
-              \tokenDefinitionsList()\countOfMatches + 1
               \stringColumnNumber = \stringOffset - \lastNewLineCharacterEndPosition + 1
               \stringOffset + RegularExpressionMatchLength(\tokenDefinitionsList()\regEx)
               If Not \tokenDefinitionsList()\skipToken
@@ -358,46 +349,6 @@ Module Lexer
     EndIf
   EndProcedure
   
-  Procedure$ TokenDefinitionsListTuningInfo(*lexer.LexerStruc)
-    ; ----------------------------------------------------------------------------------------------------------------------
-    ; Description:  | Helps to optimize the order of the token definitions in the token definitions list.
-    ;               | The Lexer counts during his work how often each individual token definition was found. With this
-    ;               | information it is clear how the list of token definitions must be sorted in order to minimize
-    ;               | unnecessary iterations
-    ; ----------------------------------------------------------------------------------------------------------------------
-    ; Parameter:    | *lexer -- The handle of the lexer
-    ; ----------------------------------------------------------------------------------------------------------------------
-    ; Return value: | The token definitions list in optimized order
-    ; ----------------------------------------------------------------------------------------------------------------------
-    Protected result$ = #CRLF$ + "Best token list order:" ; Add '#CRLF$' at the beginning of 'result$' to make sure that the
-                                                          ; output is cleanly listed in the log of the PB-IDE, even if the
-                                                          ; time display is enabled
-    Protected NewList tokenDefinitionsListTuningInfoList.TokenDefinitionsListTuningInfoListStruc()
-    With tokenDefinitionsListTuningInfoList()
-      ; Maps can not be sorted. Therefore, a list must be created and all map elements to be sorted must be inserted in this
-      ; list.
-      ForEach *lexer\tokenDefinitionsList()
-        If AddElement(tokenDefinitionsListTuningInfoList())
-          \countOfMatches = *lexer\tokenDefinitionsList()\countOfMatches
-          \tokenName$     = *lexer\tokenDefinitionsList()\tokenName$
-          \tokenType      = *lexer\tokenDefinitionsList()\tokenType
-        EndIf
-      Next
-      SortStructuredList(tokenDefinitionsListTuningInfoList(), #PB_Sort_Descending,
-                         OffsetOf(TokenDefinitionsListTuningInfoListStruc\countOfMatches), #PB_Integer)
-      ; Combine the entries of the sorted list in a string
-      ForEach tokenDefinitionsListTuningInfoList()
-        result$ = #CRLF$ +
-                  "[" +
-                  "TokenType: " + Str(\tokenType) +
-                  " | " +
-                  "TokenName: " + \tokenName$ +
-                  "]" +
-                  " (" + Str(\countOfMatches) + " times of matches)"
-      Next
-    EndWith
-    ProcedureReturn result$
-  EndProcedure
 EndModule
 
 ; ==========================================================================================================================
