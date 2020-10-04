@@ -1,5 +1,5 @@
 ﻿;   Description: Simulates keyboard and mouse inputs
-;            OS: Windows, Linux
+;            OS: Windows, Linux, Mac
 ; English-Forum:
 ;  French-Forum:
 ;  German-Forum: https://www.purebasic.fr/german/viewtopic.php?f=8&t=31246
@@ -94,16 +94,132 @@ DeclareModule Simulate
     #XSuper_R = $FFEC
     #XHyper_L = $FFED
     #XHyper_R = $FFEE
+  CompilerElseIf #PB_Compiler_OS = #PB_OS_MacOS
+    #VK_A                    = $00
+    #VK_S                    = $01
+    #VK_D                    = $02
+    #VK_F                    = $03
+    #VK_H                    = $04
+    #VK_G                    = $05
+    #VK_Z                    = $06
+    #VK_X                    = $07
+    #VK_C                    = $08
+    #VK_V                    = $09
+    #VK_B                    = $0B
+    #VK_Q                    = $0C
+    #VK_W                    = $0D
+    #VK_E                    = $0E
+    #VK_R                    = $0F
+    #VK_Y                    = $10
+    #VK_T                    = $11
+    #VK_1                    = $12
+    #VK_2                    = $13
+    #VK_3                    = $14
+    #VK_4                    = $15
+    #VK_6                    = $16
+    #VK_5                    = $17
+    #VK_Equal                = $18
+    #VK_9                    = $19
+    #VK_7                    = $1A
+    #VK_Minus                = $1B
+    #VK_8                    = $1C
+    #VK_0                    = $1D
+    #VK_RightBracket         = $1E
+    #VK_O                    = $1F
+    #VK_U                    = $20
+    #VK_LeftBracket          = $21
+    #VK_I                    = $22
+    #VK_P                    = $23
+    #VK_L                    = $25
+    #VK_J                    = $26
+    #VK_Quote                = $27
+    #VK_K                    = $28
+    #VK_Semicolon            = $29
+    #VK_Backslash            = $2A
+    #VK_Comma                = $2B
+    #VK_Slash                = $2C
+    #VK_N                    = $2D
+    #VK_M                    = $2E
+    #VK_Period               = $2F
+    #VK_Grave                = $32
+    #VK_KeypadDecimal        = $41
+    #VK_KeypadMultiply       = $43
+    #VK_KeypadPlus           = $45
+    #VK_KeypadClear          = $47
+    #VK_KeypadDivide         = $4B
+    #VK_KeypadEnter          = $4C
+    #VK_KeypadMinus          = $4E
+    #VK_KeypadEquals         = $51
+    #VK_Keypad0              = $52
+    #VK_Keypad1              = $53
+    #VK_Keypad2              = $54
+    #VK_Keypad3              = $55
+    #VK_Keypad4              = $56
+    #VK_Keypad5              = $57
+    #VK_Keypad6              = $58
+    #VK_Keypad7              = $59
+    #VK_Keypad8              = $5B
+    #VK_Keypad9              = $5C
+   
+    #VK_Return                    = $24
+    #VK_Tab                       = $30
+    #VK_Space                     = $31
+    #VK_Delete                    = $33
+    #VK_Escape                    = $35
+    #VK_Command                   = $37
+    #VK_Shift                     = $38
+    #VK_CapsLock                  = $39
+    #VK_Option                    = $3A
+    #VK_Control                   = $3B
+    #VK_RightShift                = $3C
+    #VK_RightOption               = $3D
+    #VK_RightControl              = $3E
+    #VK_Function                  = $3F
+    #VK_F17                       = $40
+    #VK_VolumeUp                  = $48
+    #VK_VolumeDown                = $49
+    #VK_Mute                      = $4A
+    #VK_F18                       = $4F
+    #VK_F19                       = $50
+    #VK_F20                       = $5A
+    #VK_F5                        = $60
+    #VK_F6                        = $61
+    #VK_F7                        = $62
+    #VK_F3                        = $63
+    #VK_F8                        = $64
+    #VK_F9                        = $65
+    #VK_F11                       = $67
+    #VK_F13                       = $69
+    #VK_F16                       = $6A
+    #VK_F14                       = $6B
+    #VK_F10                       = $6D
+    #VK_F12                       = $6F
+    #VK_F15                       = $71
+    #VK_Help                      = $72
+    #VK_Home                      = $73
+    #VK_PageUp                    = $74
+    #VK_ForwardDelete             = $75
+    #VK_F4                        = $76
+    #VK_End                       = $77
+    #VK_F2                        = $78
+    #VK_PageDown                  = $79
+    #VK_F1                        = $7A
+    #VK_LeftArrow                 = $7B
+    #VK_RightArrow                = $7C
+    #VK_DownArrow                 = $7D
+    #VK_UpArrow                   = $7E
+   
   CompilerEndIf
  
   Declare ComputerKey(key.i, is_press.b = 1, option.b = 0, char_mode.b = 0)
-  Declare ComputerMouse(posx.i, posy.i, key.w = 0, is_press.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
-  Declare Ghost(write.s, delay.i)
+  Declare ComputerMouse(posx.d, posy.d, key.w = 0, is_press.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
+                                                                                 ;Declare Ghost(write.s, delay.i)
  
 EndDeclareModule
 
 Module Simulate
   CompilerIf #PB_Compiler_OS = #PB_OS_Linux
+   
     ImportC "-lX11"
       XOpenDisplay(*display)
       XCloseDisplay(*display)
@@ -119,7 +235,27 @@ Module Simulate
       XTestFakeButtonEvent(display, button, is_press, delay)
       XTestFakeMotionEvent(display, screen_number, x, y, delay)
     EndImport
+   
+  CompilerElseIf #PB_Compiler_OS = #PB_OS_MacOS
+   
+    #kCGEventFlagMaskShift     = $020000 ; = NX_SHIFTMASK
+    #kCGEventFlagMaskControl   = $040000 ; = NX_CONTROLMASK
+    #kCGEventFlagMaskAlternate = $080000 ; = NX_ALTERNATEMASK
+    #kCGEventFlagMaskCommand   = $100000 ; = NX_COMMANDMASK
+   
+    ImportC ""
+      CFRelease(CFTypeRef.i)
+      CGEventCreate(CGEventSourceRef.i)
+      CGEventCreateKeyboardEvent(CGEventSourceRef.i, CGVirtualKeyCode.u, KeyDown.l)
+      CGEventCreateMouseEvent(CGEventSourceRef.i, MouseEventType.i, x.d, y.d, MouseButton.i)
+      CGEventPost(CGEventTapLocation.l, CGEventRef.i)
+      CGEventSetFlags(CGEventRef.i, CGEventFlags.l)
+      CGEventGetLocation(CGEventRef.i)
+      CGEventSetIntegerValueField(CGEventRef.i, CGEventField.i, value.q)
+    EndImport
+   
   CompilerEndIf
+ 
  
   Procedure ComputerKey(key.i, is_press.b = 1, option.b = 0, char_mode.b = 0)
     CompilerIf #PB_Compiler_OS = #PB_OS_Windows
@@ -161,39 +297,55 @@ Module Simulate
       EndIf
     CompilerElseIf #PB_Compiler_OS = #PB_OS_Linux
       Protected *display = XOpenDisplay(0)
-     
-      ;       If XKeySymToString(key) <> 0
-      ;         Debug PeekS(XKeySymToString(key), -1, #PB_UTF8)
-      ;       EndIf
-      ;       symbol = XStringToKeysym(PeekS(XKeySymToString(key), -1, #PB_UTF8))
-     
       code = XkeysymTokeycode(*display, key)
       XTestFakekeyEvent(*display, code, is_press, 0)
       XFlush(*display)
       XCloseDisplay(*display)
+    CompilerElseIf #PB_Compiler_OS = #PB_OS_MacOS
+      Protected TipTap.i
+      If is_press = 1
+        TipTap = CGEventCreateKeyboardEvent(0, key, #True)
+      Else
+        TipTap = CGEventCreateKeyboardEvent(0, key, #False)
+      EndIf
+      If TipTap
+        If option = 1
+          CGEventSetFlags(TipTap, #kCGEventFlagMaskShift)
+        ElseIf option = 2
+          CGEventSetFlags(TipTap, #kCGEventFlagMaskControl)
+        ElseIf option = 3
+          CGEventSetFlags(TipTap, #kCGEventFlagMaskCommand)
+        ElseIf option = 4
+          CGEventSetFlags(TipTap, #kCGEventFlagMaskAlternate)
+        Else
+          CGEventSetFlags(TipTap, 0)
+        EndIf
+        CGEventPost(0, TipTap)
+        CFRelease(TipTap)
+      EndIf
     CompilerEndIf
   EndProcedure
  
-  Procedure ComputerMouse(posx.i, posy.i, key.w = 0, is_press.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
+  Procedure ComputerMouse(posx.d, posy.d, key.w = 0, is_press.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
     CompilerIf #PB_Compiler_OS = #PB_OS_Windows
       If option = 0
         Protected Miau.INPUT
         Miau\Type=#INPUT_MOUSE
         If is_press = 1
           If key = 0
-            Miau\mi\dwFlags  = #MOUSEEVENTF_LEFTDOWN
+            Miau\mi\dwFlags = #MOUSEEVENTF_LEFTDOWN
           ElseIf key = 1
-            Miau\mi\dwFlags  = #MOUSEEVENTF_RIGHTDOWN
+            Miau\mi\dwFlags = #MOUSEEVENTF_RIGHTDOWN
           ElseIf key = 2
-            Miau\mi\dwFlags  = #MOUSEEVENTF_MIDDLEDOWN
+            Miau\mi\dwFlags = #MOUSEEVENTF_MIDDLEDOWN
           EndIf
         Else
           If key = 0
-            Miau\mi\dwFlags  = #MOUSEEVENTF_LEFTUP
+            Miau\mi\dwFlags = #MOUSEEVENTF_LEFTUP
           ElseIf key = 1
-            Miau\mi\dwFlags  = #MOUSEEVENTF_RIGHTUP
+            Miau\mi\dwFlags = #MOUSEEVENTF_RIGHTUP
           ElseIf key = 2
-            Miau\mi\dwFlags  = #MOUSEEVENTF_MIDDLEUP
+            Miau\mi\dwFlags = #MOUSEEVENTF_MIDDLEUP
           EndIf
         EndIf
         SetCursorPos_(posx, posy)
@@ -233,18 +385,39 @@ Module Simulate
       EndIf
       XFlush(*display)
       XCloseDisplay(*display)
+    CompilerElseIf #PB_Compiler_OS = #PB_OS_MacOS
+      Protected Miau.i
+      If key = 0
+        If is_press = 1
+          Miau = CGEventCreateMouseEvent(0, 1, posx, posy, 0)
+        Else
+          Miau = CGEventCreateMouseEvent(0, 2, posx, posy, 0)
+        EndIf
+      ElseIf key = 1
+        If is_press = 1
+          Miau = CGEventCreateMouseEvent(0, 3, posx, posy, 1)
+        Else
+          Miau = CGEventCreateMouseEvent(0, 4, posx, posy, 1)
+        EndIf
+      ElseIf key = 2
+        ;?
+      EndIf
+      If Miau
+        CGEventPost(0, Miau)
+        CFRelease(Miau)
+      EndIf
     CompilerEndIf
   EndProcedure
  
-  Procedure Ghost(write.s, delay.i)
-    Protected g
-    ;Windows-Char-Mode (Only letters and numbers)
-    For g = 1 To Len(write)
-      ComputerKey(Asc(Mid(write,g,1)), 1, 0, 1)
-      ComputerKey(Asc(Mid(write,g,1)), 0, 0, 1)
-      Delay(delay)
-    Next g
-  EndProcedure
+  ;   Procedure Ghost(write.s, delay.i)
+  ;     Protected g
+  ;     ;Windows-Char-Mode (Only letters and numbers)
+  ;     For g = 1 To Len(write)
+  ;       ComputerKey(Asc(Mid(write,g,1)), 1, 0, 1)
+  ;       ComputerKey(Asc(Mid(write,g,1)), 0, 0, 1)
+  ;       Delay(delay)
+  ;     Next g
+  ;   EndProcedure
  
 EndModule
 
@@ -254,11 +427,11 @@ CompilerIf #PB_Compiler_IsMainFile
  
   CompilerIf #PB_Compiler_OS = #PB_OS_Linux
    
-    RunProgram("xed", "", "")
+    RunProgram("gedit", "", "")
     Delay(3000)
    
-    ;   ComputerMouse(100, 50, 0)
-    ;   ComputerMouse(100, 50, 0, 0)
+    ;ComputerMouse(100, 100, 0)
+    ;ComputerMouse(100, 100, 0, 0)
    
     ComputerKey(#XShift_L, #True)
     ComputerKey('H', #True)
@@ -301,8 +474,6 @@ CompilerIf #PB_Compiler_IsMainFile
     ComputerKey('!', 1)
     ComputerKey('!', 0)
     ComputerKey(#XShift_L, 0)
-   
-    Ghost(" Its snowing", 20)
    
   CompilerElseIf #PB_Compiler_OS = #PB_OS_Windows
    
@@ -360,7 +531,27 @@ CompilerIf #PB_Compiler_IsMainFile
     ComputerKey('1', 0)
     ComputerKey(#VK_LSHIFT, 0)
    
-    Ghost(" Its snowing", 20)
+  CompilerElseIf #PB_Compiler_OS = #PB_OS_MacOS
+   
+    ProgramID = RunProgram("Open", "/Applications/TextEdit.app", "")
+    Delay(3000)
+   
+    ComputerMouse(100, 100, 2, 1)
+    ComputerMouse(100, 100, 2, 0)
+   
+    ComputerKey(#VK_Shift, #True)
+    ComputerKey(#VK_H, #True, #True)
+    ComputerKey(#VK_A, #True)
+    ComputerKey(#VK_L, #True)
+    ComputerKey(#VK_L, #True)
+    ComputerKey(#VK_O, #True)
+    ComputerKey(#VK_Space, #True)
+    ComputerKey(#VK_M, #True, #True)
+    ComputerKey(#VK_A, #True)
+    ComputerKey(#VK_C, #True)
+    ComputerKey(#VK_Slash, #True) ;no German-Keyboardlayout
+    ComputerKey(#VK_O, #True, #True)
+    ComputerKey(#VK_S, #True, #True)
    
   CompilerEndIf
  
