@@ -174,7 +174,7 @@ Module Simulate
     CompilerEndIf
   EndProcedure
  
-  Procedure ComputerMouse(posx.i, posy.i, key.w = 0, is_pressss.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
+  Procedure ComputerMouse(posx.i, posy.i, key.w = 0, is_press.b = 1, option.b = 0) ;key = 0 (Left) / key = 1 (Right) / key = 2 (Middle)
     CompilerIf #PB_Compiler_OS = #PB_OS_Windows
       If option = 0
         Protected Miau.INPUT
