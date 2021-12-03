@@ -152,7 +152,7 @@ If Result$ = ""
 EndIf
 
 LicenseTextFilePath$ = SaveFileRequester(#Program_Name,
-                                         "ThirdPartyLibs_Licenses.txt", "", 0)
+                                         "THIRD_PARTY_LIBRARIES_LICENSES", "", 0)
 If LicenseTextFilePath$ = ""
   MessageRequester(#Program_Name, "The file save request was canceled.",
                    #PB_MessageRequester_Error)
@@ -166,7 +166,12 @@ If File = 0
   End
 EndIf
 
-WriteString(File, "Third-party libraries in use:" + #CRLF$ + #CRLF$)
+WriteString(File,
+            "The compiled program contains third-party libraries which are added by the" +
+            #CRLF$ +
+            "PureBasic compiler during compilation. The libraries and their license texts are" +
+            #CRLF$ +
+            "listed below." + #CRLF$ + #CRLF$)
 WriteString(File, Result$)
 CloseFile(File)
 MessageRequester(#Program_Name, "The license file was successfully created.",
