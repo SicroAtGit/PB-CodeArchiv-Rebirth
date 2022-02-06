@@ -1,8 +1,13 @@
-﻿;   Description: Displays the commented ASM code from the PB compiler
-;            OS: Windows, Linux, Mac
-; English-Forum:
-;  French-Forum:
-;  German-Forum: https://www.purebasic.fr/german/viewtopic.php?f=10&t=30935
+﻿;-Description   : Displays the commented ASM code from the PB compiler
+; OS            : Windows, Linux, Mac
+; English-Forum :
+; French-Forum  :
+; German-Forum  : https://www.purebasic.fr/german/viewtopic.php?f=10&t=30935
+; 
+; Author        : Sicro
+; Author second : mk-soft
+; Update        : 28.11.2021
+
 ; -----------------------------------------------------------------------------
 
 ; MIT License
@@ -39,8 +44,29 @@ EnableExplicit
 ;-Include Codes
 ; =============
 
-XIncludeFile "../System/OpenStandardProgram.pbi"
-XIncludeFile "../File/GetFileContentAsString.pbi"
+Procedure.i OpenWithStandardProgram(FilePath$)
+  
+  Protected Result
+  
+  ; Avoid problems with paths containing spaces
+  FilePath$ = #DQUOTE$ + FilePath$ + #DQUOTE$
+  
+  CompilerSelect #PB_Compiler_OS
+    CompilerCase #PB_OS_Windows
+      ; https://docs.microsoft.com/en-us/windows/desktop/api/shellapi/nf-shellapi-shellexecutew
+      Result = Bool(ShellExecute_(0, "open", FilePath$, #Null, #Null, #SW_SHOW) > 32)
+    CompilerCase #PB_OS_Linux
+      ; https://portland.freedesktop.org/doc/xdg-open.html
+      Result = Bool(RunProgram("xdg-open", FilePath$, GetCurrentDirectory()))
+    CompilerCase #PB_OS_MacOS
+      Result = Bool(RunProgram("open", FilePath$, GetCurrentDirectory()))
+  CompilerEndSelect
+  
+  ProcedureReturn Result
+  
+EndProcedure
+
+;XIncludeFile "../File/GetFileContentAsString.pbi"
 
 ; ================
 ;-Define Constants
@@ -74,6 +100,14 @@ Define program, file, event, isCompilerError, countOfParameters, i, isLibrary
 outputFilePathForStandardProgram$ = GetTemporaryDirectory() + RemoveString(#Program_Name, " ") + "-Output.txt"
 
 compilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
+If compilerFilePath$ = ""
+  MessageRequester("Info", "Run only as PB-IDE Tool", #PB_MessageRequester_Info)
+  End
+EndIf
+
+If FindString(compilerFilePath$, "pbcompilerc")
+    compilerFilePath$   = ReplaceString(compilerFilePath$, "pbcompilerc", "pbcompiler")
+EndIf
 compilerHomePath$ = GetPathPart(compilerFilePath$)
 codeFilePath$     = ProgramParameter(0) ; "%FILE"
 codeTempFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
@@ -99,7 +133,7 @@ CompilerElse
   workingDirectoryPath$ = GetPathPart(codeFilePath$)
 CompilerEndIf
 
-compilerParameters$ = "--commented"
+compilerParameters$ = "--commented -o PB_Editor_BuildCount=0 -o PB_Editor_CompileCount=0"
 
 If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
   compilerParameters$ + " --thread"
@@ -166,7 +200,12 @@ Else
   isCompilerError = #True
 EndIf
 
-asmCode$ = GetFileContentAsString(asmCodeFilePath$)
+; Read the ASM code file
+file = ReadFile(#PB_Any, asmCodeFilePath$)
+If file
+  asmCode$ + ReadString(file, #PB_File_IgnoreEOL)
+  CloseFile(file)
+EndIf
 
 ; If an error has occurred, output detailed information
 If isCompilerError Or asmCode$ = ""
@@ -189,11 +228,12 @@ If isCompilerError Or asmCode$ = ""
 EndIf
 
 ; Remove the ASM file only if no error occurred to avoid removing error traces
-DeleteFile(asmCodeFilePath$)
 DeleteFile(exeFilePath$)
 
-output$ = "Compiler File Path: "  + compilerFilePath$   + #CRLF$ +
-          "Compiler Parameters: " + compilerParameters$ + #CRLF$ +
+output$ = "##############################################" + #CRLF$ +
+          "Compiler File Path: "  + compilerFilePath$      + #CRLF$ +
+          "Compiler Parameters: " + compilerParameters$    + #CRLF$ +
+          "ASM Code File Path:"   + asmCodeFilePath$       + #CRLF$ +
           #CRLF$ +
           "##############################################" + #CRLF$ +
           compilerOutput$ + #CRLF$ +
@@ -245,14 +285,14 @@ Repeat
         Case #Button_OpenStandardEditor
           file = CreateFile(#PB_Any, outputFilePathForStandardProgram$)
           If file
-            WriteStringN(file, output$)
+            WriteStringN(file, asmCode$)
             CloseFile(file)
           EndIf
           If Not OpenWithStandardProgram(outputFilePathForStandardProgram$)
             MessageRequester(#ErrorWindowTitle, "The output could not be opened in the standard editor!", #PB_MessageRequester_Error)
           EndIf
         Case #Button_CopyToClipboard
-          SetClipboardText(output$)
+          SetClipboardText(asmCode$)
       EndSelect
     Case #PB_Event_Menu
       CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
