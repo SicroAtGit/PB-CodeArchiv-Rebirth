@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2017-2018 Sicro
+; Copyright (c) 2017-2018, 2022 Sicro
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -272,7 +272,8 @@ Module FileInfo
     Protected FileInfo.SHFILEINFO, ImageList.IImageList
     Protected IconHandle, Image, IconSizeType, RealIconWidth, RealIconHeight
     
-    If FileSize(File$) < 0
+    If FileSize(File$) = -1
+      ; '-2' (Directory) is supported
       ProcedureReturn 0
     EndIf
     
