@@ -8,6 +8,7 @@
 ; MIT License
 ;
 ; Copyright (c) 2018-2020 Sicro
+; Copyright (c) 2022 mk-soft
 ;
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -99,7 +100,7 @@ CompilerElse
   workingDirectoryPath$ = GetPathPart(codeFilePath$)
 CompilerEndIf
 
-compilerParameters$ = "--commented"
+compilerParameters$ = "--commented -o PB_Editor_BuildCount=0 -o PB_Editor_CompileCount=0"
 
 If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
   compilerParameters$ + " --thread"
