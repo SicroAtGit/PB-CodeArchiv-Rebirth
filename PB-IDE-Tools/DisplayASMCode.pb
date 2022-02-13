@@ -67,6 +67,7 @@ Define compilerHomePath$, compilerFilePath$, workingDirectoryPath$, codeFilePath
        compilerUserParameters$
 Define asmCode$, output$, compilerOutput$
 Define program, file, event, isCompilerError, countOfParameters, i, isLibrary
+Define compilerVersion$, isCompilerV6
 
 ; ==============================
 ;-Set Values For Local Variables
@@ -79,6 +80,29 @@ If compilerFilePath$ = ""
   MessageRequester(#ErrorWindowTitle, "Run only as PB IDE tool", #PB_MessageRequester_Error)
   End
 EndIf
+
+If FindString(compilerFilePath$, "pbcompilerc")
+  compilerFilePath$ = ReplaceString(compilerFilePath$, "pbcompilerc", "pbcompiler")
+EndIf
+
+; Run the PB compiler to get compiler version
+program = RunProgram(compilerFilePath$, "-v", "", #PB_Program_Open | #PB_Program_Read)
+If program
+  While ProgramRunning(program)
+    While AvailableProgramOutput(program)
+      compilerVersion$ + ReadProgramString(program) + #CRLF$
+    Wend
+  Wend
+  isCompilerError = Bool(ProgramExitCode(program))
+  CloseProgram(program)
+Else
+  isCompilerError = #True
+EndIf
+
+If FindString(compilerVersion$, "PureBasic 6.")
+  isCompilerV6 = #True
+EndIf
+
 compilerHomePath$ = GetPathPart(compilerFilePath$)
 codeFilePath$     = ProgramParameter(0) ; "%FILE"
 codeTempFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
@@ -104,7 +128,14 @@ CompilerElse
   workingDirectoryPath$ = GetPathPart(codeFilePath$)
 CompilerEndIf
 
-compilerParameters$ = "--commented -o PB_Editor_BuildCount=0 -o PB_Editor_CompileCount=0"
+compilerParameters$ = "--commented"
+
+; The PB compiler parameter for constants has changed since PB 6.0
+If isCompilerV6
+  compilerParameters$ + " -co PB_Editor_BuildCount=0 -co PB_Editor_CompileCount=0"
+Else
+  compilerParameters$ + " -o PB_Editor_BuildCount=0 -o PB_Editor_CompileCount=0"
+EndIf
 
 If Val(GetEnvironmentVariable("PB_TOOL_Thread"))
   compilerParameters$ + " --thread"
