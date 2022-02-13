@@ -63,17 +63,14 @@ EndEnumeration
 ; ======================
 
 Define compilerHomePath$, compilerFilePath$, workingDirectoryPath$, codeFilePath$, codeTempFilePath$,
-       asmCodeFilePath$, exeFilePath$, outputFilePathForStandardProgram$, compilerParameters$,
-       compilerUserParameters$
+       asmCodeFilePath$, exeFilePath$, compilerParameters$, compilerUserParameters$
 Define asmCode$, output$, compilerOutput$
-Define program, file, event, isCompilerError, countOfParameters, i, isLibrary
+Define program, event, isCompilerError, countOfParameters, i, isLibrary
 Define compilerVersion$, isCompilerV6
 
 ; ==============================
 ;-Set Values For Local Variables
 ; ==============================
-
-outputFilePathForStandardProgram$ = GetTemporaryDirectory() + RemoveString(#Program_Name, " ") + "-Output.txt"
 
 compilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
 If compilerFilePath$ = ""
@@ -279,16 +276,11 @@ Repeat
     Case #PB_Event_Gadget
       Select EventGadget()
         Case #Button_OpenStandardEditor
-          file = CreateFile(#PB_Any, outputFilePathForStandardProgram$)
-          If file
-            WriteStringN(file, output$)
-            CloseFile(file)
-          EndIf
-          If Not OpenWithStandardProgram(outputFilePathForStandardProgram$)
+          If Not OpenWithStandardProgram(asmCodeFilePath$)
             MessageRequester(#ErrorWindowTitle, "The output could not be opened in the standard editor!", #PB_MessageRequester_Error)
           EndIf
         Case #Button_CopyToClipboard
-          SetClipboardText(output$)
+          SetClipboardText(asmCode$)
       EndSelect
     Case #PB_Event_Menu
       CompilerIf #PB_Compiler_OS = #PB_OS_MacOS
