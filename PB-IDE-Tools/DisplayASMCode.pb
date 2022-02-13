@@ -75,6 +75,10 @@ Define program, file, event, isCompilerError, countOfParameters, i, isLibrary
 outputFilePathForStandardProgram$ = GetTemporaryDirectory() + RemoveString(#Program_Name, " ") + "-Output.txt"
 
 compilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
+If compilerFilePath$ = ""
+  MessageRequester(#ErrorWindowTitle, "Run only as PB IDE tool", #PB_MessageRequester_Error)
+  End
+EndIf
 compilerHomePath$ = GetPathPart(compilerFilePath$)
 codeFilePath$     = ProgramParameter(0) ; "%FILE"
 codeTempFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
