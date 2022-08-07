@@ -105,5 +105,5 @@ EndIf
 
 ;ShellExecute_(#Null, "open", "notepad", "/P " + print_dateiname$, #Null, #SW_HIDE)
 ;oder
-RunProgram("Notepad", "/P " +Chr(34)+ print_dateiname$+Chr(34), "",#PB_Program_Wait|#PB_Program_Hide)
+RunProgram("Notepad", "/P " +Chr(34)+ print_dateiname$+Chr(34), "",#PB_Program_Wait)
 DeleteFile(temp_dateiname$)
