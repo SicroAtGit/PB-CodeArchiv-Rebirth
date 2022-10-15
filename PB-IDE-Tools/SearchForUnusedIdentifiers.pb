@@ -188,7 +188,7 @@ ForEach identifiersMap()
 Next
 
 If Not isUnusedIdentifierFound
-  AddGadgetItem(#Editor_Output, -1, "No unused identifiers found :-)" + MapKey(identifiersMap()))
+  AddGadgetItem(#Editor_Output, -1, "No unused identifiers found :-)")
 EndIf
 
 Repeat
