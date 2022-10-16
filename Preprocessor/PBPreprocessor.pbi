@@ -57,6 +57,8 @@ Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
     Parameters$ + " --subsystem " + CompilerSubsystem$
   EndIf
   
+  DeleteFile(TempCodeFilePath$)
+  
   If Not RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
                     #PB_Program_Wait | #PB_Program_Hide)
     ProcedureReturn ""
