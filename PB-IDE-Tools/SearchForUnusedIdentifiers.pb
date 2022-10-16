@@ -152,6 +152,10 @@ While PBLexer::NextToken(*lexer)
       EndIf
     Case PBLexer::#TokenType_Identifier
       tokenValue$ = LCase(PBLexer::TokenValue(*lexer))
+      If Right(tokenValue$, 1) = "_"
+        ; Skip WinAPI functions
+        Continue
+      EndIf
       If Not IsNativeIdentifier(nativeIdentifiersMap(), tokenValue$)
         identifiersMap(tokenValue$) + 1
       EndIf
