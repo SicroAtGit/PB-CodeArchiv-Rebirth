@@ -110,7 +110,7 @@ DoEvents()
 ; ==========================================================================================================================
 ;- Read PB code file content into a string
 ; ==========================================================================================================================
-AddGadgetItem(#Editor_Output, -1, "Reprocess code file and read the content of the result file ...")
+AddGadgetItem(#Editor_Output, -1, "Preprocess code file and read the content of the result file ...")
 DoEvents()
 code$ = GetContentOfPreProcessedFile(codeFilePath$, compilerFilePath$)
 stringLength = Len(code$)
