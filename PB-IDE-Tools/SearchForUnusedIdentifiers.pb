@@ -150,7 +150,7 @@ While PBLexer::NextToken(*lexer)
           Wend
         EndIf
       EndIf
-    Case PBLexer::#TokenType_Identifier, PBLexer::#TokenType_Constant
+    Case PBLexer::#TokenType_Identifier
       tokenValue$ = LCase(PBLexer::TokenValue(*lexer))
       If Not IsNativeIdentifier(nativeIdentifiersMap(), tokenValue$)
         identifiersMap(tokenValue$) + 1
@@ -614,9 +614,6 @@ DataSection
   Data$ "Yaw", "Year", "ZoomSprite"
   ; Native object value types
   Data$ "a", "b", "c", "d", "f", "i", "l", "q", "s", "u", "w"
-  ; Other native constants
-  Data$ "#CRLF$", "#CRLF", "#CR$", "#CR", "#LF$", "#LF", "#TAB", "#TAB$", "#DQUOTE$", "#True", "#False", "#Null", "#Null$"
-  Data$ "#LFCR", "#LFCR$"
   ; --
   Data$ ""
 EndDataSection
