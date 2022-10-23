@@ -60,7 +60,7 @@ Declare DoEvents()
 ; ==========================================================================================================================
 ;- Definition of variables and maps
 ; ==========================================================================================================================
-Define   codeFilePath$, compilerFilePath$, identifier$, code$, tokenValue$
+Define   codeFilePath$, compilerFilePath$, identifier$, code$, tokenValue$, lastTokenValue$
 Define   *lexer
 Define   lastTokenType, lastStringOffset, stringLength, isUnusedIdentifierFound
 Define.f readStatusInPercent
@@ -155,23 +155,41 @@ While PBLexer::NextToken(*lexer)
       If Right(tokenValue$, 1) = "_"
         ; Skip WinAPI functions
         Continue
+      ElseIf lastTokenValue$ = "\"
+        ; Skip structure fields
+        Continue
       EndIf
       If Not IsNativeIdentifier(nativeIdentifiersMap(), tokenValue$)
         identifiersMap(tokenValue$) + 1
       EndIf
     Case PBLexer::#TokenType_Keyword
-      If LCase(PBLexer::TokenValue(*lexer)) = "macro"
-        ; Skip macro blocks
-        ; During pre-processing of codes, the PB Compiler does not remove the macro blocks after all macro calls have
-        ; been resolved
-        While PBLexer::NextToken(*lexer)
-          If LCase(PBLexer::TokenValue(*lexer)) = "endmacro"
-            Break
+      Select LCase(PBLexer::TokenValue(*lexer))
+        Case "macro"
+          ; Skip macro blocks
+          ; During pre-processing of codes, the PB Compiler does not remove the macro blocks after all macro calls have
+          ; been resolved
+          While PBLexer::NextToken(*lexer)
+            If LCase(PBLexer::TokenValue(*lexer)) = "endmacro"
+              Break
+            EndIf
+          Wend
+        Case "structure"
+          PBLexer::NextToken(*lexer) ; Skip "structure"
+          If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Identifier
+            ; Read structure name
+            tokenValue$ = LCase(PBLexer::TokenValue(*lexer))
+            identifiersMap(tokenValue$) + 1
           EndIf
-        Wend
-      EndIf
+          ; Skip the rest of the structure block
+          While PBLexer::NextToken(*lexer)
+            If LCase(PBLexer::TokenValue(*lexer)) = "endstructure"
+              Break
+            EndIf
+          Wend
+      EndSelect
   EndSelect
   lastTokenType = PBLexer::TokenType(*lexer)
+  lastTokenValue$ = PBLexer::TokenValue(*lexer)
 Wend
 PBLexer::Free(*lexer)
 
