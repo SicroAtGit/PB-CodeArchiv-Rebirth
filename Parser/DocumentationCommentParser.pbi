@@ -75,7 +75,6 @@ DeclareModule DocumentationCommentParser
     Declare  ProcessXIncludeFileKeyword(*lexer, currentDirectory$,
                                         Map procedures.DocumentationCommentStruc())
     
-    Declare$ ProcessProcedureReturnType(*lexer)
     Declare$ ProcessProcedureParameters(*lexer)
     Declare  ProcessProcedure(*lexer, Map procedures.DocumentationCommentStruc())
     
@@ -136,7 +135,7 @@ Module DocumentationCommentParser
         Select PBLexer::TokenType(*lexer)
             Case PBLexer::#TokenType_Keyword
                 Select LCase(PBLexer::TokenValue(*lexer))
-                    Case "procedure"
+                    Case "procedure", "procedure$"
                         ProcessProcedure(*lexer, procedures())
                     Case "macro"
                         ProcessMacro(*lexer)
@@ -338,24 +337,6 @@ Module DocumentationCommentParser
         Debug "--------------------", 1
     EndProcedure
     
-    Procedure$ ProcessProcedureReturnType(*lexer)
-        Protected returnType$
-        
-        Select PBLexer::TokenValue(*lexer)
-            Case "$"
-                returnType$ = "s"
-                PBLexer::NextToken(*lexer) ; Skip "$"
-            Case "."
-                PBLexer::NextToken(*lexer) ; Skip "."
-                returnType$ = PBLexer::TokenValue(*lexer)
-                PBLexer::NextToken(*lexer) ; Skip procedure return type
-            Default
-                returnType$ = "i"
-        EndSelect
-        
-        ProcedureReturn returnType$
-    EndProcedure
-    
     Procedure$ ProcessProcedureParameters(*lexer)
         Protected tokenValue$, parameters$
         Protected roundedBracketsCounter = 1
@@ -403,9 +384,19 @@ Module DocumentationCommentParser
         ; TODO: Support for procedure names with macros
         ; TODO: Support for procedure parameters with macros
         
-        PBLexer::NextToken(*lexer) ; Skip "Procedure"
-        
-        procedureReturnType$ = ProcessProcedureReturnType(*lexer)
+        If Right(PBLexer::TokenValue(*lexer), 1) = "$"
+            procedureReturnType$ = "s"
+            PBLexer::NextToken(*lexer) ; Skip "Procedure$"
+        Else
+            PBLexer::NextToken(*lexer) ; Skip "Procedure"
+            If PBLexer::TokenValue(*lexer) = "."
+                PBLexer::NextToken(*lexer) ; Skip "."
+                procedureReturnType$ = PBLexer::TokenValue(*lexer)
+                PBLexer::NextToken(*lexer) ; Skip procedure return type
+            Else
+                procedureReturnType$ = "i"
+            EndIf
+        EndIf
         
         ; Process procedure name
         Repeat

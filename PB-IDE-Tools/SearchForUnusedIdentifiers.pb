@@ -147,14 +147,6 @@ While PBLexer::NextToken(*lexer)
       EndIf
     Case PBLexer::#TokenType_Identifier, PBLexer::#TokenType_Constant
       tokenValue$ = LCase(PBLexer::TokenValue(*lexer))
-      lastStringOffset = PBLexer::StringOffset(*lexer)
-      If PBLexer::NextToken(*lexer)
-        If PBLexer::TokenType(*lexer) = PBLexer::#TokenType_StringTypeSuffix
-          tokenValue$ + "$"
-        Else
-          PBLexer::StringOffset(*lexer, lastStringOffset)
-        EndIf
-      EndIf
       If Not IsNativeIdentifier(nativeIdentifiersMap(), tokenValue$)
         identifiersMap(tokenValue$) + 1
       EndIf
