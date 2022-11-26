@@ -138,7 +138,7 @@ Module PBLexer
                "'.*?'" ; 'a'
       Lexer::DefineNewToken(*lexer, #TokenType_Number, regEx$, #False, "Number")
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Constant, "(?:#[ \t]*[A-Z_]+[A-Z0-9_]*)\b", #False, "Constant")
+      Lexer::DefineNewToken(*lexer, #TokenType_Constant, "(?:#[ \t]*[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Constant")
       
       Lexer::DefineNewToken(*lexer, #TokenType_Period, "\.", #False, "Period")
     EndIf
