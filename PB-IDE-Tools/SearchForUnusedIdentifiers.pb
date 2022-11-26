@@ -113,9 +113,8 @@ DoEvents()
 AddGadgetItem(#Editor_Output, -1, "Preprocess code file and read the content of the result file ...")
 DoEvents()
 code$ = GetContentOfPreProcessedFile(codeFilePath$, compilerFilePath$)
-If code$ = ""
-  MessageRequester(#Program_Name$, "Your code is empty or contains syntax errors, so the PB compiler cannot preprocess" +
-                                   " the code!", #PB_MessageRequester_Error)
+If Left(code$, 5) = "Error"
+  MessageRequester(#Program_Name$, code$, #PB_MessageRequester_Error)
   End
 EndIf
 stringLength = Len(code$)
