@@ -129,6 +129,7 @@ Module Lexer
     ; Return value: | None
     ; ----------------------------------------------------------------------------------------------------------------------
     If *lexer
+      FreeRegularExpression(*lexer\newLineRegEx)
       ForEach *lexer\tokenDefinitionsList()
         FreeRegularExpression(*lexer\tokenDefinitionsList()\regEx)
       Next
