@@ -123,8 +123,10 @@ Wend
 
 ClosePreferences()
 
-ScanPBCodeFile(CodeFilePath$, CompilerFilePath$, Functions(),
-               NeededThirdPartyLibrary())
+If Not ScanPBCodeFile(CodeFilePath$, CompilerFilePath$, Functions(),
+                      NeededThirdPartyLibrary())
+  End
+EndIf
 
 ForEach NeededThirdPartyLibrary()
   
@@ -196,12 +198,14 @@ Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
                                                   CompilerFilePath$, #False,
                                                   CompilerEnableThread,
                                                   CompilerSubsystem$)
-  If CodeFileContent$ = ""
+  If Left(CodeFileContent$, 5) = "Error"
+    MessageRequester(#Program_Name, CodeFileContent$, #PB_MessageRequester_Error)
     ProcedureReturn #False
   EndIf
   
   *Lexer = PBLexer::Create(@CodeFileContent$)
   If Not *Lexer
+    MessageRequester(#Program_Name, "PBLexer could not be created!", #PB_MessageRequester_Error)
     ProcedureReturn #False
   EndIf
   
@@ -220,5 +224,6 @@ Procedure ScanPBCodeFile(CodeFilePath$, CompilerFilePath$,
   Wend
   
   PBLexer::Free(*Lexer)
+  ProcedureReturn #True
   
 EndProcedure
