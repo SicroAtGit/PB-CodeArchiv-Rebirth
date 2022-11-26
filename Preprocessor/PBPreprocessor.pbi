@@ -34,7 +34,8 @@ Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
                                         CompilerEnableThread = #False,
                                         CompilerSubsystem$ = "")
   
-  Protected TempCodeFilePath$, Parameters$
+  Protected TempCodeFilePath$, Parameters$, Result$, Error$
+  Protected Compiler
   
   If CodeFilePath$ = ""
     ProcedureReturn ""
@@ -59,11 +60,27 @@ Procedure$ GetContentOfPreProcessedFile(CodeFilePath$, CompilerFilePath$,
   
   DeleteFile(TempCodeFilePath$)
   
-  If Not RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
-                    #PB_Program_Wait | #PB_Program_Hide)
-    ProcedureReturn ""
+  Compiler = RunProgram(CompilerFilePath$, Parameters$, GetPathPart(CodeFilePath$),
+                        #PB_Program_Open | #PB_Program_Read)
+  If Compiler
+    While ProgramRunning(Compiler)
+      While AvailableProgramOutput(Compiler)
+        Result$ + ReadProgramString(Compiler) + #CRLF$
+      Wend
+    Wend
+    If ProgramExitCode(Compiler)
+      Error$ = "Error:" + #CRLF$ + Result$
+    EndIf
+    CloseProgram(Compiler)
+  Else
+    Error$ = "Error:" + #CRLF$ +
+             "PureBasic compiler could not be started!"
   EndIf
   
-  ProcedureReturn GetFileContentAsString(TempCodeFilePath$)
+  If Error$ = ""
+    ProcedureReturn GetFileContentAsString(TempCodeFilePath$)
+  Else
+    ProcedureReturn Error$
+  EndIf
   
 EndProcedure
