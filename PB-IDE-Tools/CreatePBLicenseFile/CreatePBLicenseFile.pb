@@ -1,5 +1,5 @@
 ﻿; Tool Settings:
-; - Arguments: "%TEMPFILE"
+; - Arguments: "%FILE" "%TEMPFILE"
 ; - Event:     Menu Or Shortcut
 ; For MacOS, the field "Commandline" must contain the full path to the executable
 ; file, e.g.: .../Program.app/Contents/MacOS/Program
@@ -64,7 +64,12 @@ Define LicenseText$
 ;- Set Variables
 ; =============================================================================
 
-CodeFilePath$     = ProgramParameter(0)
+CodeFilePath$ = ProgramParameter(0) ; "%FILE"
+If CodeFilePath$ = ""
+  ; The code has not yet been saved
+  ; Use the path of the auto-generated temp code file
+  CodeFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
+EndIf
 CompilerFilePath$ = GetEnvironmentVariable("PB_TOOL_Compiler")
 
 ; =============================================================================
