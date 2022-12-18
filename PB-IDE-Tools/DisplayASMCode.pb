@@ -110,20 +110,12 @@ If codeFilePath$ = ""
   codeFilePath$ = codeTempFilePath$
 EndIf
 
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  asmCodeFilePath$ = compilerHomePath$ + "purebasic.asm"
-CompilerElse
-  asmCodeFilePath$ = GetPathPart(codeFilePath$) + "purebasic.asm"
-CompilerEndIf
+asmCodeFilePath$ = GetPathPart(codeFilePath$) + "purebasic.asm"
 
 ; The EXE file is only created so that the PB compiler does not execute the code, but only creates the ASM code
 exeFilePath$ = GetTemporaryDirectory() + "purebasic"
 
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  workingDirectoryPath$ = GetPathPart(compilerFilePath$)
-CompilerElse
-  workingDirectoryPath$ = GetPathPart(codeFilePath$)
-CompilerEndIf
+workingDirectoryPath$ = GetPathPart(codeFilePath$)
 
 compilerParameters$ = "--commented"
 
