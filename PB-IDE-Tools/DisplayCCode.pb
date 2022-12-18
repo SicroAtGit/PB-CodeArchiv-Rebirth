@@ -127,7 +127,7 @@ EndIf
 
 cCodeFilePath$ = GetPathPart(codeFilePath$) + "purebasic.c"
 
-; The EXE file is only created so that the PB compiler does not execute the code, but only creates the ASM code
+; The EXE file is only created so that the PB compiler does not execute the code, but only creates the C code
 exeFilePath$ = GetTemporaryDirectory() + "purebasic"
 
 workingDirectoryPath$ = GetPathPart(codeFilePath$)
@@ -184,10 +184,10 @@ DeleteFile(cCodeFilePath$)
 DeleteFile(exeFilePath$)
 
 ; ====================
-;-Create ASM Code File
+;-Create C Code File
 ; ====================
 
-; Run the PB compiler to create the ASM code file
+; Run the PB compiler to create the C code file
 program = RunProgram(compilerFilePath$,
                      #DQUOTE$ + codeFilePath$ + #DQUOTE$ + " " + compilerParameters$,
                      workingDirectoryPath$,
@@ -210,9 +210,9 @@ cCode$ = GetFileContentAsString(cCodeFilePath$)
 
 ; If an error has occurred, output detailed information
 If isCompilerError Or cCode$ = ""
-  MessageRequester(#ErrorWindowTitle, "Tool could not create the asm output!" +
+  MessageRequester(#ErrorWindowTitle, "Tool could not create the c output!" +
                                       #CRLF$ + #CRLF$ +
-                                      "Note that the PB compiler only generates ASM output if the PB code is syntaxically correct!" +
+                                      "Note that the PB compiler only generates C output if the PB code is syntaxically correct!" +
                                       #CRLF$ + #CRLF$ +
                                       "-------------------------------------" +
                                       #CRLF$ + #CRLF$ +
@@ -242,7 +242,7 @@ output$ = "##############################################" + #CRLF$ +
           cCode$
 
 ; =============================
-;-Create ASM Code Output Window
+;-Create C Code Output Window
 ; =============================
 
 Procedure UpdateWindow()
@@ -252,7 +252,7 @@ Procedure UpdateWindow()
                WindowWidth(#Window_Main) / 2 - 8, #PB_Ignore)
 EndProcedure
  
-; Display the ASM code in an EditorGadget
+; Display the C code in an EditorGadget
 If Not OpenWindow(#Window_Main, #PB_Ignore, #PB_Ignore, 500, 500, #Program_Name, #PB_Window_SystemMenu | #PB_Window_SizeGadget |
                                                                                  #PB_Window_MinimizeGadget | #PB_Window_MaximizeGadget)
   MessageRequester(#ErrorWindowTitle, "The program window could not be created!", #PB_MessageRequester_Error)
