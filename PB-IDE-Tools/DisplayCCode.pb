@@ -70,7 +70,7 @@ EndEnumeration
 ;-Define Local Variables
 ; ======================
 
-Define compilerHomePath$, compilerFilePath$, workingDirectoryPath$, codeFilePath$, codeTempFilePath$,
+Define compilerFilePath$, workingDirectoryPath$, codeFilePath$, codeTempFilePath$,
        cCodeFilePath$, exeFilePath$, compilerParameters$, compilerUserParameters$
 Define cCode$, output$, compilerOutput$
 Define program, event, isCompilerError, countOfParameters, i, isLibrary
@@ -115,7 +115,6 @@ If FindString(compilerVersion$, "PureBasic 6.")
   isCompilerV6 = #True
 EndIf
 
-compilerHomePath$ = GetPathPart(compilerFilePath$)
 codeFilePath$     = ProgramParameter(0) ; "%FILE"
 codeTempFilePath$ = ProgramParameter(1) ; "%TEMPFILE"
 
