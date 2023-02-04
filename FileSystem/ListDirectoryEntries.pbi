@@ -36,10 +36,24 @@ EnumerationBinary
   #ListDirectoryEntries_Mode_ListAll = #ListDirectoryEntries_Mode_ListDirectories | #ListDirectoryEntries_Mode_ListFiles
 EndEnumeration
 
+Structure CharacterStruc
+  StructureUnion
+    c.c
+    s.s{1}
+  EndStructureUnion
+EndStructure
+
+Structure TrieNodeStruc
+  NextNode.a[$FFFF + 1] ; Variable type `.a` allows a total of 256 nodes in the trie
+  IsFinalNode.b
+EndStructure
+
 Prototype ProtoListDirectoryEntriesCallback(EntryPath$, Directory)
 
-Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback, FileExtensions$="", EnableRecursiveScan=#True, Mode=#ListDirectoryEntries_Mode_ListAll)
+Procedure ProcessDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback, IsFilterExtension, Array TrieNodes.TrieNodeStruc(1), EnableRecursiveScan=#True, Mode=#ListDirectoryEntries_Mode_ListAll)
   
+  Protected.CharacterStruc *CurrExtChar
+  Protected CurrNode, NextNode
   Protected Directory
   Protected EntryName$
   Protected EntryExtension$
@@ -59,12 +73,22 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
         Case #PB_DirectoryEntry_File
           
           If Mode & #ListDirectoryEntries_Mode_ListFiles
-            If FileExtensions$ <> ""
+            If IsFilterExtension
               EntryExtension$ = GetExtensionPart(EntryName$)
               If EntryExtension$ = ""
                 Continue
               EndIf
-              If Not FindString("," + FileExtensions$ + ",", "," + EntryExtension$ + ",", 1, #PB_String_NoCase)
+              CurrNode = 0
+              *CurrExtChar = @EntryExtension$
+              While *CurrExtChar\c
+                NextNode = TrieNodes(CurrNode)\NextNode[*CurrExtChar\c]
+                If NextNode = 0
+                  Break
+                EndIf
+                CurrNode = NextNode
+                *CurrExtChar + SizeOf(Unicode)
+              Wend
+              If NextNode = 0 Or TrieNodes(CurrNode)\IsFinalNode = #False
                 Continue
               EndIf
             EndIf
@@ -79,7 +103,7 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
             EndIf
             
             If EnableRecursiveScan
-              ListDirectoryEntries(Path$ + EntryName$, Callback, FileExtensions$, EnableRecursiveScan, Mode)
+              ProcessDirectoryEntries(Path$ + EntryName$, Callback, IsFilterExtension, TrieNodes(), EnableRecursiveScan, Mode)
             EndIf
           EndIf
           
@@ -88,7 +112,43 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
     Wend
     FinishDirectory(Directory)
   EndIf
+  
+EndProcedure
 
+Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback, FileExtensions$="", EnableRecursiveScan=#True, Mode=#ListDirectoryEntries_Mode_ListAll)
+  
+  Protected.CharacterStruc *CurrExtChar
+  Protected Dim TrieNodes.TrieNodeStruc(0)
+  Protected CurrNode, NextNode
+  
+  If Right(Path$, 1) <> #PS$
+    Path$ + #PS$
+  EndIf
+  
+  If FileExtensions$ <> ""
+    *CurrExtChar = @FileExtensions$
+    While *CurrExtChar\c
+      If *CurrExtChar\c = ','
+        TrieNodes(CurrNode)\IsFinalNode = #True
+        CurrNode = 0
+      Else
+        NextNode = TrieNodes(CurrNode)\NextNode[*CurrExtChar\c]
+        If NextNode = 0
+          ReDim TrieNodes(ArraySize(TrieNodes()) + 1)
+          TrieNodes(CurrNode)\NextNode[Asc(UCase(*CurrExtChar\s))] = ArraySize(TrieNodes())
+          TrieNodes(CurrNode)\NextNode[Asc(LCase(*CurrExtChar\s))] = ArraySize(TrieNodes())
+          CurrNode = ArraySize(TrieNodes())
+        Else
+          CurrNode = NextNode
+        EndIf
+      EndIf
+      *CurrExtChar + SizeOf(Unicode)
+    Wend
+    TrieNodes(CurrNode)\IsFinalNode = #True
+  EndIf
+  
+  ProcessDirectoryEntries(Path$, Callback, Bool(FileExtensions$ <> ""), TrieNodes(), EnableRecursiveScan, Mode)
+  
 EndProcedure
 
 ;-Example
