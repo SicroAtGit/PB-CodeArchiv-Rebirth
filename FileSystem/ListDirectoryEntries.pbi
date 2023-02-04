@@ -39,31 +39,31 @@ EndEnumeration
 Prototype ProtoListDirectoryEntriesCallback(EntryPath$, Directory)
 
 Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback, FileExtensions$="", EnableRecursiveScan=#True, Mode=#ListDirectoryEntries_Mode_ListAll)
-
+  
   Protected Directory
   Protected EntryName$
   Protected EntryExtension$
   Protected Slash$
-
+  
   CompilerSelect #PB_Compiler_OS
     CompilerCase #PB_OS_Windows: Slash$ = "\"
     CompilerDefault:           : Slash$ = "/"
   CompilerEndSelect
-
+  
   If Right(Path$, 1) <> Slash$
     Path$ + Slash$
   EndIf
-
+  
   Directory = ExamineDirectory(#PB_Any, Path$, "*")
   If Directory
     While NextDirectoryEntry(Directory)
-
+      
       EntryName$ = DirectoryEntryName(Directory)
-
+      
       Select DirectoryEntryType(Directory)
-
+          
         Case #PB_DirectoryEntry_File
-
+          
           If Mode & #ListDirectoryEntries_Mode_ListFiles
             If FileExtensions$ <> ""
               EntryExtension$ = GetExtensionPart(EntryName$)
@@ -76,21 +76,21 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
             EndIf
             Callback(Path$ + EntryName$, Directory)
           EndIf
-
+          
         Case #PB_DirectoryEntry_Directory
-
+          
           If EntryName$ <> "." And EntryName$ <> ".."
             If Mode & #ListDirectoryEntries_Mode_ListDirectories
               Callback(Path$ + EntryName$ + Slash$, Directory)
             EndIf
-
+            
             If EnableRecursiveScan
               ListDirectoryEntries(Path$ + EntryName$, Callback, FileExtensions$, EnableRecursiveScan, Mode)
             EndIf
           EndIf
-
+          
       EndSelect
-
+      
     Wend
     FinishDirectory(Directory)
   EndIf
