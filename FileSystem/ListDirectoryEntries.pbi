@@ -43,15 +43,9 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
   Protected Directory
   Protected EntryName$
   Protected EntryExtension$
-  Protected Slash$
   
-  CompilerSelect #PB_Compiler_OS
-    CompilerCase #PB_OS_Windows: Slash$ = "\"
-    CompilerDefault:           : Slash$ = "/"
-  CompilerEndSelect
-  
-  If Right(Path$, 1) <> Slash$
-    Path$ + Slash$
+  If Right(Path$, 1) <> #PS$
+    Path$ + #PS$
   EndIf
   
   Directory = ExamineDirectory(#PB_Any, Path$, "*")
@@ -81,7 +75,7 @@ Procedure ListDirectoryEntries(Path$, Callback.ProtoListDirectoryEntriesCallback
           
           If EntryName$ <> "." And EntryName$ <> ".."
             If Mode & #ListDirectoryEntries_Mode_ListDirectories
-              Callback(Path$ + EntryName$ + Slash$, Directory)
+              Callback(Path$ + EntryName$ + #PS$, Directory)
             EndIf
             
             If EnableRecursiveScan
