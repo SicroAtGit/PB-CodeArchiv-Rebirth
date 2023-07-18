@@ -47,7 +47,7 @@ Module ProgramParameterParser
       ; Prüfe nach langem Parameter
       If Left(Parameter$, 2) = "--"
         
-        If Mid(Parameter$, 3, Len(LongName$)) = LongName$
+        If LongName$ <> "" And Mid(Parameter$, 3, Len(LongName$)) = LongName$
           ProcedureReturn #True
         EndIf
         
@@ -76,7 +76,7 @@ Module ProgramParameterParser
       ; Prüfe nach langem Parameter
       If Left(Parameter$, 2) = "--"
         
-        If Mid(Parameter$, 3, Len(LongName$)) = LongName$
+        If LongName$ <> "" And Mid(Parameter$, 3, Len(LongName$)) = LongName$
           Parameter$ = ProgramParameter(i + 1)
           Break
         EndIf
