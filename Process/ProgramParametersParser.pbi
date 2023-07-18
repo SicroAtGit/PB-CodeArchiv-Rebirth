@@ -37,53 +37,53 @@ DeclareModule ProgramParameterParser
 EndDeclareModule
 
 Module ProgramParameterParser
-
+  
   Procedure.i IsSet(LongName$, ShortName$="")
     Protected i, x, Parameter$, Length
-
+    
     For i = CountProgramParameters() - 1 To 0 Step -1
       Parameter$ = ProgramParameter(i)
-
+      
       ; Prüfe nach langem Parameter
       If Left(Parameter$, 2) = "--"
-
+        
         If Mid(Parameter$, 3, Len(LongName$)) = LongName$
           ProcedureReturn #True
         EndIf
-
-      ; Prüfe nach kurzem Parameter
+        
+        ; Prüfe nach kurzem Parameter
       ElseIf Left(Parameter$, 1) = "-" And ShortName$ <> ""
-
+        
         Length = Len(Parameter$)
         For x = 2 To Length
           If Mid(Parameter$, x, 1) = ShortName$
             ProcedureReturn #True
           EndIf
         Next
-
+        
       EndIf
     Next
-
+    
     ProcedureReturn #False
   EndProcedure
-
+  
   Procedure.s GetValue(LongName$, ShortName$="", DefaultValue$="", AllowMultiSetValue=#False)
     Protected i, x, Parameter$, Length
-
+    
     For i = CountProgramParameters() - 1 To 0 Step -1
       Parameter$ = ProgramParameter(i)
-
+      
       ; Prüfe nach langem Parameter
       If Left(Parameter$, 2) = "--"
-
+        
         If Mid(Parameter$, 3, Len(LongName$)) = LongName$
           Parameter$ = ProgramParameter(i + 1)
           Break
         EndIf
-
-      ; Prüfe nach kurzem Parameter
+        
+        ; Prüfe nach kurzem Parameter
       ElseIf Left(Parameter$, 1) = "-" And ShortName$ <> ""
-
+        
         Length = Len(Parameter$)
         For x = 2 To Length
           If Mid(Parameter$, x, 1) = ShortName$
@@ -94,50 +94,50 @@ Module ProgramParameterParser
             Break 2
           EndIf
         Next
-
+        
       EndIf
     Next
-
+    
     If Left(Parameter$, 1) = "-" Or Left(Parameter$, 2) = "--"
       Parameter$ = ""
     EndIf
-
+    
     If Parameter$ = ""
       Parameter$ = DefaultValue$
     EndIf
-
+    
     ProcedureReturn Parameter$
   EndProcedure
-
+  
 EndModule
 
 ;-Example
 CompilerIf #PB_Compiler_IsMainFile
   ; ===============
-    ; >> Beispiele <<
-    ; ===============
+  ; >> Beispiele <<
+  ; ===============
   
-    ; Programm.exe --version "1.0" --open "D:\InputFile" --save "D:\OutputFile" -oc
-    ; Programm.exe --optimize --compress --version "1.0" --open "D:\InputFile" --save "D:\OutputFile"
-    ; Programm.exe -o -c -v "1.0" --open "D:\InputFile" --save "D:\OutputFile"
+  ; Programm.exe --version "1.0" --open "D:\InputFile" --save "D:\OutputFile" -oc
+  ; Programm.exe --optimize --compress --version "1.0" --open "D:\InputFile" --save "D:\OutputFile"
+  ; Programm.exe -o -c -v "1.0" --open "D:\InputFile" --save "D:\OutputFile"
   
-    ; Parameter überschreiben:
+  ; Parameter überschreiben:
   
-    ; Programm.exe --open "D:\InputFile" --open "X:\Test\InputFile"
+  ; Programm.exe --open "D:\InputFile" --open "X:\Test\InputFile"
   
-    ; Parameter kombinieren und allen einen Wert gleichzeitig übergeben:
+  ; Parameter kombinieren und allen einen Wert gleichzeitig übergeben:
   
-    ; Programm.exe -mt "Test"
+  ; Programm.exe -mt "Test"
   
-    Debug ProgramParameterParser::GetValue("version", "v", "UnknownVersion")
-    Debug ProgramParameterParser::GetValue("open", "")
-    Debug ProgramParameterParser::GetValue("save", "")
-    Debug ProgramParameterParser::GetValue("message", "m")
-    Debug ProgramParameterParser::GetValue("", "t", "", 0)
-    If ProgramParameterParser::IsSet("optimize", "o")
-      Debug "Optimierung ist aktiviert"
-    EndIf
-    If ProgramParameterParser::IsSet("compress", "c")
-      Debug "Komprimierung ist aktiviert"
-    EndIf
+  Debug ProgramParameterParser::GetValue("version", "v", "UnknownVersion")
+  Debug ProgramParameterParser::GetValue("open", "")
+  Debug ProgramParameterParser::GetValue("save", "")
+  Debug ProgramParameterParser::GetValue("message", "m")
+  Debug ProgramParameterParser::GetValue("", "t", "", 0)
+  If ProgramParameterParser::IsSet("optimize", "o")
+    Debug "Optimierung ist aktiviert"
+  EndIf
+  If ProgramParameterParser::IsSet("compress", "c")
+    Debug "Komprimierung ist aktiviert"
+  EndIf
 CompilerEndIf
