@@ -737,9 +737,9 @@ CompilerIf #PB_Compiler_IsMainFile = 1
          ; Status prüfen und die korrekte Trennungsschreibweise aus der duden.de webseite extrahieren und übergeben
          If FindString(sResponse, "Es ist leider ein Fehler aufgetreten") = 0
             If FindString(sResponse, "Von Duden empfohlene Trennung") > 0
-               sResponse = GetStringPart(sResponse, ~"Von Duden empfohlene Trennung</dt><dd class=\"tuple__val\">", "</dd>")
+               sResponse = GetStringPart(sResponse, ~"Von Duden empfohlene Trennung</dt>\n        <dd class=\"tuple__val\">", "</dd>")
             Else
-               sResponse = GetStringPart(sResponse, ~"Worttrennung</dt><dd class=\"tuple__val\">", "</dd>")
+               sResponse = GetStringPart(sResponse, ~"Worttrennung</dt>\n        <dd class=\"tuple__val\">", "</dd>")
             EndIf
             ProcedureReturn sResponse
          EndIf
