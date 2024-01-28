@@ -668,7 +668,7 @@ Module Silbentrennung
       ; Sonderfälle ganze Wörter. "gesuchtesWort" , "Wort mit Trennungsmarker (|)". Alles klein schreiben.
       SonderfaelleWorte:
       Data.s "silbereisen", "sil|ber|ei|sen"
-      Data.i "*","*"                             ; Listenende
+      Data.s "*","*"                             ; Listenende
       
       ; Wortendungen die nicht getrennt werden dürfen. Alles klein schreiben.
       Wortendungen:
@@ -684,7 +684,6 @@ Module Silbentrennung
 EndModule
 
 CompilerIf #PB_Compiler_IsMainFile = 1
-   InitNetwork()
    
    Procedure.s GetStringPart(sString.s, sStartDelimiter.s, sEndDelimiter.s, iPartLength=0)
       Protected.i iPos1, iPos2
@@ -706,7 +705,7 @@ CompilerIf #PB_Compiler_IsMainFile = 1
       EndIf
    EndProcedure
    Procedure.s AskDuden(sWord.s)
-      Protected.i *Buffer
+      Protected *Buffer
       Protected.s sUrl, sResponse
       
       sWord = ReplaceString(sWord, "ä", "ae")

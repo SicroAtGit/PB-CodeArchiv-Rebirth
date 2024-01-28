@@ -66,13 +66,6 @@ Structure Color4
 	Red.f                 ; Rot [0.0, Intensität]
 EndStructure
 
-Structure Vector4
-	W.f                   ; {0,1} order 1/Z
-	X.f                   ; X-Koordinate
-	Y.f                   ; Y-Koordinate
-	Z.f                   ; Z-Koordinate
-EndStructure
-
 Structure Drawing3D_Vertex Extends Vector4
 	Color.Color4 ; Farbe
 EndStructure
