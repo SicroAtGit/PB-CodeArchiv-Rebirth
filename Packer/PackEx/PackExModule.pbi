@@ -639,9 +639,9 @@ Module PackEx
 	EndProcedure
 	
 	Procedure.i AddCryptMemory_(PackID, *Buffer, Size.i, PackedFileName.s, Key.s, ProgressBar.i=#False)
-	  Define.i Size, Result
+	  Define.i Result
 	  Define.q Counter,qAES_ID = #qAES
-	  Define   *Buffer, *Hash
+	  Define   *Hash
 
 	  Counter = GetCounter_()
     
@@ -727,9 +727,8 @@ Module PackEx
 	
 
 	Procedure.i AddMemory2Pack_(*Buffer, Size.i, PackedFileName.s, Key.s, ProgressBar=#False) ; only OpenPack()
-	  Define.i PackID, PackEntrySize, Size, pResult, Result, Files, Count
+	  Define.i PackID, PackEntrySize, pResult, Result, Files, Count
 	  Define.s PackFile, PackEntryName
-	  Define   *Buffer
 	  
 	  PackFile = PackEx()\TempDir + GetFilePart(PackEx()\File)
 	  
@@ -1253,7 +1252,7 @@ Module PackEx
   Procedure.i AddMemory(Pack.i, *Buffer, Size.i, PackedFileName.s, Key.s="", ProgressBar.i=#False) 
     Define.i Result
     Define.q Counter, Hash, qAES_ID = #qAES
-    Define   *Buffer, *Output
+    Define   *Output
     
     If FindMapElement(PackEx(), Str(Pack))
       
@@ -1305,7 +1304,7 @@ Module PackEx
   Procedure.i DecompressMemory(Pack.i, *Buffer, Size.i, PackedFileName.s, Key.s="", ProgressBar.i=#False)
     Define.i MemSize, Result = -1
     Define.q Counter, qAES_ID
-    Define   *Input, *Buffer
+    Define   *Input
     
     If FindMapElement(PackEx(), Str(Pack))
       

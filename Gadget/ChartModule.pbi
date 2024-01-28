@@ -3044,7 +3044,7 @@ Module Chart
   CompilerIf #Enable_Horizontal
     
     Procedure   DrawHorizontalChart_(X.i, Y.i, Width.i, Height.i)
-      Define.i X, Y, Width, Height, PosX, PosY, sHeight, bWidth, bHeight, maxLabelWidth
+      Define.i PosX, PosY, sHeight, bWidth, bHeight, maxLabelWidth
       Define.i txtX, txtY, txtWidth, txtHeight, axisY
       Define.i n, Items, Spaces, ScaleLines, Color, Gradient, maxValue, minValue
       Define.f SpaceX, Quotient, Calc

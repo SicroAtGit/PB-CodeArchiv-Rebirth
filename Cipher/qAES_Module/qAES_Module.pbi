@@ -531,9 +531,9 @@ Module qAES
   
   
 	Procedure.i WriteEncryptedFile_(File.s, *Buffer, Size.i, Key.s, ProgressBar.i=#False) 
-	  Define.i FileID, Size, Result
+	  Define.i FileID, Result
     Define.q Counter, qAES_ID = #qAES
-    Define   *Buffer, *Hash
+    Define   *Hash
     
     Counter = GetCounter_()
     
@@ -2512,9 +2512,9 @@ Module qAES
     
     
     Procedure.i AddCryptPackMemory(Pack.i, *Buffer, Size.i, Key.s, PackedFileName.s)
-      Define   *Buffer, *Hash, *Output
+      Define   *Hash, *Output
       Define.q Counter,qAES_ID = #qAES
-      Define.i Size, Result
+      Define.i Result
 
       If *Buffer
         
@@ -2545,9 +2545,8 @@ Module qAES
     EndProcedure
     
     Procedure.i UncompressCryptPackMemory(Pack.i, *Buffer, Size.i, Key.s, PackedFileName.s="")
-      Define.i Size, Result
+      Define.i Result
       Define   Footer.Footer_Structure
-      Define   *Buffer
       
       If *Buffer
 
