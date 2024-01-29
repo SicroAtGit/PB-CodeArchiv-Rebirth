@@ -314,6 +314,9 @@ Module _Base_Lexer
   EndStructure
   ;- constant
   #Buffer_GetSize=-1
+  CompilerIf Not Defined(SCI_SETLEXER, #PB_Constant)
+    #SCI_SETLEXER = 4001
+  CompilerEndIf
   
   ;- declare
   Declare __GetData(gadget)

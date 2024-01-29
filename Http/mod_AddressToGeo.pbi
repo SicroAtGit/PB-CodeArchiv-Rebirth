@@ -168,7 +168,7 @@ Module AddressToGeo
       ; |               andernfalls ein String nach folgendem Format Latitude#Longitude#Adresse
       ; |Remarks      : Die zurückgegebene Adresse ist die von Open Streetmap korrigierte Adresse
       ; +-----------------------------------------------------------------
-      Protected.i *Buffer
+      Protected *Buffer
       Protected.s sURL, sResponse
       
       ; Geokodierungsanfrage an Open Streetmap senden
@@ -202,7 +202,7 @@ Module AddressToGeo
       ; |               andernfalls ein String nach folgendem Format Latitude#Longitude#Adresse
       ; |Remarks      : Die zurückgegebene Adresse ist die von Google korrigierte Adresse
       ; +-----------------------------------------------------------------
-      Protected.i *Buffer
+      Protected *Buffer
       Protected.s sURL, sResponse, sGoogleAddress
       
       ; Geokodierungsanfrage an Google senden

@@ -196,7 +196,7 @@ Module Resource
   EndProcedure
   
   Procedure.i GetImage(Pack.i, Image.i, FileName$)
-    Define.i Result.i, *Buffer
+    Define Result.i, *Buffer
     If FindMapElement(ResEx(), Str(Pack))
       FileName$ = GetFilePart(FileName$)
       If FindMapElement(ResEx()\Content(), FileName$)
@@ -222,7 +222,7 @@ Module Resource
   EndProcedure
   
   Procedure.i GetSound(Pack.i, Sound.i, FileName$, Flags.i=#False)
-    Define.i Result.i, *Buffer
+    Define Result.i, *Buffer
 
     If FindMapElement(ResEx(), Str(Pack))
       
@@ -251,7 +251,7 @@ Module Resource
   EndProcedure
   
   Procedure.i GetXML(Pack.i, XML.i, FileName$, Flags.i=#False, Encoding.i=#PB_UTF8)
-    Define.i Result.i, *Buffer
+    Define Result.i, *Buffer
 
     If FindMapElement(ResEx(), Str(Pack))
       FileName$ = GetFilePart(FileName$)
