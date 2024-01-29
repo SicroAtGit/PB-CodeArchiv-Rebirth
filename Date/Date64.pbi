@@ -319,57 +319,78 @@ Module Date64
 
   Procedure.i Year64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wYear)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_year, Value + 1900)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("y")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wYear)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_year, Value + 1900)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("y")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i Month64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wMonth)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_mon, Value + 1)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("M")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wMonth)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_mon, Value + 1)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("M")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i Day64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wDay)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_mday, Value)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("d")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wDay)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_mday, Value)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("d")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i Hour64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wHour)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_hour, Value)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("H")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wHour)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_hour, Value)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("H")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i Minute64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wMinute)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_min, Value)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("m")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wMinute)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_min, Value)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("m")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i Second64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wSecond)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_sec, Value)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("s")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wSecond)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_sec, Value)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("s")
     CompilerEndSelect
   EndProcedure
 
   Procedure.i DayOfWeek64(Date.q)
     CompilerSelect #PB_Compiler_OS
-      CompilerCase #PB_OS_Windows : Windows_ReturnDatePart(wDayOfWeek)
-      CompilerCase #PB_OS_Linux   : Linux_ReturnDatePart(tm_wday, Value)
-      CompilerCase #PB_OS_MacOS   : Mac_ReturnDatePart("E")
+      CompilerCase #PB_OS_Windows
+        Windows_ReturnDatePart(wDayOfWeek)
+      CompilerCase #PB_OS_Linux
+        Linux_ReturnDatePart(tm_wday, Value)
+      CompilerCase #PB_OS_MacOS
+        Mac_ReturnDatePart("E")
     CompilerEndSelect
   EndProcedure
 

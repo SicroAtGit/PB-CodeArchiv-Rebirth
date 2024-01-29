@@ -294,7 +294,7 @@ CompilerIf #PB_Compiler_IsMainFile
   ; generate some graph data
   Dim GraphValues (127)
   Define t
-  RandomSeed('LS')
+  RandomSeed(4980819)
   For t = 0 To ArraySize(GraphValues())
     GraphValues(t) = Random(127, 0)
     If Random(1, 0)

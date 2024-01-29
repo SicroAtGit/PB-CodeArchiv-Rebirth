@@ -173,7 +173,7 @@ Procedure.s TimeStr (*diff.TimeSpan, units$=#TS_en)
       EndIf
     EndIf
     
-    If \seconds > 0 Or Asc(ret$) = ''
+    If \seconds > 0 Or Asc(ret$) = 0
       ret$ + ", " + \seconds + StringField(units$, 13, ",")
       If \seconds <> 1
         ret$ + StringField(units$, 14, ",")
