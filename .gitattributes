@@ -1,0 +1,86 @@
+# Source: https://github.com/fantaisie-software/purebasic-repository-template/blob/master/.gitattributes
+
+# Set Git's default behaviour to text-files autodetection, in case users
+# don't have `core.autocrlf` set:
+* text=auto
+
+# Explicitly declare commonly used file extensions as either text or binary,
+# and tell Git how to handle line-endings normalization.
+
+## PureBasic Files
+##################
+*.cfg   text linguist-generated=true gitlab-generated=true
+*.pb    text linguist-language=PureBasic gitlab-language=PureBasic
+*.pbf   text linguist-language=PureBasic gitlab-language=PureBasic
+*.pbi   text linguist-language=PureBasic gitlab-language=PureBasic
+*.pbp   linguist-language=XML linguist-generated=true
+*.pbp   gitlab-language=XML gitlab-generated=true
+
+
+## Shell Scripts
+################
+*.bat   text eol=crlf
+*.com   text eol=crlf
+*.sh    text eol=lf
+*.ps1   text eol=crlf
+
+
+## Repository Configuration
+###########################
+.editorconfig    text eol=lf
+.gitlab-ci.yml   text eol=lf
+.travis.yml      text eol=lf
+.gitattributes   text eol=lf
+.gitconfig       text eol=lf
+.gitignore       text eol=lf
+.gitmodules      text eol=lf
+
+
+## Documentation Files
+######################
+*.asc        text
+*.adoc       text
+*.asciidoc   text
+*.md         text
+*.txt        text
+*.doc        binary
+*.docx       binary
+*.odt        binary
+*.pdf        binary
+COPYING      text
+LICENSE      text
+UNLICENSE    text
+
+
+## Zipped Archives
+##################
+*.7z    binary
+*.gz    binary
+*.jar   binary
+*.rar   binary
+*.tar   binary
+*.zip   binary
+
+
+## Image & Graphics Files
+#########################
+*.bmp      binary
+*.gif      binary
+*.ico      binary
+*.jpeg     binary
+*.jpg      binary
+*.png      binary
+*.svg      binary
+*.svgz     binary
+
+
+## Compiled Binaries
+####################
+*.app      binary
+*.dll      binary
+*.dylib    binary
+*.exe      binary
+*.out      binary
+*.so       binary
+
+# EOF #
