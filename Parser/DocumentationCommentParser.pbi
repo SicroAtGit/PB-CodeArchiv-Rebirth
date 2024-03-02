@@ -534,7 +534,9 @@ Module DocumentationCommentParser
             
             Select PBLexer::TokenType(*lexer)
                 Case PBLexer::#TokenType_Constant
-                    result$ + ResolveValue(constants$(LCase(tokenValue$)))
+                    If FindMapElement(constants$(), LCase(tokenValue$))
+                        result$ + ResolveValue(constants$())
+                    EndIf
                     
                 Case PBLexer::#TokenType_Identifier
                     If FindMapElement(macros$(), LCase(tokenValue$))
