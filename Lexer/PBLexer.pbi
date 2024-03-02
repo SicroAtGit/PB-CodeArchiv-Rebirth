@@ -129,7 +129,7 @@ Module PBLexer
       
       Lexer::DefineNewToken(*lexer, #TokenType_Identifier, "(?:[A-Z_]+[A-Z0-9_]*)\b\$?", #False, "Identifier")
       
-      Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r^\n]*", Bool(includeCommentTokens <> #True), "Comment")
+      Lexer::DefineNewToken(*lexer, #TokenType_Comment, ";[^\r\n]*", Bool(includeCommentTokens <> #True), "Comment")
       
       regEx$ = "[0-9]+(?:\.[0-9]+)?(?:e(?:[ \t]*[+\-][ \t]*)?[0-9]+)?" + ; Integers, decimal numbers and binary numbers
                "|" +
