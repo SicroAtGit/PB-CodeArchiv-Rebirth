@@ -1,0 +1,80 @@
+root = true
+
+## Repository Configurations
+############################
+[.{git*,editorconfig,*.yml}]
+end_of_line = lf
+indent_style = space
+indent_size = unset
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[.gitmodules]
+indent_style = tab
+
+[.gitkeep]
+insert_final_newline = unset
+
+
+## PureBasic
+############
+[*.{pb,pbi,pbf}]
+charset = utf-8-bom
+indent_style = space
+indent_size = unset
+end_of_line = unset
+insert_final_newline = true
+trim_trailing_whitespace = unset
+
+
+## Markdown GFM
+###############
+[*.md]
+indent_style = space
+indent_size = unset
+end_of_line = unset
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+## Shell Scripts
+################
+[*.sh]
+end_of_line = lf
+indent_style = tab
+indent_size = unset
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+## Batch Scripts
+################
+[*.{bat,cmd}]
+indent_style = tab
+indent_size = unset
+end_of_line = crlf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+## Plain-Text Files
+###################
+[*.txt]
+indent_style = space
+indent_size = unset
+end_of_line = unset
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+
+[{LICENSE,README}]
+indent_size = unset
+indent_style = space
+end_of_line = unset
+trim_trailing_whitespace = true
+insert_final_newline = true
+
