@@ -565,7 +565,7 @@ CompilerIf #PB_Compiler_IsMainFile
     NewMap procedures.DocumentationCommentParser::DocumentationCommentStruc()
     
     ; Set the code file to parse and start the process
-    filePath$ = OpenFileRequester("Open file", "",
+    filePath$ = OpenFileRequester("Open file", GetCurrentDirectory(),
                                   "PureBasic code files|*.pb;*.pbi", 0)
     If FileSize(filePath$) < 1
         MessageRequester("DocumentationCommentParser",
