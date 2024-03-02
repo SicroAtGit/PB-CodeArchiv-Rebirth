@@ -119,6 +119,14 @@ Module DocumentationCommentParser
         ClearMap(xIncludedFilePaths())
         ResetStructure(@currentDocumentationComment, DocumentationCommentStruc)
         
+        ; Predefine constants
+        ; Note:
+        ; - The map keys must be written in lower case.
+        ; - The map values must be PB code, i.e. for strings the quotes must
+        ;   also be included in the map value.
+        constants$("#ps$") = #DQUOTE$ + #PS$ + #DQUOTE$
+        constants$("#nps$") = #DQUOTE$ + #NPS$ + #DQUOTE$
+        
         ProcedureReturn ProcessParsing(filePath$,
                                        procedures.DocumentationCommentStruc())
     EndProcedure
