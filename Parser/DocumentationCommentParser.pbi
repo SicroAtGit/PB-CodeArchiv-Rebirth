@@ -31,7 +31,7 @@
 ;- Include code files
 ; =============================================================================
 
-XIncludeFile "../Lexer/PBLexer.pbi"
+XIncludeFile "../Lexer/PBLexer2/PBLexer.pbi"
 
 DeclareModule DocumentationCommentParser
     
@@ -172,7 +172,7 @@ Module DocumentationCommentParser
             ProcedureReturn #False
         EndIf
         
-        *lexer = PBLexer::Create(@code$, 250, #False, #True)
+        *lexer = PBLexer::Create(@code$, #False, #True)
         If Not *lexer
             Debug ">>> Lexer could not be created!", 1
             Debug "", 1
