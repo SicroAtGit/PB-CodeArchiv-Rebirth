@@ -307,18 +307,12 @@ CompilerIf #PB_Compiler_IsMainFile
     ProcedureReturn content$
   EndProcedure
   
-  Procedure UnusedProcedure()
-    ; This procedure serves as a dummy for an unused procedure
-  EndProcedure
-  
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Definition of local variables
   ; ------------------------------------------------------------------------------------------------------------------------
   Define fileName$ = #PB_Compiler_File ; For the example, the PBLexer code file itself is used
-  Define code$, keywordName$
+  Define code$
   Define *pbLexer
-  Define stringOffset
-  Define NewMap countOfCallsOfDefinedProceduresMap()
   
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Read code file
@@ -328,65 +322,18 @@ CompilerIf #PB_Compiler_IsMainFile
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Create lexer
   ; ------------------------------------------------------------------------------------------------------------------------
-  *pbLexer = PBLexer::Create(@code$)
+  *pbLexer = PBLexer::Create(@code$, 250, #True, #True)
   If *pbLexer = 0
     Debug "PBLexer can't be created!"
     End
   EndIf
   
   ; ------------------------------------------------------------------------------------------------------------------------
-  ;- > Search all procedure definitions and count the calls of these procedures
+  ;- > Lex the PB code and output the token types and the token values as debug output
   ; ------------------------------------------------------------------------------------------------------------------------
-  ; Note: This code does not handle procedures of different modules separately
   While PBLexer::NextToken(*pbLexer)
-    Select PBLexer::TokenType(*pbLexer)
-      Case PBLexer::#TokenType_Keyword
-        keywordName$ = LCase(PBLexer::TokenValue(*pbLexer))
-        Select keywordName$
-          Case "procedure", "procedure$" ; Start keyword of a procedure definition block
-            Debug "A procedure definition was found:"
-            If PBLexer::NextToken(*pbLexer)
-              If Right(keywordName$, 1) = "$" ; Support for "Procedure$"
-                Debug "Procedure return type: s"
-              ElseIf PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Period And PBLexer::NextToken(*pbLexer) And
-                     PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Identifier
-                ; The procedure has a return type definition
-                Debug "Procedure return type: " + PBLexer::TokenValue(*pbLexer)
-                PBLexer::NextToken(*pbLexer)
-              Else ; No procedure return type was defined
-                Debug "Procedure return type: i" ; Default procedure return type is "i" (Integer)
-              EndIf
-              If PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Identifier
-                Debug "Procedure name: " + PBLexer::TokenValue(*pbLexer)
-                AddMapElement(countOfCallsOfDefinedProceduresMap(), PBLexer::TokenValue(*pbLexer))
-              EndIf
-            EndIf
-            Debug "-----------------------------------------------------"
-        EndSelect
-      Case PBLexer::#TokenType_Identifier
-        If FindMapElement(countOfCallsOfDefinedProceduresMap(), PBLexer::TokenValue(*pbLexer))
-          ; An identifier was found that has the same name as one of the defined procedures.
-          ; However, it can also be a variable, so it must also be checked whether the identifier is followed by an opening
-          ; bracket.
-          stringOffset = PBLexer::StringOffset(*pbLexer)
-          If PBLexer::NextToken(*pbLexer) And PBLexer::TokenType(*pbLexer) = PBLexer::#TokenType_Separator And
-             PBLexer::TokenValue(*pbLexer) = "("
-            countOfCallsOfDefinedProceduresMap() + 1
-          EndIf
-          PBLexer::StringOffset(*pbLexer, stringOffset)
-        EndIf
-    EndSelect
+    Debug "[" + PBLexer::TokenName(*pbLexer) + "]: " + PBLexer::TokenValue(*pbLexer)
   Wend
-  
-  ; ------------------------------------------------------------------------------------------------------------------------
-  ;- > List all defined procedures and the count of their calls
-  ; ------------------------------------------------------------------------------------------------------------------------
-  Debug "====================================================="
-  Debug "All defined procedures and the count of their calls:"
-  Debug "====================================================="
-  ForEach countOfCallsOfDefinedProceduresMap()
-    Debug MapKey(countOfCallsOfDefinedProceduresMap()) + ": " + Str(countOfCallsOfDefinedProceduresMap())
-  Next
   
   ; ------------------------------------------------------------------------------------------------------------------------
   ;- > Free lexer
