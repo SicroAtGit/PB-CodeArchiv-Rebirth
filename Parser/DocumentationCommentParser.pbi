@@ -518,6 +518,7 @@ Module DocumentationCommentParser
         Wend
     EndProcedure
     
+    ; Resolves recursively all constants, macros and strings
     Procedure$ ResolveValue(value$)
         Protected *lexer
         Protected result$, string$, tokenValue$
