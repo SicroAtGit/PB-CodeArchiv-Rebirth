@@ -65,30 +65,6 @@ DeclareModule DocumentationCommentParser
     
     Declare  ParseFile(filePath$, Map procedures.DocumentationCommentStruc())
     
-    Declare  ProcessToken(*lexer, currentDirectory$,
-                          Map procedures.DocumentationCommentStruc())
-    Declare  ProcessParsing(filePath$, Map procedures.DocumentationCommentStruc())
-    
-    Declare$ ProcessIncludePathKeyword(*lexer, currentDirectory$)
-    Declare  ProcessIncludeFileKeyword(*lexer, currentDirectory$,
-                                       Map procedures.DocumentationCommentStruc())
-    Declare  ProcessXIncludeFileKeyword(*lexer, currentDirectory$,
-                                        Map procedures.DocumentationCommentStruc())
-    
-    Declare$ ProcessProcedureParameters(*lexer)
-    Declare  ProcessProcedure(*lexer, Map procedures.DocumentationCommentStruc())
-    
-    Declare  ProcessMacro(*lexer)
-    Declare  ProcessConstant(*lexer)
-    Declare  ProcessComment(*lexer)
-    Declare  ProcessDocumentationComment(*lexer)
-    
-    ; Resolves recursively all constants, macros and strings
-    Declare$ ResolveValue(value$)
-    
-    Declare$ GetStringInsideOf(string$, startString$, endString$)
-    Declare$ RemoveAnyLeadingSpaces(string$)
-    
 EndDeclareModule
 
 Module DocumentationCommentParser
@@ -99,6 +75,23 @@ Module DocumentationCommentParser
     
     XIncludeFile "../FileSystem/IsAbsolutePath.pbi"
     XIncludeFile "../File/GetFileContentAsString.pbi"
+    
+    ; =========================================================================
+    ;- Declare procedure
+    ; =========================================================================
+    
+    Declare  ProcessParsing(filePath$, Map procedures.DocumentationCommentStruc())
+    Declare$ ProcessIncludePathKeyword(*lexer, currentDirectory$)
+    Declare  ProcessIncludeFileKeyword(*lexer, currentDirectory$,
+                                       Map procedures.DocumentationCommentStruc())
+    Declare  ProcessXIncludeFileKeyword(*lexer, currentDirectory$,
+                                        Map procedures.DocumentationCommentStruc())
+    Declare  ProcessProcedure(*lexer, Map procedures.DocumentationCommentStruc())
+    Declare  ProcessMacro(*lexer)
+    Declare  ProcessConstant(*lexer)
+    Declare  ProcessComment(*lexer)
+    Declare  ProcessDocumentationComment(*lexer)
+    Declare$ ResolveValue(value$)
     
     ; =========================================================================
     ;- Define local variables
