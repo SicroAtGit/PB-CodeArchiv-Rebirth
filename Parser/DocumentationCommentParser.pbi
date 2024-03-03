@@ -100,6 +100,7 @@ Module DocumentationCommentParser
     NewMap constants$()
     NewMap macros$()
     Define currentDocumentationComment.DocumentationCommentStruc
+    Define currentModule$
     
     ; The value of the items are not needed, so we use the smallest variable
     ; type to safe memory space
@@ -133,6 +134,7 @@ Module DocumentationCommentParser
     
     Procedure ProcessToken(*lexer, currentDirectory$,
                            Map procedures.DocumentationCommentStruc())
+        Shared currentModule$
         Select PBLexer::TokenType(*lexer)
             Case PBLexer::#TokenType_Keyword
                 Select LCase(PBLexer::TokenValue(*lexer))
@@ -140,6 +142,11 @@ Module DocumentationCommentParser
                         ProcessProcedure(*lexer, procedures())
                     Case "macro"
                         ProcessMacro(*lexer)
+                    Case "module", "declaremodule"
+                        PBLexer::NextToken(*lexer) ; Skip "Module" or "DeclareModule"
+                        currentModule$ = PBLexer::TokenValue(*lexer)
+                    Case "endmodule", "enddeclaremodule"
+                        currentModule$ = ""
                     Case "includepath"
                         currentDirectory$ = ProcessIncludePathKeyword(*lexer,
                                                                       currentDirectory$)
@@ -191,10 +198,14 @@ Module DocumentationCommentParser
     
     Procedure ProcessMacro(*lexer)
         Protected macroName$, macroValue$
-        Shared macros$()
+        Shared macros$(), currentModule$
         
         If PBLexer::NextToken(*lexer)
             macroName$ = LCase(PBLexer::TokenValue(*lexer))
+        EndIf
+        
+        If currentModule$
+            macroName$ = currentModule$ + "::" + macroName$
         EndIf
         
         ; Skip macro parameters
@@ -311,9 +322,13 @@ Module DocumentationCommentParser
     
     Procedure ProcessConstant(*lexer)
         Protected constantName$, constantValue$
-        Shared constants$()
+        Shared constants$(), currentModule$
         
         constantName$ = LCase(PBLexer::TokenValue(*lexer))
+        
+        If currentModule$
+            constantName$ = currentModule$ + "::" + constantName$
+        EndIf
         
         PBLexer::NextToken(*lexer) ; Go to the '=' token
         If PBLexer::TokenValue(*lexer) <> "="
@@ -380,7 +395,7 @@ Module DocumentationCommentParser
         Protected procedureReturnType$, procedureName$, procedureParameters$
         Protected tokenValue$
         Protected i
-        Shared macros$(), currentDocumentationComment
+        Shared macros$(), currentDocumentationComment, currentModule$
         
         ; TODO: Support for procedure names with macros
         ; TODO: Support for procedure parameters with macros
@@ -407,6 +422,10 @@ Module DocumentationCommentParser
             EndIf
             procedureName$ + tokenValue$
         Until Not PBLexer::NextToken(*lexer)
+        
+        If currentModule$
+            procedureName$ = currentModule$ + "::" + procedureName$
+        EndIf
         
         procedureParameters$ = ProcessProcedureParameters(*lexer)
         
@@ -528,7 +547,7 @@ Module DocumentationCommentParser
     
     ; Resolves recursively all constants, macros and strings
     Procedure$ ResolveValue(value$)
-        Protected *lexer
+        Protected *lexer, *oldOffset
         Protected result$, string$, tokenValue$
         Shared constants$(), macros$()
         
@@ -547,8 +566,32 @@ Module DocumentationCommentParser
                     EndIf
                     
                 Case PBLexer::#TokenType_Identifier
-                    If FindMapElement(macros$(), LCase(tokenValue$))
-                        result$ + ResolveValue(macros$())
+                    *oldOffset = PBLexer::StringOffset(*lexer)
+                    
+                    ; Is it really a module?
+                    If PBLexer::NextToken(*lexer) And
+                       PBLexer::TokenType(*lexer) = PBLexer::#TokenType_DoubleColon And
+                       PBLexer::NextToken(*lexer) And
+                       (PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Constant Or
+                        PBLexer::TokenType(*lexer) = PBLexer::#TokenType_Identifier)
+                        ; Yes, it is a module.
+                        tokenValue$ = tokenValue$ + "::" + PBLexer::TokenValue(*lexer)
+                        Select PBLexer::TokenType(*lexer)
+                            Case PBLexer::#TokenType_Constant
+                                If FindMapElement(constants$(), LCase(tokenValue$))
+                                    result$ + ResolveValue(constants$())
+                                EndIf
+                            Case PBLexer::#TokenType_Identifier
+                                If FindMapElement(macros$(), LCase(tokenValue$))
+                                    result$ + ResolveValue(macros$())
+                                EndIf
+                        EndSelect
+                    Else
+                        ; No, it is not a module.
+                        PBLexer::StringOffset(*lexer, *oldOffset)
+                        If FindMapElement(macros$(), LCase(tokenValue$))
+                            result$ + ResolveValue(macros$())
+                        EndIf
                     EndIf
                     
                 Case PBLexer::#TokenType_String
