@@ -30,85 +30,112 @@
 ;-Top
 
 ; Unicode LCaseW and UCaseW function by mk-soft
-; From 27.05.2017, Update 03.06.2017
-; Version v1.05
+; From 27.05.2017, Update 09.10.2022
+; Version v1.07
 
 DeclareModule CaseUnicode
- 
+  
   Declare.s UCaseW(String.s)
   Declare.s LCaseW(String.s)
   Declare.s ULCaseW(String.s)
   Declare FindStringW(String.s, StringToFind.s, StartPosition=1, Mode=#PB_String_NoCase)
- 
+  
 EndDeclareModule
 
 Module CaseUnicode
- 
+  
   EnableExplicit
- 
-  Global Dim ArrayLCase.c($FFFF)
-  Global Dim ArrayUCase.c($FFFF)
- 
-  Structure udtArrayChar
+  
+  Structure udtUnicode
+    upper.c
+    lower.c
+    title.c
+  EndStructure
+  
+  Structure ArrayOfChar
     c.c[0]
   EndStructure
- 
+  
+  Global Dim CaseUnicode.udtUnicode($FFFF)
+  
+  
   ; ---------------------------------------------------------------------------
- 
+  
   Procedure Init()
-    Protected index, uchar.c, lchar.c
-   
+    Protected index, code.c, upperChar.c, lowerChar.c, titleChar.c
+    
+    ; Fill default data
     For index = 0 To $FFFF
-      ArrayLCase(index) = index
-      ArrayUCase(index) = index
+      CaseUnicode(index)\upper = index
+      CaseUnicode(index)\lower = index
+      CaseUnicode(index)\title = index
     Next
-   
-    Restore CaseFolding
+    
+    ; Read case mapping data
+    Restore CaseMapping
     Repeat
-      Read.c uchar
-      Read.c lchar
-      If Not uchar
+      Read.c code
+      If Not code
         Break
       EndIf
-      ArrayLCase(uchar) = lchar
-      ArrayUCase(lchar) = uchar
+      Read.c upperChar
+      Read.c lowerChar
+      Read.c titleChar
+      CaseUnicode(code)\upper = upperChar
+      CaseUnicode(code)\lower = lowerChar
+      CaseUnicode(code)\title = titleChar
     ForEver
   EndProcedure : Init()
- 
+  
   ; ---------------------------------------------------------------------------
- 
+  
   Procedure.s UCaseW(String.s)
-    Protected result.s, len, index, cnt, *source.udtArrayChar, *dest.udtArrayChar
+    Protected result.s, len, index, cnt, *source.ArrayOfChar, *dest.ArrayOfChar
     len = Len(String)
     result = Space(len)
     *source = @String
     *dest = @result
     cnt = len - 1
     For index = 0 To cnt
-      *dest\c[index] = ArrayUCase(*source\c[index])
+      *dest\c[index] = CaseUnicode(*source\c[index])\upper
     Next
     ProcedureReturn result
   EndProcedure
-   
+  
   ; ---------------------------------------------------------------------------
- 
+  
   Procedure.s LCaseW(String.s)
-    Protected result.s, len, index, cnt, *source.udtArrayChar, *dest.udtArrayChar
+    Protected result.s, len, index, cnt, *source.ArrayOfChar, *dest.ArrayOfChar
     len = Len(String)
     result = Space(len)
     *source = @String
     *dest = @result
     cnt = len - 1
     For index = 0 To cnt
-      *dest\c[index] = ArrayLCase(*source\c[index])
+      *dest\c[index] = CaseUnicode(*source\c[index])\lower
     Next
     ProcedureReturn result
   EndProcedure
- 
+  
   ; ---------------------------------------------------------------------------
- 
+  
+  Procedure.s TCaseW(String.s)
+    Protected result.s, len, index, cnt, *source.ArrayOfChar, *dest.ArrayOfChar
+    len = Len(String)
+    result = Space(len)
+    *source = @String
+    *dest = @result
+    cnt = len - 1
+    For index = 0 To cnt
+      *dest\c[index] = CaseUnicode(*source\c[index])\title
+    Next
+    ProcedureReturn result
+  EndProcedure
+  
+  ; ---------------------------------------------------------------------------
+  
   Procedure.s ULCaseW(String.s)
-    Protected result.s, len, index, cnt, up, *source.udtArrayChar, *dest.udtArrayChar
+    Protected result.s, len, index, cnt, up, *source.ArrayOfChar, *dest.ArrayOfChar
     len = Len(String)
     result = Space(len)
     up = #True
@@ -122,18 +149,18 @@ Module CaseUnicode
           *dest\c[index] = *source\c[index]
         Default
           If up
-            *dest\c[index] = ArrayUCase(*source\c[index])
+            *dest\c[index] = CaseUnicode(*source\c[index])\upper
             up = #False
           Else
-            *dest\c[index] = ArrayLCase(*source\c[index])
+            *dest\c[index] = CaseUnicode(*source\c[index])\lower
           EndIf
-      EndSelect           
+      EndSelect
     Next
     ProcedureReturn result
   EndProcedure
- 
+  
   ; ---------------------------------------------------------------------------
- 
+  
   Procedure FindStringW(String.s, StringToFind.s, StartPosition=1, Mode=#PB_String_NoCase)
     Protected r1, StringW.s, StringToFindW.s
     If Mode = #PB_String_NoCase
@@ -142,1149 +169,2377 @@ Module CaseUnicode
       r1 = FindString(StringW, StringToFindW, StartPosition, #PB_String_CaseSensitive)
     Else
       r1 = FindString(String, StringToFind, StartPosition, #PB_String_CaseSensitive)
-    EndIf 
+    EndIf
     ProcedureReturn r1
   EndProcedure
- 
+  
   ; ---------------------------------------------------------------------------
- 
-  DataSection
-    CaseFolding:
-    Data.c $0041, $0061
-    Data.c $0042, $0062
-    Data.c $0043, $0063
-    Data.c $0044, $0064
-    Data.c $0045, $0065
-    Data.c $0046, $0066
-    Data.c $0047, $0067
-    Data.c $0048, $0068
-    Data.c $0049, $0069
-    Data.c $004A, $006A
-    Data.c $004B, $006B
-    Data.c $004C, $006C
-    Data.c $004D, $006D
-    Data.c $004E, $006E
-    Data.c $004F, $006F
-    Data.c $0050, $0070
-    Data.c $0051, $0071
-    Data.c $0052, $0072
-    Data.c $0053, $0073
-    Data.c $0054, $0074
-    Data.c $0055, $0075
-    Data.c $0056, $0076
-    Data.c $0057, $0077
-    Data.c $0058, $0078
-    Data.c $0059, $0079
-    Data.c $005A, $007A
-    Data.c $00B5, $03BC
-    Data.c $00C0, $00E0
-    Data.c $00C1, $00E1
-    Data.c $00C2, $00E2
-    Data.c $00C3, $00E3
-    Data.c $00C4, $00E4
-    Data.c $00C5, $00E5
-    Data.c $00C6, $00E6
-    Data.c $00C7, $00E7
-    Data.c $00C8, $00E8
-    Data.c $00C9, $00E9
-    Data.c $00CA, $00EA
-    Data.c $00CB, $00EB
-    Data.c $00CC, $00EC
-    Data.c $00CD, $00ED
-    Data.c $00CE, $00EE
-    Data.c $00CF, $00EF
-    Data.c $00D0, $00F0
-    Data.c $00D1, $00F1
-    Data.c $00D2, $00F2
-    Data.c $00D3, $00F3
-    Data.c $00D4, $00F4
-    Data.c $00D5, $00F5
-    Data.c $00D6, $00F6
-    Data.c $00D8, $00F8
-    Data.c $00D9, $00F9
-    Data.c $00DA, $00FA
-    Data.c $00DB, $00FB
-    Data.c $00DC, $00FC
-    Data.c $00DD, $00FD
-    Data.c $00DE, $00FE
-    Data.c $0100, $0101
-    Data.c $0102, $0103
-    Data.c $0104, $0105
-    Data.c $0106, $0107
-    Data.c $0108, $0109
-    Data.c $010A, $010B
-    Data.c $010C, $010D
-    Data.c $010E, $010F
-    Data.c $0110, $0111
-    Data.c $0112, $0113
-    Data.c $0114, $0115
-    Data.c $0116, $0117
-    Data.c $0118, $0119
-    Data.c $011A, $011B
-    Data.c $011C, $011D
-    Data.c $011E, $011F
-    Data.c $0120, $0121
-    Data.c $0122, $0123
-    Data.c $0124, $0125
-    Data.c $0126, $0127
-    Data.c $0128, $0129
-    Data.c $012A, $012B
-    Data.c $012C, $012D
-    Data.c $012E, $012F
-    Data.c $0132, $0133
-    Data.c $0134, $0135
-    Data.c $0136, $0137
-    Data.c $0139, $013A
-    Data.c $013B, $013C
-    Data.c $013D, $013E
-    Data.c $013F, $0140
-    Data.c $0141, $0142
-    Data.c $0143, $0144
-    Data.c $0145, $0146
-    Data.c $0147, $0148
-    Data.c $014A, $014B
-    Data.c $014C, $014D
-    Data.c $014E, $014F
-    Data.c $0150, $0151
-    Data.c $0152, $0153
-    Data.c $0154, $0155
-    Data.c $0156, $0157
-    Data.c $0158, $0159
-    Data.c $015A, $015B
-    Data.c $015C, $015D
-    Data.c $015E, $015F
-    Data.c $0160, $0161
-    Data.c $0162, $0163
-    Data.c $0164, $0165
-    Data.c $0166, $0167
-    Data.c $0168, $0169
-    Data.c $016A, $016B
-    Data.c $016C, $016D
-    Data.c $016E, $016F
-    Data.c $0170, $0171
-    Data.c $0172, $0173
-    Data.c $0174, $0175
-    Data.c $0176, $0177
-    Data.c $0178, $00FF
-    Data.c $0179, $017A
-    Data.c $017B, $017C
-    Data.c $017D, $017E
-    Data.c $017F, $0073
-    Data.c $0181, $0253
-    Data.c $0182, $0183
-    Data.c $0184, $0185
-    Data.c $0186, $0254
-    Data.c $0187, $0188
-    Data.c $0189, $0256
-    Data.c $018A, $0257
-    Data.c $018B, $018C
-    Data.c $018E, $01DD
-    Data.c $018F, $0259
-    Data.c $0190, $025B
-    Data.c $0191, $0192
-    Data.c $0193, $0260
-    Data.c $0194, $0263
-    Data.c $0196, $0269
-    Data.c $0197, $0268
-    Data.c $0198, $0199
-    Data.c $019C, $026F
-    Data.c $019D, $0272
-    Data.c $019F, $0275
-    Data.c $01A0, $01A1
-    Data.c $01A2, $01A3
-    Data.c $01A4, $01A5
-    Data.c $01A6, $0280
-    Data.c $01A7, $01A8
-    Data.c $01A9, $0283
-    Data.c $01AC, $01AD
-    Data.c $01AE, $0288
-    Data.c $01AF, $01B0
-    Data.c $01B1, $028A
-    Data.c $01B2, $028B
-    Data.c $01B3, $01B4
-    Data.c $01B5, $01B6
-    Data.c $01B7, $0292
-    Data.c $01B8, $01B9
-    Data.c $01BC, $01BD
-    Data.c $01C4, $01C6
-    Data.c $01C5, $01C6
-    Data.c $01C7, $01C9
-    Data.c $01C8, $01C9
-    Data.c $01CA, $01CC
-    Data.c $01CB, $01CC
-    Data.c $01CD, $01CE
-    Data.c $01CF, $01D0
-    Data.c $01D1, $01D2
-    Data.c $01D3, $01D4
-    Data.c $01D5, $01D6
-    Data.c $01D7, $01D8
-    Data.c $01D9, $01DA
-    Data.c $01DB, $01DC
-    Data.c $01DE, $01DF
-    Data.c $01E0, $01E1
-    Data.c $01E2, $01E3
-    Data.c $01E4, $01E5
-    Data.c $01E6, $01E7
-    Data.c $01E8, $01E9
-    Data.c $01EA, $01EB
-    Data.c $01EC, $01ED
-    Data.c $01EE, $01EF
-    Data.c $01F1, $01F3
-    Data.c $01F2, $01F3
-    Data.c $01F4, $01F5
-    Data.c $01F6, $0195
-    Data.c $01F7, $01BF
-    Data.c $01F8, $01F9
-    Data.c $01FA, $01FB
-    Data.c $01FC, $01FD
-    Data.c $01FE, $01FF
-    Data.c $0200, $0201
-    Data.c $0202, $0203
-    Data.c $0204, $0205
-    Data.c $0206, $0207
-    Data.c $0208, $0209
-    Data.c $020A, $020B
-    Data.c $020C, $020D
-    Data.c $020E, $020F
-    Data.c $0210, $0211
-    Data.c $0212, $0213
-    Data.c $0214, $0215
-    Data.c $0216, $0217
-    Data.c $0218, $0219
-    Data.c $021A, $021B
-    Data.c $021C, $021D
-    Data.c $021E, $021F
-    Data.c $0220, $019E
-    Data.c $0222, $0223
-    Data.c $0224, $0225
-    Data.c $0226, $0227
-    Data.c $0228, $0229
-    Data.c $022A, $022B
-    Data.c $022C, $022D
-    Data.c $022E, $022F
-    Data.c $0230, $0231
-    Data.c $0232, $0233
-    Data.c $023A, $2C65
-    Data.c $023B, $023C
-    Data.c $023D, $019A
-    Data.c $023E, $2C66
-    Data.c $0241, $0242
-    Data.c $0243, $0180
-    Data.c $0244, $0289
-    Data.c $0245, $028C
-    Data.c $0246, $0247
-    Data.c $0248, $0249
-    Data.c $024A, $024B
-    Data.c $024C, $024D
-    Data.c $024E, $024F
-    Data.c $0345, $03B9
-    Data.c $0370, $0371
-    Data.c $0372, $0373
-    Data.c $0376, $0377
-    Data.c $037F, $03F3
-    Data.c $0386, $03AC
-    Data.c $0388, $03AD
-    Data.c $0389, $03AE
-    Data.c $038A, $03AF
-    Data.c $038C, $03CC
-    Data.c $038E, $03CD
-    Data.c $038F, $03CE
-    Data.c $0391, $03B1
-    Data.c $0392, $03B2
-    Data.c $0393, $03B3
-    Data.c $0394, $03B4
-    Data.c $0395, $03B5
-    Data.c $0396, $03B6
-    Data.c $0397, $03B7
-    Data.c $0398, $03B8
-    Data.c $0399, $03B9
-    Data.c $039A, $03BA
-    Data.c $039B, $03BB
-    Data.c $039C, $03BC
-    Data.c $039D, $03BD
-    Data.c $039E, $03BE
-    Data.c $039F, $03BF
-    Data.c $03A0, $03C0
-    Data.c $03A1, $03C1
-    Data.c $03A3, $03C3
-    Data.c $03A4, $03C4
-    Data.c $03A5, $03C5
-    Data.c $03A6, $03C6
-    Data.c $03A7, $03C7
-    Data.c $03A8, $03C8
-    Data.c $03A9, $03C9
-    Data.c $03AA, $03CA
-    Data.c $03AB, $03CB
-    Data.c $03C2, $03C3
-    Data.c $03CF, $03D7
-    Data.c $03D0, $03B2
-    Data.c $03D1, $03B8
-    Data.c $03D5, $03C6
-    Data.c $03D6, $03C0
-    Data.c $03D8, $03D9
-    Data.c $03DA, $03DB
-    Data.c $03DC, $03DD
-    Data.c $03DE, $03DF
-    Data.c $03E0, $03E1
-    Data.c $03E2, $03E3
-    Data.c $03E4, $03E5
-    Data.c $03E6, $03E7
-    Data.c $03E8, $03E9
-    Data.c $03EA, $03EB
-    Data.c $03EC, $03ED
-    Data.c $03EE, $03EF
-    Data.c $03F0, $03BA
-    Data.c $03F1, $03C1
-    Data.c $03F4, $03B8
-    Data.c $03F5, $03B5
-    Data.c $03F7, $03F8
-    Data.c $03F9, $03F2
-    Data.c $03FA, $03FB
-    Data.c $03FD, $037B
-    Data.c $03FE, $037C
-    Data.c $03FF, $037D
-    Data.c $0400, $0450
-    Data.c $0401, $0451
-    Data.c $0402, $0452
-    Data.c $0403, $0453
-    Data.c $0404, $0454
-    Data.c $0405, $0455
-    Data.c $0406, $0456
-    Data.c $0407, $0457
-    Data.c $0408, $0458
-    Data.c $0409, $0459
-    Data.c $040A, $045A
-    Data.c $040B, $045B
-    Data.c $040C, $045C
-    Data.c $040D, $045D
-    Data.c $040E, $045E
-    Data.c $040F, $045F
-    Data.c $0410, $0430
-    Data.c $0411, $0431
-    Data.c $0412, $0432
-    Data.c $0413, $0433
-    Data.c $0414, $0434
-    Data.c $0415, $0435
-    Data.c $0416, $0436
-    Data.c $0417, $0437
-    Data.c $0418, $0438
-    Data.c $0419, $0439
-    Data.c $041A, $043A
-    Data.c $041B, $043B
-    Data.c $041C, $043C
-    Data.c $041D, $043D
-    Data.c $041E, $043E
-    Data.c $041F, $043F
-    Data.c $0420, $0440
-    Data.c $0421, $0441
-    Data.c $0422, $0442
-    Data.c $0423, $0443
-    Data.c $0424, $0444
-    Data.c $0425, $0445
-    Data.c $0426, $0446
-    Data.c $0427, $0447
-    Data.c $0428, $0448
-    Data.c $0429, $0449
-    Data.c $042A, $044A
-    Data.c $042B, $044B
-    Data.c $042C, $044C
-    Data.c $042D, $044D
-    Data.c $042E, $044E
-    Data.c $042F, $044F
-    Data.c $0460, $0461
-    Data.c $0462, $0463
-    Data.c $0464, $0465
-    Data.c $0466, $0467
-    Data.c $0468, $0469
-    Data.c $046A, $046B
-    Data.c $046C, $046D
-    Data.c $046E, $046F
-    Data.c $0470, $0471
-    Data.c $0472, $0473
-    Data.c $0474, $0475
-    Data.c $0476, $0477
-    Data.c $0478, $0479
-    Data.c $047A, $047B
-    Data.c $047C, $047D
-    Data.c $047E, $047F
-    Data.c $0480, $0481
-    Data.c $048A, $048B
-    Data.c $048C, $048D
-    Data.c $048E, $048F
-    Data.c $0490, $0491
-    Data.c $0492, $0493
-    Data.c $0494, $0495
-    Data.c $0496, $0497
-    Data.c $0498, $0499
-    Data.c $049A, $049B
-    Data.c $049C, $049D
-    Data.c $049E, $049F
-    Data.c $04A0, $04A1
-    Data.c $04A2, $04A3
-    Data.c $04A4, $04A5
-    Data.c $04A6, $04A7
-    Data.c $04A8, $04A9
-    Data.c $04AA, $04AB
-    Data.c $04AC, $04AD
-    Data.c $04AE, $04AF
-    Data.c $04B0, $04B1
-    Data.c $04B2, $04B3
-    Data.c $04B4, $04B5
-    Data.c $04B6, $04B7
-    Data.c $04B8, $04B9
-    Data.c $04BA, $04BB
-    Data.c $04BC, $04BD
-    Data.c $04BE, $04BF
-    Data.c $04C0, $04CF
-    Data.c $04C1, $04C2
-    Data.c $04C3, $04C4
-    Data.c $04C5, $04C6
-    Data.c $04C7, $04C8
-    Data.c $04C9, $04CA
-    Data.c $04CB, $04CC
-    Data.c $04CD, $04CE
-    Data.c $04D0, $04D1
-    Data.c $04D2, $04D3
-    Data.c $04D4, $04D5
-    Data.c $04D6, $04D7
-    Data.c $04D8, $04D9
-    Data.c $04DA, $04DB
-    Data.c $04DC, $04DD
-    Data.c $04DE, $04DF
-    Data.c $04E0, $04E1
-    Data.c $04E2, $04E3
-    Data.c $04E4, $04E5
-    Data.c $04E6, $04E7
-    Data.c $04E8, $04E9
-    Data.c $04EA, $04EB
-    Data.c $04EC, $04ED
-    Data.c $04EE, $04EF
-    Data.c $04F0, $04F1
-    Data.c $04F2, $04F3
-    Data.c $04F4, $04F5
-    Data.c $04F6, $04F7
-    Data.c $04F8, $04F9
-    Data.c $04FA, $04FB
-    Data.c $04FC, $04FD
-    Data.c $04FE, $04FF
-    Data.c $0500, $0501
-    Data.c $0502, $0503
-    Data.c $0504, $0505
-    Data.c $0506, $0507
-    Data.c $0508, $0509
-    Data.c $050A, $050B
-    Data.c $050C, $050D
-    Data.c $050E, $050F
-    Data.c $0510, $0511
-    Data.c $0512, $0513
-    Data.c $0514, $0515
-    Data.c $0516, $0517
-    Data.c $0518, $0519
-    Data.c $051A, $051B
-    Data.c $051C, $051D
-    Data.c $051E, $051F
-    Data.c $0520, $0521
-    Data.c $0522, $0523
-    Data.c $0524, $0525
-    Data.c $0526, $0527
-    Data.c $0528, $0529
-    Data.c $052A, $052B
-    Data.c $052C, $052D
-    Data.c $052E, $052F
-    Data.c $0531, $0561
-    Data.c $0532, $0562
-    Data.c $0533, $0563
-    Data.c $0534, $0564
-    Data.c $0535, $0565
-    Data.c $0536, $0566
-    Data.c $0537, $0567
-    Data.c $0538, $0568
-    Data.c $0539, $0569
-    Data.c $053A, $056A
-    Data.c $053B, $056B
-    Data.c $053C, $056C
-    Data.c $053D, $056D
-    Data.c $053E, $056E
-    Data.c $053F, $056F
-    Data.c $0540, $0570
-    Data.c $0541, $0571
-    Data.c $0542, $0572
-    Data.c $0543, $0573
-    Data.c $0544, $0574
-    Data.c $0545, $0575
-    Data.c $0546, $0576
-    Data.c $0547, $0577
-    Data.c $0548, $0578
-    Data.c $0549, $0579
-    Data.c $054A, $057A
-    Data.c $054B, $057B
-    Data.c $054C, $057C
-    Data.c $054D, $057D
-    Data.c $054E, $057E
-    Data.c $054F, $057F
-    Data.c $0550, $0580
-    Data.c $0551, $0581
-    Data.c $0552, $0582
-    Data.c $0553, $0583
-    Data.c $0554, $0584
-    Data.c $0555, $0585
-    Data.c $0556, $0586
-    Data.c $10A0, $2D00
-    Data.c $10A1, $2D01
-    Data.c $10A2, $2D02
-    Data.c $10A3, $2D03
-    Data.c $10A4, $2D04
-    Data.c $10A5, $2D05
-    Data.c $10A6, $2D06
-    Data.c $10A7, $2D07
-    Data.c $10A8, $2D08
-    Data.c $10A9, $2D09
-    Data.c $10AA, $2D0A
-    Data.c $10AB, $2D0B
-    Data.c $10AC, $2D0C
-    Data.c $10AD, $2D0D
-    Data.c $10AE, $2D0E
-    Data.c $10AF, $2D0F
-    Data.c $10B0, $2D10
-    Data.c $10B1, $2D11
-    Data.c $10B2, $2D12
-    Data.c $10B3, $2D13
-    Data.c $10B4, $2D14
-    Data.c $10B5, $2D15
-    Data.c $10B6, $2D16
-    Data.c $10B7, $2D17
-    Data.c $10B8, $2D18
-    Data.c $10B9, $2D19
-    Data.c $10BA, $2D1A
-    Data.c $10BB, $2D1B
-    Data.c $10BC, $2D1C
-    Data.c $10BD, $2D1D
-    Data.c $10BE, $2D1E
-    Data.c $10BF, $2D1F
-    Data.c $10C0, $2D20
-    Data.c $10C1, $2D21
-    Data.c $10C2, $2D22
-    Data.c $10C3, $2D23
-    Data.c $10C4, $2D24
-    Data.c $10C5, $2D25
-    Data.c $10C7, $2D27
-    Data.c $10CD, $2D2D
-    Data.c $13F8, $13F0
-    Data.c $13F9, $13F1
-    Data.c $13FA, $13F2
-    Data.c $13FB, $13F3
-    Data.c $13FC, $13F4
-    Data.c $13FD, $13F5
-    Data.c $1C80, $0432
-    Data.c $1C81, $0434
-    Data.c $1C82, $043E
-    Data.c $1C83, $0441
-    Data.c $1C84, $0442
-    Data.c $1C85, $0442
-    Data.c $1C86, $044A
-    Data.c $1C87, $0463
-    Data.c $1C88, $A64B
-    Data.c $1E00, $1E01
-    Data.c $1E02, $1E03
-    Data.c $1E04, $1E05
-    Data.c $1E06, $1E07
-    Data.c $1E08, $1E09
-    Data.c $1E0A, $1E0B
-    Data.c $1E0C, $1E0D
-    Data.c $1E0E, $1E0F
-    Data.c $1E10, $1E11
-    Data.c $1E12, $1E13
-    Data.c $1E14, $1E15
-    Data.c $1E16, $1E17
-    Data.c $1E18, $1E19
-    Data.c $1E1A, $1E1B
-    Data.c $1E1C, $1E1D
-    Data.c $1E1E, $1E1F
-    Data.c $1E20, $1E21
-    Data.c $1E22, $1E23
-    Data.c $1E24, $1E25
-    Data.c $1E26, $1E27
-    Data.c $1E28, $1E29
-    Data.c $1E2A, $1E2B
-    Data.c $1E2C, $1E2D
-    Data.c $1E2E, $1E2F
-    Data.c $1E30, $1E31
-    Data.c $1E32, $1E33
-    Data.c $1E34, $1E35
-    Data.c $1E36, $1E37
-    Data.c $1E38, $1E39
-    Data.c $1E3A, $1E3B
-    Data.c $1E3C, $1E3D
-    Data.c $1E3E, $1E3F
-    Data.c $1E40, $1E41
-    Data.c $1E42, $1E43
-    Data.c $1E44, $1E45
-    Data.c $1E46, $1E47
-    Data.c $1E48, $1E49
-    Data.c $1E4A, $1E4B
-    Data.c $1E4C, $1E4D
-    Data.c $1E4E, $1E4F
-    Data.c $1E50, $1E51
-    Data.c $1E52, $1E53
-    Data.c $1E54, $1E55
-    Data.c $1E56, $1E57
-    Data.c $1E58, $1E59
-    Data.c $1E5A, $1E5B
-    Data.c $1E5C, $1E5D
-    Data.c $1E5E, $1E5F
-    Data.c $1E60, $1E61
-    Data.c $1E62, $1E63
-    Data.c $1E64, $1E65
-    Data.c $1E66, $1E67
-    Data.c $1E68, $1E69
-    Data.c $1E6A, $1E6B
-    Data.c $1E6C, $1E6D
-    Data.c $1E6E, $1E6F
-    Data.c $1E70, $1E71
-    Data.c $1E72, $1E73
-    Data.c $1E74, $1E75
-    Data.c $1E76, $1E77
-    Data.c $1E78, $1E79
-    Data.c $1E7A, $1E7B
-    Data.c $1E7C, $1E7D
-    Data.c $1E7E, $1E7F
-    Data.c $1E80, $1E81
-    Data.c $1E82, $1E83
-    Data.c $1E84, $1E85
-    Data.c $1E86, $1E87
-    Data.c $1E88, $1E89
-    Data.c $1E8A, $1E8B
-    Data.c $1E8C, $1E8D
-    Data.c $1E8E, $1E8F
-    Data.c $1E90, $1E91
-    Data.c $1E92, $1E93
-    Data.c $1E94, $1E95
-    Data.c $1E9B, $1E61
-    Data.c $1E9E, $00DF
-    Data.c $1EA0, $1EA1
-    Data.c $1EA2, $1EA3
-    Data.c $1EA4, $1EA5
-    Data.c $1EA6, $1EA7
-    Data.c $1EA8, $1EA9
-    Data.c $1EAA, $1EAB
-    Data.c $1EAC, $1EAD
-    Data.c $1EAE, $1EAF
-    Data.c $1EB0, $1EB1
-    Data.c $1EB2, $1EB3
-    Data.c $1EB4, $1EB5
-    Data.c $1EB6, $1EB7
-    Data.c $1EB8, $1EB9
-    Data.c $1EBA, $1EBB
-    Data.c $1EBC, $1EBD
-    Data.c $1EBE, $1EBF
-    Data.c $1EC0, $1EC1
-    Data.c $1EC2, $1EC3
-    Data.c $1EC4, $1EC5
-    Data.c $1EC6, $1EC7
-    Data.c $1EC8, $1EC9
-    Data.c $1ECA, $1ECB
-    Data.c $1ECC, $1ECD
-    Data.c $1ECE, $1ECF
-    Data.c $1ED0, $1ED1
-    Data.c $1ED2, $1ED3
-    Data.c $1ED4, $1ED5
-    Data.c $1ED6, $1ED7
-    Data.c $1ED8, $1ED9
-    Data.c $1EDA, $1EDB
-    Data.c $1EDC, $1EDD
-    Data.c $1EDE, $1EDF
-    Data.c $1EE0, $1EE1
-    Data.c $1EE2, $1EE3
-    Data.c $1EE4, $1EE5
-    Data.c $1EE6, $1EE7
-    Data.c $1EE8, $1EE9
-    Data.c $1EEA, $1EEB
-    Data.c $1EEC, $1EED
-    Data.c $1EEE, $1EEF
-    Data.c $1EF0, $1EF1
-    Data.c $1EF2, $1EF3
-    Data.c $1EF4, $1EF5
-    Data.c $1EF6, $1EF7
-    Data.c $1EF8, $1EF9
-    Data.c $1EFA, $1EFB
-    Data.c $1EFC, $1EFD
-    Data.c $1EFE, $1EFF
-    Data.c $1F08, $1F00
-    Data.c $1F09, $1F01
-    Data.c $1F0A, $1F02
-    Data.c $1F0B, $1F03
-    Data.c $1F0C, $1F04
-    Data.c $1F0D, $1F05
-    Data.c $1F0E, $1F06
-    Data.c $1F0F, $1F07
-    Data.c $1F18, $1F10
-    Data.c $1F19, $1F11
-    Data.c $1F1A, $1F12
-    Data.c $1F1B, $1F13
-    Data.c $1F1C, $1F14
-    Data.c $1F1D, $1F15
-    Data.c $1F28, $1F20
-    Data.c $1F29, $1F21
-    Data.c $1F2A, $1F22
-    Data.c $1F2B, $1F23
-    Data.c $1F2C, $1F24
-    Data.c $1F2D, $1F25
-    Data.c $1F2E, $1F26
-    Data.c $1F2F, $1F27
-    Data.c $1F38, $1F30
-    Data.c $1F39, $1F31
-    Data.c $1F3A, $1F32
-    Data.c $1F3B, $1F33
-    Data.c $1F3C, $1F34
-    Data.c $1F3D, $1F35
-    Data.c $1F3E, $1F36
-    Data.c $1F3F, $1F37
-    Data.c $1F48, $1F40
-    Data.c $1F49, $1F41
-    Data.c $1F4A, $1F42
-    Data.c $1F4B, $1F43
-    Data.c $1F4C, $1F44
-    Data.c $1F4D, $1F45
-    Data.c $1F59, $1F51
-    Data.c $1F5B, $1F53
-    Data.c $1F5D, $1F55
-    Data.c $1F5F, $1F57
-    Data.c $1F68, $1F60
-    Data.c $1F69, $1F61
-    Data.c $1F6A, $1F62
-    Data.c $1F6B, $1F63
-    Data.c $1F6C, $1F64
-    Data.c $1F6D, $1F65
-    Data.c $1F6E, $1F66
-    Data.c $1F6F, $1F67
-    Data.c $1F88, $1F80
-    Data.c $1F89, $1F81
-    Data.c $1F8A, $1F82
-    Data.c $1F8B, $1F83
-    Data.c $1F8C, $1F84
-    Data.c $1F8D, $1F85
-    Data.c $1F8E, $1F86
-    Data.c $1F8F, $1F87
-    Data.c $1F98, $1F90
-    Data.c $1F99, $1F91
-    Data.c $1F9A, $1F92
-    Data.c $1F9B, $1F93
-    Data.c $1F9C, $1F94
-    Data.c $1F9D, $1F95
-    Data.c $1F9E, $1F96
-    Data.c $1F9F, $1F97
-    Data.c $1FA8, $1FA0
-    Data.c $1FA9, $1FA1
-    Data.c $1FAA, $1FA2
-    Data.c $1FAB, $1FA3
-    Data.c $1FAC, $1FA4
-    Data.c $1FAD, $1FA5
-    Data.c $1FAE, $1FA6
-    Data.c $1FAF, $1FA7
-    Data.c $1FB8, $1FB0
-    Data.c $1FB9, $1FB1
-    Data.c $1FBA, $1F70
-    Data.c $1FBB, $1F71
-    Data.c $1FBC, $1FB3
-    Data.c $1FBE, $03B9
-    Data.c $1FC8, $1F72
-    Data.c $1FC9, $1F73
-    Data.c $1FCA, $1F74
-    Data.c $1FCB, $1F75
-    Data.c $1FCC, $1FC3
-    Data.c $1FD8, $1FD0
-    Data.c $1FD9, $1FD1
-    Data.c $1FDA, $1F76
-    Data.c $1FDB, $1F77
-    Data.c $1FE8, $1FE0
-    Data.c $1FE9, $1FE1
-    Data.c $1FEA, $1F7A
-    Data.c $1FEB, $1F7B
-    Data.c $1FEC, $1FE5
-    Data.c $1FF8, $1F78
-    Data.c $1FF9, $1F79
-    Data.c $1FFA, $1F7C
-    Data.c $1FFB, $1F7D
-    Data.c $1FFC, $1FF3
-    Data.c $2126, $03C9
-    Data.c $212A, $006B
-    Data.c $212B, $00E5
-    Data.c $2132, $214E
-    Data.c $2160, $2170
-    Data.c $2161, $2171
-    Data.c $2162, $2172
-    Data.c $2163, $2173
-    Data.c $2164, $2174
-    Data.c $2165, $2175
-    Data.c $2166, $2176
-    Data.c $2167, $2177
-    Data.c $2168, $2178
-    Data.c $2169, $2179
-    Data.c $216A, $217A
-    Data.c $216B, $217B
-    Data.c $216C, $217C
-    Data.c $216D, $217D
-    Data.c $216E, $217E
-    Data.c $216F, $217F
-    Data.c $2183, $2184
-    Data.c $24B6, $24D0
-    Data.c $24B7, $24D1
-    Data.c $24B8, $24D2
-    Data.c $24B9, $24D3
-    Data.c $24BA, $24D4
-    Data.c $24BB, $24D5
-    Data.c $24BC, $24D6
-    Data.c $24BD, $24D7
-    Data.c $24BE, $24D8
-    Data.c $24BF, $24D9
-    Data.c $24C0, $24DA
-    Data.c $24C1, $24DB
-    Data.c $24C2, $24DC
-    Data.c $24C3, $24DD
-    Data.c $24C4, $24DE
-    Data.c $24C5, $24DF
-    Data.c $24C6, $24E0
-    Data.c $24C7, $24E1
-    Data.c $24C8, $24E2
-    Data.c $24C9, $24E3
-    Data.c $24CA, $24E4
-    Data.c $24CB, $24E5
-    Data.c $24CC, $24E6
-    Data.c $24CD, $24E7
-    Data.c $24CE, $24E8
-    Data.c $24CF, $24E9
-    Data.c $2C00, $2C30
-    Data.c $2C01, $2C31
-    Data.c $2C02, $2C32
-    Data.c $2C03, $2C33
-    Data.c $2C04, $2C34
-    Data.c $2C05, $2C35
-    Data.c $2C06, $2C36
-    Data.c $2C07, $2C37
-    Data.c $2C08, $2C38
-    Data.c $2C09, $2C39
-    Data.c $2C0A, $2C3A
-    Data.c $2C0B, $2C3B
-    Data.c $2C0C, $2C3C
-    Data.c $2C0D, $2C3D
-    Data.c $2C0E, $2C3E
-    Data.c $2C0F, $2C3F
-    Data.c $2C10, $2C40
-    Data.c $2C11, $2C41
-    Data.c $2C12, $2C42
-    Data.c $2C13, $2C43
-    Data.c $2C14, $2C44
-    Data.c $2C15, $2C45
-    Data.c $2C16, $2C46
-    Data.c $2C17, $2C47
-    Data.c $2C18, $2C48
-    Data.c $2C19, $2C49
-    Data.c $2C1A, $2C4A
-    Data.c $2C1B, $2C4B
-    Data.c $2C1C, $2C4C
-    Data.c $2C1D, $2C4D
-    Data.c $2C1E, $2C4E
-    Data.c $2C1F, $2C4F
-    Data.c $2C20, $2C50
-    Data.c $2C21, $2C51
-    Data.c $2C22, $2C52
-    Data.c $2C23, $2C53
-    Data.c $2C24, $2C54
-    Data.c $2C25, $2C55
-    Data.c $2C26, $2C56
-    Data.c $2C27, $2C57
-    Data.c $2C28, $2C58
-    Data.c $2C29, $2C59
-    Data.c $2C2A, $2C5A
-    Data.c $2C2B, $2C5B
-    Data.c $2C2C, $2C5C
-    Data.c $2C2D, $2C5D
-    Data.c $2C2E, $2C5E
-    Data.c $2C60, $2C61
-    Data.c $2C62, $026B
-    Data.c $2C63, $1D7D
-    Data.c $2C64, $027D
-    Data.c $2C67, $2C68
-    Data.c $2C69, $2C6A
-    Data.c $2C6B, $2C6C
-    Data.c $2C6D, $0251
-    Data.c $2C6E, $0271
-    Data.c $2C6F, $0250
-    Data.c $2C70, $0252
-    Data.c $2C72, $2C73
-    Data.c $2C75, $2C76
-    Data.c $2C7E, $023F
-    Data.c $2C7F, $0240
-    Data.c $2C80, $2C81
-    Data.c $2C82, $2C83
-    Data.c $2C84, $2C85
-    Data.c $2C86, $2C87
-    Data.c $2C88, $2C89
-    Data.c $2C8A, $2C8B
-    Data.c $2C8C, $2C8D
-    Data.c $2C8E, $2C8F
-    Data.c $2C90, $2C91
-    Data.c $2C92, $2C93
-    Data.c $2C94, $2C95
-    Data.c $2C96, $2C97
-    Data.c $2C98, $2C99
-    Data.c $2C9A, $2C9B
-    Data.c $2C9C, $2C9D
-    Data.c $2C9E, $2C9F
-    Data.c $2CA0, $2CA1
-    Data.c $2CA2, $2CA3
-    Data.c $2CA4, $2CA5
-    Data.c $2CA6, $2CA7
-    Data.c $2CA8, $2CA9
-    Data.c $2CAA, $2CAB
-    Data.c $2CAC, $2CAD
-    Data.c $2CAE, $2CAF
-    Data.c $2CB0, $2CB1
-    Data.c $2CB2, $2CB3
-    Data.c $2CB4, $2CB5
-    Data.c $2CB6, $2CB7
-    Data.c $2CB8, $2CB9
-    Data.c $2CBA, $2CBB
-    Data.c $2CBC, $2CBD
-    Data.c $2CBE, $2CBF
-    Data.c $2CC0, $2CC1
-    Data.c $2CC2, $2CC3
-    Data.c $2CC4, $2CC5
-    Data.c $2CC6, $2CC7
-    Data.c $2CC8, $2CC9
-    Data.c $2CCA, $2CCB
-    Data.c $2CCC, $2CCD
-    Data.c $2CCE, $2CCF
-    Data.c $2CD0, $2CD1
-    Data.c $2CD2, $2CD3
-    Data.c $2CD4, $2CD5
-    Data.c $2CD6, $2CD7
-    Data.c $2CD8, $2CD9
-    Data.c $2CDA, $2CDB
-    Data.c $2CDC, $2CDD
-    Data.c $2CDE, $2CDF
-    Data.c $2CE0, $2CE1
-    Data.c $2CE2, $2CE3
-    Data.c $2CEB, $2CEC
-    Data.c $2CED, $2CEE
-    Data.c $2CF2, $2CF3
-    Data.c $A640, $A641
-    Data.c $A642, $A643
-    Data.c $A644, $A645
-    Data.c $A646, $A647
-    Data.c $A648, $A649
-    Data.c $A64A, $A64B
-    Data.c $A64C, $A64D
-    Data.c $A64E, $A64F
-    Data.c $A650, $A651
-    Data.c $A652, $A653
-    Data.c $A654, $A655
-    Data.c $A656, $A657
-    Data.c $A658, $A659
-    Data.c $A65A, $A65B
-    Data.c $A65C, $A65D
-    Data.c $A65E, $A65F
-    Data.c $A660, $A661
-    Data.c $A662, $A663
-    Data.c $A664, $A665
-    Data.c $A666, $A667
-    Data.c $A668, $A669
-    Data.c $A66A, $A66B
-    Data.c $A66C, $A66D
-    Data.c $A680, $A681
-    Data.c $A682, $A683
-    Data.c $A684, $A685
-    Data.c $A686, $A687
-    Data.c $A688, $A689
-    Data.c $A68A, $A68B
-    Data.c $A68C, $A68D
-    Data.c $A68E, $A68F
-    Data.c $A690, $A691
-    Data.c $A692, $A693
-    Data.c $A694, $A695
-    Data.c $A696, $A697
-    Data.c $A698, $A699
-    Data.c $A69A, $A69B
-    Data.c $A722, $A723
-    Data.c $A724, $A725
-    Data.c $A726, $A727
-    Data.c $A728, $A729
-    Data.c $A72A, $A72B
-    Data.c $A72C, $A72D
-    Data.c $A72E, $A72F
-    Data.c $A732, $A733
-    Data.c $A734, $A735
-    Data.c $A736, $A737
-    Data.c $A738, $A739
-    Data.c $A73A, $A73B
-    Data.c $A73C, $A73D
-    Data.c $A73E, $A73F
-    Data.c $A740, $A741
-    Data.c $A742, $A743
-    Data.c $A744, $A745
-    Data.c $A746, $A747
-    Data.c $A748, $A749
-    Data.c $A74A, $A74B
-    Data.c $A74C, $A74D
-    Data.c $A74E, $A74F
-    Data.c $A750, $A751
-    Data.c $A752, $A753
-    Data.c $A754, $A755
-    Data.c $A756, $A757
-    Data.c $A758, $A759
-    Data.c $A75A, $A75B
-    Data.c $A75C, $A75D
-    Data.c $A75E, $A75F
-    Data.c $A760, $A761
-    Data.c $A762, $A763
-    Data.c $A764, $A765
-    Data.c $A766, $A767
-    Data.c $A768, $A769
-    Data.c $A76A, $A76B
-    Data.c $A76C, $A76D
-    Data.c $A76E, $A76F
-    Data.c $A779, $A77A
-    Data.c $A77B, $A77C
-    Data.c $A77D, $1D79
-    Data.c $A77E, $A77F
-    Data.c $A780, $A781
-    Data.c $A782, $A783
-    Data.c $A784, $A785
-    Data.c $A786, $A787
-    Data.c $A78B, $A78C
-    Data.c $A78D, $0265
-    Data.c $A790, $A791
-    Data.c $A792, $A793
-    Data.c $A796, $A797
-    Data.c $A798, $A799
-    Data.c $A79A, $A79B
-    Data.c $A79C, $A79D
-    Data.c $A79E, $A79F
-    Data.c $A7A0, $A7A1
-    Data.c $A7A2, $A7A3
-    Data.c $A7A4, $A7A5
-    Data.c $A7A6, $A7A7
-    Data.c $A7A8, $A7A9
-    Data.c $A7AA, $0266
-    Data.c $A7AB, $025C
-    Data.c $A7AC, $0261
-    Data.c $A7AD, $026C
-    Data.c $A7AE, $026A
-    Data.c $A7B0, $029E
-    Data.c $A7B1, $0287
-    Data.c $A7B2, $029D
-    Data.c $A7B3, $AB53
-    Data.c $A7B4, $A7B5
-    Data.c $A7B6, $A7B7
-    Data.c $AB70, $13A0
-    Data.c $AB71, $13A1
-    Data.c $AB72, $13A2
-    Data.c $AB73, $13A3
-    Data.c $AB74, $13A4
-    Data.c $AB75, $13A5
-    Data.c $AB76, $13A6
-    Data.c $AB77, $13A7
-    Data.c $AB78, $13A8
-    Data.c $AB79, $13A9
-    Data.c $AB7A, $13AA
-    Data.c $AB7B, $13AB
-    Data.c $AB7C, $13AC
-    Data.c $AB7D, $13AD
-    Data.c $AB7E, $13AE
-    Data.c $AB7F, $13AF
-    Data.c $AB80, $13B0
-    Data.c $AB81, $13B1
-    Data.c $AB82, $13B2
-    Data.c $AB83, $13B3
-    Data.c $AB84, $13B4
-    Data.c $AB85, $13B5
-    Data.c $AB86, $13B6
-    Data.c $AB87, $13B7
-    Data.c $AB88, $13B8
-    Data.c $AB89, $13B9
-    Data.c $AB8A, $13BA
-    Data.c $AB8B, $13BB
-    Data.c $AB8C, $13BC
-    Data.c $AB8D, $13BD
-    Data.c $AB8E, $13BE
-    Data.c $AB8F, $13BF
-    Data.c $AB90, $13C0
-    Data.c $AB91, $13C1
-    Data.c $AB92, $13C2
-    Data.c $AB93, $13C3
-    Data.c $AB94, $13C4
-    Data.c $AB95, $13C5
-    Data.c $AB96, $13C6
-    Data.c $AB97, $13C7
-    Data.c $AB98, $13C8
-    Data.c $AB99, $13C9
-    Data.c $AB9A, $13CA
-    Data.c $AB9B, $13CB
-    Data.c $AB9C, $13CC
-    Data.c $AB9D, $13CD
-    Data.c $AB9E, $13CE
-    Data.c $AB9F, $13CF
-    Data.c $ABA0, $13D0
-    Data.c $ABA1, $13D1
-    Data.c $ABA2, $13D2
-    Data.c $ABA3, $13D3
-    Data.c $ABA4, $13D4
-    Data.c $ABA5, $13D5
-    Data.c $ABA6, $13D6
-    Data.c $ABA7, $13D7
-    Data.c $ABA8, $13D8
-    Data.c $ABA9, $13D9
-    Data.c $ABAA, $13DA
-    Data.c $ABAB, $13DB
-    Data.c $ABAC, $13DC
-    Data.c $ABAD, $13DD
-    Data.c $ABAE, $13DE
-    Data.c $ABAF, $13DF
-    Data.c $ABB0, $13E0
-    Data.c $ABB1, $13E1
-    Data.c $ABB2, $13E2
-    Data.c $ABB3, $13E3
-    Data.c $ABB4, $13E4
-    Data.c $ABB5, $13E5
-    Data.c $ABB6, $13E6
-    Data.c $ABB7, $13E7
-    Data.c $ABB8, $13E8
-    Data.c $ABB9, $13E9
-    Data.c $ABBA, $13EA
-    Data.c $ABBB, $13EB
-    Data.c $ABBC, $13EC
-    Data.c $ABBD, $13ED
-    Data.c $ABBE, $13EE
-    Data.c $ABBF, $13EF
-    Data.c $FF21, $FF41
-    Data.c $FF22, $FF42
-    Data.c $FF23, $FF43
-    Data.c $FF24, $FF44
-    Data.c $FF25, $FF45
-    Data.c $FF26, $FF46
-    Data.c $FF27, $FF47
-    Data.c $FF28, $FF48
-    Data.c $FF29, $FF49
-    Data.c $FF2A, $FF4A
-    Data.c $FF2B, $FF4B
-    Data.c $FF2C, $FF4C
-    Data.c $FF2D, $FF4D
-    Data.c $FF2E, $FF4E
-    Data.c $FF2F, $FF4F
-    Data.c $FF30, $FF50
-    Data.c $FF31, $FF51
-    Data.c $FF32, $FF52
-    Data.c $FF33, $FF53
-    Data.c $FF34, $FF54
-    Data.c $FF35, $FF55
-    Data.c $FF36, $FF56
-    Data.c $FF37, $FF57
-    Data.c $FF38, $FF58
-    Data.c $FF39, $FF59
-    Data.c $FF3A, $FF5A
-    Data.c $0000, $0000
+  
+    DataSection
+    ; Code, Upper, Lower, Title
+    CaseMapping:
+    Data.c $0041,$0041,$0061,$0041
+    Data.c $0042,$0042,$0062,$0042
+    Data.c $0043,$0043,$0063,$0043
+    Data.c $0044,$0044,$0064,$0044
+    Data.c $0045,$0045,$0065,$0045
+    Data.c $0046,$0046,$0066,$0046
+    Data.c $0047,$0047,$0067,$0047
+    Data.c $0048,$0048,$0068,$0048
+    Data.c $0049,$0049,$0069,$0049
+    Data.c $004A,$004A,$006A,$004A
+    Data.c $004B,$004B,$006B,$004B
+    Data.c $004C,$004C,$006C,$004C
+    Data.c $004D,$004D,$006D,$004D
+    Data.c $004E,$004E,$006E,$004E
+    Data.c $004F,$004F,$006F,$004F
+    Data.c $0050,$0050,$0070,$0050
+    Data.c $0051,$0051,$0071,$0051
+    Data.c $0052,$0052,$0072,$0052
+    Data.c $0053,$0053,$0073,$0053
+    Data.c $0054,$0054,$0074,$0054
+    Data.c $0055,$0055,$0075,$0055
+    Data.c $0056,$0056,$0076,$0056
+    Data.c $0057,$0057,$0077,$0057
+    Data.c $0058,$0058,$0078,$0058
+    Data.c $0059,$0059,$0079,$0059
+    Data.c $005A,$005A,$007A,$005A
+    Data.c $0061,$0041,$0061,$0041
+    Data.c $0062,$0042,$0062,$0042
+    Data.c $0063,$0043,$0063,$0043
+    Data.c $0064,$0044,$0064,$0044
+    Data.c $0065,$0045,$0065,$0045
+    Data.c $0066,$0046,$0066,$0046
+    Data.c $0067,$0047,$0067,$0047
+    Data.c $0068,$0048,$0068,$0048
+    Data.c $0069,$0049,$0069,$0049
+    Data.c $006A,$004A,$006A,$004A
+    Data.c $006B,$004B,$006B,$004B
+    Data.c $006C,$004C,$006C,$004C
+    Data.c $006D,$004D,$006D,$004D
+    Data.c $006E,$004E,$006E,$004E
+    Data.c $006F,$004F,$006F,$004F
+    Data.c $0070,$0050,$0070,$0050
+    Data.c $0071,$0051,$0071,$0051
+    Data.c $0072,$0052,$0072,$0052
+    Data.c $0073,$0053,$0073,$0053
+    Data.c $0074,$0054,$0074,$0054
+    Data.c $0075,$0055,$0075,$0055
+    Data.c $0076,$0056,$0076,$0056
+    Data.c $0077,$0057,$0077,$0057
+    Data.c $0078,$0058,$0078,$0058
+    Data.c $0079,$0059,$0079,$0059
+    Data.c $007A,$005A,$007A,$005A
+    Data.c $00B5,$039C,$00B5,$039C
+    Data.c $00C0,$00C0,$00E0,$00C0
+    Data.c $00C1,$00C1,$00E1,$00C1
+    Data.c $00C2,$00C2,$00E2,$00C2
+    Data.c $00C3,$00C3,$00E3,$00C3
+    Data.c $00C4,$00C4,$00E4,$00C4
+    Data.c $00C5,$00C5,$00E5,$00C5
+    Data.c $00C6,$00C6,$00E6,$00C6
+    Data.c $00C7,$00C7,$00E7,$00C7
+    Data.c $00C8,$00C8,$00E8,$00C8
+    Data.c $00C9,$00C9,$00E9,$00C9
+    Data.c $00CA,$00CA,$00EA,$00CA
+    Data.c $00CB,$00CB,$00EB,$00CB
+    Data.c $00CC,$00CC,$00EC,$00CC
+    Data.c $00CD,$00CD,$00ED,$00CD
+    Data.c $00CE,$00CE,$00EE,$00CE
+    Data.c $00CF,$00CF,$00EF,$00CF
+    Data.c $00D0,$00D0,$00F0,$00D0
+    Data.c $00D1,$00D1,$00F1,$00D1
+    Data.c $00D2,$00D2,$00F2,$00D2
+    Data.c $00D3,$00D3,$00F3,$00D3
+    Data.c $00D4,$00D4,$00F4,$00D4
+    Data.c $00D5,$00D5,$00F5,$00D5
+    Data.c $00D6,$00D6,$00F6,$00D6
+    Data.c $00D8,$00D8,$00F8,$00D8
+    Data.c $00D9,$00D9,$00F9,$00D9
+    Data.c $00DA,$00DA,$00FA,$00DA
+    Data.c $00DB,$00DB,$00FB,$00DB
+    Data.c $00DC,$00DC,$00FC,$00DC
+    Data.c $00DD,$00DD,$00FD,$00DD
+    Data.c $00DE,$00DE,$00FE,$00DE
+    Data.c $00E0,$00C0,$00E0,$00C0
+    Data.c $00E1,$00C1,$00E1,$00C1
+    Data.c $00E2,$00C2,$00E2,$00C2
+    Data.c $00E3,$00C3,$00E3,$00C3
+    Data.c $00E4,$00C4,$00E4,$00C4
+    Data.c $00E5,$00C5,$00E5,$00C5
+    Data.c $00E6,$00C6,$00E6,$00C6
+    Data.c $00E7,$00C7,$00E7,$00C7
+    Data.c $00E8,$00C8,$00E8,$00C8
+    Data.c $00E9,$00C9,$00E9,$00C9
+    Data.c $00EA,$00CA,$00EA,$00CA
+    Data.c $00EB,$00CB,$00EB,$00CB
+    Data.c $00EC,$00CC,$00EC,$00CC
+    Data.c $00ED,$00CD,$00ED,$00CD
+    Data.c $00EE,$00CE,$00EE,$00CE
+    Data.c $00EF,$00CF,$00EF,$00CF
+    Data.c $00F0,$00D0,$00F0,$00D0
+    Data.c $00F1,$00D1,$00F1,$00D1
+    Data.c $00F2,$00D2,$00F2,$00D2
+    Data.c $00F3,$00D3,$00F3,$00D3
+    Data.c $00F4,$00D4,$00F4,$00D4
+    Data.c $00F5,$00D5,$00F5,$00D5
+    Data.c $00F6,$00D6,$00F6,$00D6
+    Data.c $00F8,$00D8,$00F8,$00D8
+    Data.c $00F9,$00D9,$00F9,$00D9
+    Data.c $00FA,$00DA,$00FA,$00DA
+    Data.c $00FB,$00DB,$00FB,$00DB
+    Data.c $00FC,$00DC,$00FC,$00DC
+    Data.c $00FD,$00DD,$00FD,$00DD
+    Data.c $00FE,$00DE,$00FE,$00DE
+    Data.c $00FF,$0178,$00FF,$0178
+    Data.c $0100,$0100,$0101,$0100
+    Data.c $0101,$0100,$0101,$0100
+    Data.c $0102,$0102,$0103,$0102
+    Data.c $0103,$0102,$0103,$0102
+    Data.c $0104,$0104,$0105,$0104
+    Data.c $0105,$0104,$0105,$0104
+    Data.c $0106,$0106,$0107,$0106
+    Data.c $0107,$0106,$0107,$0106
+    Data.c $0108,$0108,$0109,$0108
+    Data.c $0109,$0108,$0109,$0108
+    Data.c $010A,$010A,$010B,$010A
+    Data.c $010B,$010A,$010B,$010A
+    Data.c $010C,$010C,$010D,$010C
+    Data.c $010D,$010C,$010D,$010C
+    Data.c $010E,$010E,$010F,$010E
+    Data.c $010F,$010E,$010F,$010E
+    Data.c $0110,$0110,$0111,$0110
+    Data.c $0111,$0110,$0111,$0110
+    Data.c $0112,$0112,$0113,$0112
+    Data.c $0113,$0112,$0113,$0112
+    Data.c $0114,$0114,$0115,$0114
+    Data.c $0115,$0114,$0115,$0114
+    Data.c $0116,$0116,$0117,$0116
+    Data.c $0117,$0116,$0117,$0116
+    Data.c $0118,$0118,$0119,$0118
+    Data.c $0119,$0118,$0119,$0118
+    Data.c $011A,$011A,$011B,$011A
+    Data.c $011B,$011A,$011B,$011A
+    Data.c $011C,$011C,$011D,$011C
+    Data.c $011D,$011C,$011D,$011C
+    Data.c $011E,$011E,$011F,$011E
+    Data.c $011F,$011E,$011F,$011E
+    Data.c $0120,$0120,$0121,$0120
+    Data.c $0121,$0120,$0121,$0120
+    Data.c $0122,$0122,$0123,$0122
+    Data.c $0123,$0122,$0123,$0122
+    Data.c $0124,$0124,$0125,$0124
+    Data.c $0125,$0124,$0125,$0124
+    Data.c $0126,$0126,$0127,$0126
+    Data.c $0127,$0126,$0127,$0126
+    Data.c $0128,$0128,$0129,$0128
+    Data.c $0129,$0128,$0129,$0128
+    Data.c $012A,$012A,$012B,$012A
+    Data.c $012B,$012A,$012B,$012A
+    Data.c $012C,$012C,$012D,$012C
+    Data.c $012D,$012C,$012D,$012C
+    Data.c $012E,$012E,$012F,$012E
+    Data.c $012F,$012E,$012F,$012E
+    Data.c $0130,$0130,$0069,$0130
+    Data.c $0131,$0049,$0131,$0049
+    Data.c $0132,$0132,$0133,$0132
+    Data.c $0133,$0132,$0133,$0132
+    Data.c $0134,$0134,$0135,$0134
+    Data.c $0135,$0134,$0135,$0134
+    Data.c $0136,$0136,$0137,$0136
+    Data.c $0137,$0136,$0137,$0136
+    Data.c $0139,$0139,$013A,$0139
+    Data.c $013A,$0139,$013A,$0139
+    Data.c $013B,$013B,$013C,$013B
+    Data.c $013C,$013B,$013C,$013B
+    Data.c $013D,$013D,$013E,$013D
+    Data.c $013E,$013D,$013E,$013D
+    Data.c $013F,$013F,$0140,$013F
+    Data.c $0140,$013F,$0140,$013F
+    Data.c $0141,$0141,$0142,$0141
+    Data.c $0142,$0141,$0142,$0141
+    Data.c $0143,$0143,$0144,$0143
+    Data.c $0144,$0143,$0144,$0143
+    Data.c $0145,$0145,$0146,$0145
+    Data.c $0146,$0145,$0146,$0145
+    Data.c $0147,$0147,$0148,$0147
+    Data.c $0148,$0147,$0148,$0147
+    Data.c $014A,$014A,$014B,$014A
+    Data.c $014B,$014A,$014B,$014A
+    Data.c $014C,$014C,$014D,$014C
+    Data.c $014D,$014C,$014D,$014C
+    Data.c $014E,$014E,$014F,$014E
+    Data.c $014F,$014E,$014F,$014E
+    Data.c $0150,$0150,$0151,$0150
+    Data.c $0151,$0150,$0151,$0150
+    Data.c $0152,$0152,$0153,$0152
+    Data.c $0153,$0152,$0153,$0152
+    Data.c $0154,$0154,$0155,$0154
+    Data.c $0155,$0154,$0155,$0154
+    Data.c $0156,$0156,$0157,$0156
+    Data.c $0157,$0156,$0157,$0156
+    Data.c $0158,$0158,$0159,$0158
+    Data.c $0159,$0158,$0159,$0158
+    Data.c $015A,$015A,$015B,$015A
+    Data.c $015B,$015A,$015B,$015A
+    Data.c $015C,$015C,$015D,$015C
+    Data.c $015D,$015C,$015D,$015C
+    Data.c $015E,$015E,$015F,$015E
+    Data.c $015F,$015E,$015F,$015E
+    Data.c $0160,$0160,$0161,$0160
+    Data.c $0161,$0160,$0161,$0160
+    Data.c $0162,$0162,$0163,$0162
+    Data.c $0163,$0162,$0163,$0162
+    Data.c $0164,$0164,$0165,$0164
+    Data.c $0165,$0164,$0165,$0164
+    Data.c $0166,$0166,$0167,$0166
+    Data.c $0167,$0166,$0167,$0166
+    Data.c $0168,$0168,$0169,$0168
+    Data.c $0169,$0168,$0169,$0168
+    Data.c $016A,$016A,$016B,$016A
+    Data.c $016B,$016A,$016B,$016A
+    Data.c $016C,$016C,$016D,$016C
+    Data.c $016D,$016C,$016D,$016C
+    Data.c $016E,$016E,$016F,$016E
+    Data.c $016F,$016E,$016F,$016E
+    Data.c $0170,$0170,$0171,$0170
+    Data.c $0171,$0170,$0171,$0170
+    Data.c $0172,$0172,$0173,$0172
+    Data.c $0173,$0172,$0173,$0172
+    Data.c $0174,$0174,$0175,$0174
+    Data.c $0175,$0174,$0175,$0174
+    Data.c $0176,$0176,$0177,$0176
+    Data.c $0177,$0176,$0177,$0176
+    Data.c $0178,$0178,$00FF,$0178
+    Data.c $0179,$0179,$017A,$0179
+    Data.c $017A,$0179,$017A,$0179
+    Data.c $017B,$017B,$017C,$017B
+    Data.c $017C,$017B,$017C,$017B
+    Data.c $017D,$017D,$017E,$017D
+    Data.c $017E,$017D,$017E,$017D
+    Data.c $017F,$0053,$017F,$0053
+    Data.c $0180,$0243,$0180,$0243
+    Data.c $0181,$0181,$0253,$0181
+    Data.c $0182,$0182,$0183,$0182
+    Data.c $0183,$0182,$0183,$0182
+    Data.c $0184,$0184,$0185,$0184
+    Data.c $0185,$0184,$0185,$0184
+    Data.c $0186,$0186,$0254,$0186
+    Data.c $0187,$0187,$0188,$0187
+    Data.c $0188,$0187,$0188,$0187
+    Data.c $0189,$0189,$0256,$0189
+    Data.c $018A,$018A,$0257,$018A
+    Data.c $018B,$018B,$018C,$018B
+    Data.c $018C,$018B,$018C,$018B
+    Data.c $018E,$018E,$01DD,$018E
+    Data.c $018F,$018F,$0259,$018F
+    Data.c $0190,$0190,$025B,$0190
+    Data.c $0191,$0191,$0192,$0191
+    Data.c $0192,$0191,$0192,$0191
+    Data.c $0193,$0193,$0260,$0193
+    Data.c $0194,$0194,$0263,$0194
+    Data.c $0195,$01F6,$0195,$01F6
+    Data.c $0196,$0196,$0269,$0196
+    Data.c $0197,$0197,$0268,$0197
+    Data.c $0198,$0198,$0199,$0198
+    Data.c $0199,$0198,$0199,$0198
+    Data.c $019A,$023D,$019A,$023D
+    Data.c $019C,$019C,$026F,$019C
+    Data.c $019D,$019D,$0272,$019D
+    Data.c $019E,$0220,$019E,$0220
+    Data.c $019F,$019F,$0275,$019F
+    Data.c $01A0,$01A0,$01A1,$01A0
+    Data.c $01A1,$01A0,$01A1,$01A0
+    Data.c $01A2,$01A2,$01A3,$01A2
+    Data.c $01A3,$01A2,$01A3,$01A2
+    Data.c $01A4,$01A4,$01A5,$01A4
+    Data.c $01A5,$01A4,$01A5,$01A4
+    Data.c $01A6,$01A6,$0280,$01A6
+    Data.c $01A7,$01A7,$01A8,$01A7
+    Data.c $01A8,$01A7,$01A8,$01A7
+    Data.c $01A9,$01A9,$0283,$01A9
+    Data.c $01AC,$01AC,$01AD,$01AC
+    Data.c $01AD,$01AC,$01AD,$01AC
+    Data.c $01AE,$01AE,$0288,$01AE
+    Data.c $01AF,$01AF,$01B0,$01AF
+    Data.c $01B0,$01AF,$01B0,$01AF
+    Data.c $01B1,$01B1,$028A,$01B1
+    Data.c $01B2,$01B2,$028B,$01B2
+    Data.c $01B3,$01B3,$01B4,$01B3
+    Data.c $01B4,$01B3,$01B4,$01B3
+    Data.c $01B5,$01B5,$01B6,$01B5
+    Data.c $01B6,$01B5,$01B6,$01B5
+    Data.c $01B7,$01B7,$0292,$01B7
+    Data.c $01B8,$01B8,$01B9,$01B8
+    Data.c $01B9,$01B8,$01B9,$01B8
+    Data.c $01BC,$01BC,$01BD,$01BC
+    Data.c $01BD,$01BC,$01BD,$01BC
+    Data.c $01BF,$01F7,$01BF,$01F7
+    Data.c $01C4,$01C4,$01C6,$01C5
+    Data.c $01C5,$01C4,$01C6,$01C5
+    Data.c $01C6,$01C4,$01C6,$01C5
+    Data.c $01C7,$01C7,$01C9,$01C8
+    Data.c $01C8,$01C7,$01C9,$01C8
+    Data.c $01C9,$01C7,$01C9,$01C8
+    Data.c $01CA,$01CA,$01CC,$01CB
+    Data.c $01CB,$01CA,$01CC,$01CB
+    Data.c $01CC,$01CA,$01CC,$01CB
+    Data.c $01CD,$01CD,$01CE,$01CD
+    Data.c $01CE,$01CD,$01CE,$01CD
+    Data.c $01CF,$01CF,$01D0,$01CF
+    Data.c $01D0,$01CF,$01D0,$01CF
+    Data.c $01D1,$01D1,$01D2,$01D1
+    Data.c $01D2,$01D1,$01D2,$01D1
+    Data.c $01D3,$01D3,$01D4,$01D3
+    Data.c $01D4,$01D3,$01D4,$01D3
+    Data.c $01D5,$01D5,$01D6,$01D5
+    Data.c $01D6,$01D5,$01D6,$01D5
+    Data.c $01D7,$01D7,$01D8,$01D7
+    Data.c $01D8,$01D7,$01D8,$01D7
+    Data.c $01D9,$01D9,$01DA,$01D9
+    Data.c $01DA,$01D9,$01DA,$01D9
+    Data.c $01DB,$01DB,$01DC,$01DB
+    Data.c $01DC,$01DB,$01DC,$01DB
+    Data.c $01DD,$018E,$01DD,$018E
+    Data.c $01DE,$01DE,$01DF,$01DE
+    Data.c $01DF,$01DE,$01DF,$01DE
+    Data.c $01E0,$01E0,$01E1,$01E0
+    Data.c $01E1,$01E0,$01E1,$01E0
+    Data.c $01E2,$01E2,$01E3,$01E2
+    Data.c $01E3,$01E2,$01E3,$01E2
+    Data.c $01E4,$01E4,$01E5,$01E4
+    Data.c $01E5,$01E4,$01E5,$01E4
+    Data.c $01E6,$01E6,$01E7,$01E6
+    Data.c $01E7,$01E6,$01E7,$01E6
+    Data.c $01E8,$01E8,$01E9,$01E8
+    Data.c $01E9,$01E8,$01E9,$01E8
+    Data.c $01EA,$01EA,$01EB,$01EA
+    Data.c $01EB,$01EA,$01EB,$01EA
+    Data.c $01EC,$01EC,$01ED,$01EC
+    Data.c $01ED,$01EC,$01ED,$01EC
+    Data.c $01EE,$01EE,$01EF,$01EE
+    Data.c $01EF,$01EE,$01EF,$01EE
+    Data.c $01F1,$01F1,$01F3,$01F2
+    Data.c $01F2,$01F1,$01F3,$01F2
+    Data.c $01F3,$01F1,$01F3,$01F2
+    Data.c $01F4,$01F4,$01F5,$01F4
+    Data.c $01F5,$01F4,$01F5,$01F4
+    Data.c $01F6,$01F6,$0195,$01F6
+    Data.c $01F7,$01F7,$01BF,$01F7
+    Data.c $01F8,$01F8,$01F9,$01F8
+    Data.c $01F9,$01F8,$01F9,$01F8
+    Data.c $01FA,$01FA,$01FB,$01FA
+    Data.c $01FB,$01FA,$01FB,$01FA
+    Data.c $01FC,$01FC,$01FD,$01FC
+    Data.c $01FD,$01FC,$01FD,$01FC
+    Data.c $01FE,$01FE,$01FF,$01FE
+    Data.c $01FF,$01FE,$01FF,$01FE
+    Data.c $0200,$0200,$0201,$0200
+    Data.c $0201,$0200,$0201,$0200
+    Data.c $0202,$0202,$0203,$0202
+    Data.c $0203,$0202,$0203,$0202
+    Data.c $0204,$0204,$0205,$0204
+    Data.c $0205,$0204,$0205,$0204
+    Data.c $0206,$0206,$0207,$0206
+    Data.c $0207,$0206,$0207,$0206
+    Data.c $0208,$0208,$0209,$0208
+    Data.c $0209,$0208,$0209,$0208
+    Data.c $020A,$020A,$020B,$020A
+    Data.c $020B,$020A,$020B,$020A
+    Data.c $020C,$020C,$020D,$020C
+    Data.c $020D,$020C,$020D,$020C
+    Data.c $020E,$020E,$020F,$020E
+    Data.c $020F,$020E,$020F,$020E
+    Data.c $0210,$0210,$0211,$0210
+    Data.c $0211,$0210,$0211,$0210
+    Data.c $0212,$0212,$0213,$0212
+    Data.c $0213,$0212,$0213,$0212
+    Data.c $0214,$0214,$0215,$0214
+    Data.c $0215,$0214,$0215,$0214
+    Data.c $0216,$0216,$0217,$0216
+    Data.c $0217,$0216,$0217,$0216
+    Data.c $0218,$0218,$0219,$0218
+    Data.c $0219,$0218,$0219,$0218
+    Data.c $021A,$021A,$021B,$021A
+    Data.c $021B,$021A,$021B,$021A
+    Data.c $021C,$021C,$021D,$021C
+    Data.c $021D,$021C,$021D,$021C
+    Data.c $021E,$021E,$021F,$021E
+    Data.c $021F,$021E,$021F,$021E
+    Data.c $0220,$0220,$019E,$0220
+    Data.c $0222,$0222,$0223,$0222
+    Data.c $0223,$0222,$0223,$0222
+    Data.c $0224,$0224,$0225,$0224
+    Data.c $0225,$0224,$0225,$0224
+    Data.c $0226,$0226,$0227,$0226
+    Data.c $0227,$0226,$0227,$0226
+    Data.c $0228,$0228,$0229,$0228
+    Data.c $0229,$0228,$0229,$0228
+    Data.c $022A,$022A,$022B,$022A
+    Data.c $022B,$022A,$022B,$022A
+    Data.c $022C,$022C,$022D,$022C
+    Data.c $022D,$022C,$022D,$022C
+    Data.c $022E,$022E,$022F,$022E
+    Data.c $022F,$022E,$022F,$022E
+    Data.c $0230,$0230,$0231,$0230
+    Data.c $0231,$0230,$0231,$0230
+    Data.c $0232,$0232,$0233,$0232
+    Data.c $0233,$0232,$0233,$0232
+    Data.c $023A,$023A,$2C65,$023A
+    Data.c $023B,$023B,$023C,$023B
+    Data.c $023C,$023B,$023C,$023B
+    Data.c $023D,$023D,$019A,$023D
+    Data.c $023E,$023E,$2C66,$023E
+    Data.c $023F,$2C7E,$023F,$2C7E
+    Data.c $0240,$2C7F,$0240,$2C7F
+    Data.c $0241,$0241,$0242,$0241
+    Data.c $0242,$0241,$0242,$0241
+    Data.c $0243,$0243,$0180,$0243
+    Data.c $0244,$0244,$0289,$0244
+    Data.c $0245,$0245,$028C,$0245
+    Data.c $0246,$0246,$0247,$0246
+    Data.c $0247,$0246,$0247,$0246
+    Data.c $0248,$0248,$0249,$0248
+    Data.c $0249,$0248,$0249,$0248
+    Data.c $024A,$024A,$024B,$024A
+    Data.c $024B,$024A,$024B,$024A
+    Data.c $024C,$024C,$024D,$024C
+    Data.c $024D,$024C,$024D,$024C
+    Data.c $024E,$024E,$024F,$024E
+    Data.c $024F,$024E,$024F,$024E
+    Data.c $0250,$2C6F,$0250,$2C6F
+    Data.c $0251,$2C6D,$0251,$2C6D
+    Data.c $0252,$2C70,$0252,$2C70
+    Data.c $0253,$0181,$0253,$0181
+    Data.c $0254,$0186,$0254,$0186
+    Data.c $0256,$0189,$0256,$0189
+    Data.c $0257,$018A,$0257,$018A
+    Data.c $0259,$018F,$0259,$018F
+    Data.c $025B,$0190,$025B,$0190
+    Data.c $025C,$A7AB,$025C,$A7AB
+    Data.c $0260,$0193,$0260,$0193
+    Data.c $0261,$A7AC,$0261,$A7AC
+    Data.c $0263,$0194,$0263,$0194
+    Data.c $0265,$A78D,$0265,$A78D
+    Data.c $0266,$A7AA,$0266,$A7AA
+    Data.c $0268,$0197,$0268,$0197
+    Data.c $0269,$0196,$0269,$0196
+    Data.c $026A,$A7AE,$026A,$A7AE
+    Data.c $026B,$2C62,$026B,$2C62
+    Data.c $026C,$A7AD,$026C,$A7AD
+    Data.c $026F,$019C,$026F,$019C
+    Data.c $0271,$2C6E,$0271,$2C6E
+    Data.c $0272,$019D,$0272,$019D
+    Data.c $0275,$019F,$0275,$019F
+    Data.c $027D,$2C64,$027D,$2C64
+    Data.c $0280,$01A6,$0280,$01A6
+    Data.c $0282,$A7C5,$0282,$A7C5
+    Data.c $0283,$01A9,$0283,$01A9
+    Data.c $0287,$A7B1,$0287,$A7B1
+    Data.c $0288,$01AE,$0288,$01AE
+    Data.c $0289,$0244,$0289,$0244
+    Data.c $028A,$01B1,$028A,$01B1
+    Data.c $028B,$01B2,$028B,$01B2
+    Data.c $028C,$0245,$028C,$0245
+    Data.c $0292,$01B7,$0292,$01B7
+    Data.c $029D,$A7B2,$029D,$A7B2
+    Data.c $029E,$A7B0,$029E,$A7B0
+    Data.c $0345,$0399,$0345,$0399
+    Data.c $0370,$0370,$0371,$0370
+    Data.c $0371,$0370,$0371,$0370
+    Data.c $0372,$0372,$0373,$0372
+    Data.c $0373,$0372,$0373,$0372
+    Data.c $0376,$0376,$0377,$0376
+    Data.c $0377,$0376,$0377,$0376
+    Data.c $037B,$03FD,$037B,$03FD
+    Data.c $037C,$03FE,$037C,$03FE
+    Data.c $037D,$03FF,$037D,$03FF
+    Data.c $037F,$037F,$03F3,$037F
+    Data.c $0386,$0386,$03AC,$0386
+    Data.c $0388,$0388,$03AD,$0388
+    Data.c $0389,$0389,$03AE,$0389
+    Data.c $038A,$038A,$03AF,$038A
+    Data.c $038C,$038C,$03CC,$038C
+    Data.c $038E,$038E,$03CD,$038E
+    Data.c $038F,$038F,$03CE,$038F
+    Data.c $0391,$0391,$03B1,$0391
+    Data.c $0392,$0392,$03B2,$0392
+    Data.c $0393,$0393,$03B3,$0393
+    Data.c $0394,$0394,$03B4,$0394
+    Data.c $0395,$0395,$03B5,$0395
+    Data.c $0396,$0396,$03B6,$0396
+    Data.c $0397,$0397,$03B7,$0397
+    Data.c $0398,$0398,$03B8,$0398
+    Data.c $0399,$0399,$03B9,$0399
+    Data.c $039A,$039A,$03BA,$039A
+    Data.c $039B,$039B,$03BB,$039B
+    Data.c $039C,$039C,$03BC,$039C
+    Data.c $039D,$039D,$03BD,$039D
+    Data.c $039E,$039E,$03BE,$039E
+    Data.c $039F,$039F,$03BF,$039F
+    Data.c $03A0,$03A0,$03C0,$03A0
+    Data.c $03A1,$03A1,$03C1,$03A1
+    Data.c $03A3,$03A3,$03C3,$03A3
+    Data.c $03A4,$03A4,$03C4,$03A4
+    Data.c $03A5,$03A5,$03C5,$03A5
+    Data.c $03A6,$03A6,$03C6,$03A6
+    Data.c $03A7,$03A7,$03C7,$03A7
+    Data.c $03A8,$03A8,$03C8,$03A8
+    Data.c $03A9,$03A9,$03C9,$03A9
+    Data.c $03AA,$03AA,$03CA,$03AA
+    Data.c $03AB,$03AB,$03CB,$03AB
+    Data.c $03AC,$0386,$03AC,$0386
+    Data.c $03AD,$0388,$03AD,$0388
+    Data.c $03AE,$0389,$03AE,$0389
+    Data.c $03AF,$038A,$03AF,$038A
+    Data.c $03B1,$0391,$03B1,$0391
+    Data.c $03B2,$0392,$03B2,$0392
+    Data.c $03B3,$0393,$03B3,$0393
+    Data.c $03B4,$0394,$03B4,$0394
+    Data.c $03B5,$0395,$03B5,$0395
+    Data.c $03B6,$0396,$03B6,$0396
+    Data.c $03B7,$0397,$03B7,$0397
+    Data.c $03B8,$0398,$03B8,$0398
+    Data.c $03B9,$0399,$03B9,$0399
+    Data.c $03BA,$039A,$03BA,$039A
+    Data.c $03BB,$039B,$03BB,$039B
+    Data.c $03BC,$039C,$03BC,$039C
+    Data.c $03BD,$039D,$03BD,$039D
+    Data.c $03BE,$039E,$03BE,$039E
+    Data.c $03BF,$039F,$03BF,$039F
+    Data.c $03C0,$03A0,$03C0,$03A0
+    Data.c $03C1,$03A1,$03C1,$03A1
+    Data.c $03C2,$03A3,$03C2,$03A3
+    Data.c $03C3,$03A3,$03C3,$03A3
+    Data.c $03C4,$03A4,$03C4,$03A4
+    Data.c $03C5,$03A5,$03C5,$03A5
+    Data.c $03C6,$03A6,$03C6,$03A6
+    Data.c $03C7,$03A7,$03C7,$03A7
+    Data.c $03C8,$03A8,$03C8,$03A8
+    Data.c $03C9,$03A9,$03C9,$03A9
+    Data.c $03CA,$03AA,$03CA,$03AA
+    Data.c $03CB,$03AB,$03CB,$03AB
+    Data.c $03CC,$038C,$03CC,$038C
+    Data.c $03CD,$038E,$03CD,$038E
+    Data.c $03CE,$038F,$03CE,$038F
+    Data.c $03CF,$03CF,$03D7,$03CF
+    Data.c $03D0,$0392,$03D0,$0392
+    Data.c $03D1,$0398,$03D1,$0398
+    Data.c $03D5,$03A6,$03D5,$03A6
+    Data.c $03D6,$03A0,$03D6,$03A0
+    Data.c $03D7,$03CF,$03D7,$03CF
+    Data.c $03D8,$03D8,$03D9,$03D8
+    Data.c $03D9,$03D8,$03D9,$03D8
+    Data.c $03DA,$03DA,$03DB,$03DA
+    Data.c $03DB,$03DA,$03DB,$03DA
+    Data.c $03DC,$03DC,$03DD,$03DC
+    Data.c $03DD,$03DC,$03DD,$03DC
+    Data.c $03DE,$03DE,$03DF,$03DE
+    Data.c $03DF,$03DE,$03DF,$03DE
+    Data.c $03E0,$03E0,$03E1,$03E0
+    Data.c $03E1,$03E0,$03E1,$03E0
+    Data.c $03E2,$03E2,$03E3,$03E2
+    Data.c $03E3,$03E2,$03E3,$03E2
+    Data.c $03E4,$03E4,$03E5,$03E4
+    Data.c $03E5,$03E4,$03E5,$03E4
+    Data.c $03E6,$03E6,$03E7,$03E6
+    Data.c $03E7,$03E6,$03E7,$03E6
+    Data.c $03E8,$03E8,$03E9,$03E8
+    Data.c $03E9,$03E8,$03E9,$03E8
+    Data.c $03EA,$03EA,$03EB,$03EA
+    Data.c $03EB,$03EA,$03EB,$03EA
+    Data.c $03EC,$03EC,$03ED,$03EC
+    Data.c $03ED,$03EC,$03ED,$03EC
+    Data.c $03EE,$03EE,$03EF,$03EE
+    Data.c $03EF,$03EE,$03EF,$03EE
+    Data.c $03F0,$039A,$03F0,$039A
+    Data.c $03F1,$03A1,$03F1,$03A1
+    Data.c $03F2,$03F9,$03F2,$03F9
+    Data.c $03F3,$037F,$03F3,$037F
+    Data.c $03F4,$03F4,$03B8,$03F4
+    Data.c $03F5,$0395,$03F5,$0395
+    Data.c $03F7,$03F7,$03F8,$03F7
+    Data.c $03F8,$03F7,$03F8,$03F7
+    Data.c $03F9,$03F9,$03F2,$03F9
+    Data.c $03FA,$03FA,$03FB,$03FA
+    Data.c $03FB,$03FA,$03FB,$03FA
+    Data.c $03FD,$03FD,$037B,$03FD
+    Data.c $03FE,$03FE,$037C,$03FE
+    Data.c $03FF,$03FF,$037D,$03FF
+    Data.c $0400,$0400,$0450,$0400
+    Data.c $0401,$0401,$0451,$0401
+    Data.c $0402,$0402,$0452,$0402
+    Data.c $0403,$0403,$0453,$0403
+    Data.c $0404,$0404,$0454,$0404
+    Data.c $0405,$0405,$0455,$0405
+    Data.c $0406,$0406,$0456,$0406
+    Data.c $0407,$0407,$0457,$0407
+    Data.c $0408,$0408,$0458,$0408
+    Data.c $0409,$0409,$0459,$0409
+    Data.c $040A,$040A,$045A,$040A
+    Data.c $040B,$040B,$045B,$040B
+    Data.c $040C,$040C,$045C,$040C
+    Data.c $040D,$040D,$045D,$040D
+    Data.c $040E,$040E,$045E,$040E
+    Data.c $040F,$040F,$045F,$040F
+    Data.c $0410,$0410,$0430,$0410
+    Data.c $0411,$0411,$0431,$0411
+    Data.c $0412,$0412,$0432,$0412
+    Data.c $0413,$0413,$0433,$0413
+    Data.c $0414,$0414,$0434,$0414
+    Data.c $0415,$0415,$0435,$0415
+    Data.c $0416,$0416,$0436,$0416
+    Data.c $0417,$0417,$0437,$0417
+    Data.c $0418,$0418,$0438,$0418
+    Data.c $0419,$0419,$0439,$0419
+    Data.c $041A,$041A,$043A,$041A
+    Data.c $041B,$041B,$043B,$041B
+    Data.c $041C,$041C,$043C,$041C
+    Data.c $041D,$041D,$043D,$041D
+    Data.c $041E,$041E,$043E,$041E
+    Data.c $041F,$041F,$043F,$041F
+    Data.c $0420,$0420,$0440,$0420
+    Data.c $0421,$0421,$0441,$0421
+    Data.c $0422,$0422,$0442,$0422
+    Data.c $0423,$0423,$0443,$0423
+    Data.c $0424,$0424,$0444,$0424
+    Data.c $0425,$0425,$0445,$0425
+    Data.c $0426,$0426,$0446,$0426
+    Data.c $0427,$0427,$0447,$0427
+    Data.c $0428,$0428,$0448,$0428
+    Data.c $0429,$0429,$0449,$0429
+    Data.c $042A,$042A,$044A,$042A
+    Data.c $042B,$042B,$044B,$042B
+    Data.c $042C,$042C,$044C,$042C
+    Data.c $042D,$042D,$044D,$042D
+    Data.c $042E,$042E,$044E,$042E
+    Data.c $042F,$042F,$044F,$042F
+    Data.c $0430,$0410,$0430,$0410
+    Data.c $0431,$0411,$0431,$0411
+    Data.c $0432,$0412,$0432,$0412
+    Data.c $0433,$0413,$0433,$0413
+    Data.c $0434,$0414,$0434,$0414
+    Data.c $0435,$0415,$0435,$0415
+    Data.c $0436,$0416,$0436,$0416
+    Data.c $0437,$0417,$0437,$0417
+    Data.c $0438,$0418,$0438,$0418
+    Data.c $0439,$0419,$0439,$0419
+    Data.c $043A,$041A,$043A,$041A
+    Data.c $043B,$041B,$043B,$041B
+    Data.c $043C,$041C,$043C,$041C
+    Data.c $043D,$041D,$043D,$041D
+    Data.c $043E,$041E,$043E,$041E
+    Data.c $043F,$041F,$043F,$041F
+    Data.c $0440,$0420,$0440,$0420
+    Data.c $0441,$0421,$0441,$0421
+    Data.c $0442,$0422,$0442,$0422
+    Data.c $0443,$0423,$0443,$0423
+    Data.c $0444,$0424,$0444,$0424
+    Data.c $0445,$0425,$0445,$0425
+    Data.c $0446,$0426,$0446,$0426
+    Data.c $0447,$0427,$0447,$0427
+    Data.c $0448,$0428,$0448,$0428
+    Data.c $0449,$0429,$0449,$0429
+    Data.c $044A,$042A,$044A,$042A
+    Data.c $044B,$042B,$044B,$042B
+    Data.c $044C,$042C,$044C,$042C
+    Data.c $044D,$042D,$044D,$042D
+    Data.c $044E,$042E,$044E,$042E
+    Data.c $044F,$042F,$044F,$042F
+    Data.c $0450,$0400,$0450,$0400
+    Data.c $0451,$0401,$0451,$0401
+    Data.c $0452,$0402,$0452,$0402
+    Data.c $0453,$0403,$0453,$0403
+    Data.c $0454,$0404,$0454,$0404
+    Data.c $0455,$0405,$0455,$0405
+    Data.c $0456,$0406,$0456,$0406
+    Data.c $0457,$0407,$0457,$0407
+    Data.c $0458,$0408,$0458,$0408
+    Data.c $0459,$0409,$0459,$0409
+    Data.c $045A,$040A,$045A,$040A
+    Data.c $045B,$040B,$045B,$040B
+    Data.c $045C,$040C,$045C,$040C
+    Data.c $045D,$040D,$045D,$040D
+    Data.c $045E,$040E,$045E,$040E
+    Data.c $045F,$040F,$045F,$040F
+    Data.c $0460,$0460,$0461,$0460
+    Data.c $0461,$0460,$0461,$0460
+    Data.c $0462,$0462,$0463,$0462
+    Data.c $0463,$0462,$0463,$0462
+    Data.c $0464,$0464,$0465,$0464
+    Data.c $0465,$0464,$0465,$0464
+    Data.c $0466,$0466,$0467,$0466
+    Data.c $0467,$0466,$0467,$0466
+    Data.c $0468,$0468,$0469,$0468
+    Data.c $0469,$0468,$0469,$0468
+    Data.c $046A,$046A,$046B,$046A
+    Data.c $046B,$046A,$046B,$046A
+    Data.c $046C,$046C,$046D,$046C
+    Data.c $046D,$046C,$046D,$046C
+    Data.c $046E,$046E,$046F,$046E
+    Data.c $046F,$046E,$046F,$046E
+    Data.c $0470,$0470,$0471,$0470
+    Data.c $0471,$0470,$0471,$0470
+    Data.c $0472,$0472,$0473,$0472
+    Data.c $0473,$0472,$0473,$0472
+    Data.c $0474,$0474,$0475,$0474
+    Data.c $0475,$0474,$0475,$0474
+    Data.c $0476,$0476,$0477,$0476
+    Data.c $0477,$0476,$0477,$0476
+    Data.c $0478,$0478,$0479,$0478
+    Data.c $0479,$0478,$0479,$0478
+    Data.c $047A,$047A,$047B,$047A
+    Data.c $047B,$047A,$047B,$047A
+    Data.c $047C,$047C,$047D,$047C
+    Data.c $047D,$047C,$047D,$047C
+    Data.c $047E,$047E,$047F,$047E
+    Data.c $047F,$047E,$047F,$047E
+    Data.c $0480,$0480,$0481,$0480
+    Data.c $0481,$0480,$0481,$0480
+    Data.c $048A,$048A,$048B,$048A
+    Data.c $048B,$048A,$048B,$048A
+    Data.c $048C,$048C,$048D,$048C
+    Data.c $048D,$048C,$048D,$048C
+    Data.c $048E,$048E,$048F,$048E
+    Data.c $048F,$048E,$048F,$048E
+    Data.c $0490,$0490,$0491,$0490
+    Data.c $0491,$0490,$0491,$0490
+    Data.c $0492,$0492,$0493,$0492
+    Data.c $0493,$0492,$0493,$0492
+    Data.c $0494,$0494,$0495,$0494
+    Data.c $0495,$0494,$0495,$0494
+    Data.c $0496,$0496,$0497,$0496
+    Data.c $0497,$0496,$0497,$0496
+    Data.c $0498,$0498,$0499,$0498
+    Data.c $0499,$0498,$0499,$0498
+    Data.c $049A,$049A,$049B,$049A
+    Data.c $049B,$049A,$049B,$049A
+    Data.c $049C,$049C,$049D,$049C
+    Data.c $049D,$049C,$049D,$049C
+    Data.c $049E,$049E,$049F,$049E
+    Data.c $049F,$049E,$049F,$049E
+    Data.c $04A0,$04A0,$04A1,$04A0
+    Data.c $04A1,$04A0,$04A1,$04A0
+    Data.c $04A2,$04A2,$04A3,$04A2
+    Data.c $04A3,$04A2,$04A3,$04A2
+    Data.c $04A4,$04A4,$04A5,$04A4
+    Data.c $04A5,$04A4,$04A5,$04A4
+    Data.c $04A6,$04A6,$04A7,$04A6
+    Data.c $04A7,$04A6,$04A7,$04A6
+    Data.c $04A8,$04A8,$04A9,$04A8
+    Data.c $04A9,$04A8,$04A9,$04A8
+    Data.c $04AA,$04AA,$04AB,$04AA
+    Data.c $04AB,$04AA,$04AB,$04AA
+    Data.c $04AC,$04AC,$04AD,$04AC
+    Data.c $04AD,$04AC,$04AD,$04AC
+    Data.c $04AE,$04AE,$04AF,$04AE
+    Data.c $04AF,$04AE,$04AF,$04AE
+    Data.c $04B0,$04B0,$04B1,$04B0
+    Data.c $04B1,$04B0,$04B1,$04B0
+    Data.c $04B2,$04B2,$04B3,$04B2
+    Data.c $04B3,$04B2,$04B3,$04B2
+    Data.c $04B4,$04B4,$04B5,$04B4
+    Data.c $04B5,$04B4,$04B5,$04B4
+    Data.c $04B6,$04B6,$04B7,$04B6
+    Data.c $04B7,$04B6,$04B7,$04B6
+    Data.c $04B8,$04B8,$04B9,$04B8
+    Data.c $04B9,$04B8,$04B9,$04B8
+    Data.c $04BA,$04BA,$04BB,$04BA
+    Data.c $04BB,$04BA,$04BB,$04BA
+    Data.c $04BC,$04BC,$04BD,$04BC
+    Data.c $04BD,$04BC,$04BD,$04BC
+    Data.c $04BE,$04BE,$04BF,$04BE
+    Data.c $04BF,$04BE,$04BF,$04BE
+    Data.c $04C0,$04C0,$04CF,$04C0
+    Data.c $04C1,$04C1,$04C2,$04C1
+    Data.c $04C2,$04C1,$04C2,$04C1
+    Data.c $04C3,$04C3,$04C4,$04C3
+    Data.c $04C4,$04C3,$04C4,$04C3
+    Data.c $04C5,$04C5,$04C6,$04C5
+    Data.c $04C6,$04C5,$04C6,$04C5
+    Data.c $04C7,$04C7,$04C8,$04C7
+    Data.c $04C8,$04C7,$04C8,$04C7
+    Data.c $04C9,$04C9,$04CA,$04C9
+    Data.c $04CA,$04C9,$04CA,$04C9
+    Data.c $04CB,$04CB,$04CC,$04CB
+    Data.c $04CC,$04CB,$04CC,$04CB
+    Data.c $04CD,$04CD,$04CE,$04CD
+    Data.c $04CE,$04CD,$04CE,$04CD
+    Data.c $04CF,$04C0,$04CF,$04C0
+    Data.c $04D0,$04D0,$04D1,$04D0
+    Data.c $04D1,$04D0,$04D1,$04D0
+    Data.c $04D2,$04D2,$04D3,$04D2
+    Data.c $04D3,$04D2,$04D3,$04D2
+    Data.c $04D4,$04D4,$04D5,$04D4
+    Data.c $04D5,$04D4,$04D5,$04D4
+    Data.c $04D6,$04D6,$04D7,$04D6
+    Data.c $04D7,$04D6,$04D7,$04D6
+    Data.c $04D8,$04D8,$04D9,$04D8
+    Data.c $04D9,$04D8,$04D9,$04D8
+    Data.c $04DA,$04DA,$04DB,$04DA
+    Data.c $04DB,$04DA,$04DB,$04DA
+    Data.c $04DC,$04DC,$04DD,$04DC
+    Data.c $04DD,$04DC,$04DD,$04DC
+    Data.c $04DE,$04DE,$04DF,$04DE
+    Data.c $04DF,$04DE,$04DF,$04DE
+    Data.c $04E0,$04E0,$04E1,$04E0
+    Data.c $04E1,$04E0,$04E1,$04E0
+    Data.c $04E2,$04E2,$04E3,$04E2
+    Data.c $04E3,$04E2,$04E3,$04E2
+    Data.c $04E4,$04E4,$04E5,$04E4
+    Data.c $04E5,$04E4,$04E5,$04E4
+    Data.c $04E6,$04E6,$04E7,$04E6
+    Data.c $04E7,$04E6,$04E7,$04E6
+    Data.c $04E8,$04E8,$04E9,$04E8
+    Data.c $04E9,$04E8,$04E9,$04E8
+    Data.c $04EA,$04EA,$04EB,$04EA
+    Data.c $04EB,$04EA,$04EB,$04EA
+    Data.c $04EC,$04EC,$04ED,$04EC
+    Data.c $04ED,$04EC,$04ED,$04EC
+    Data.c $04EE,$04EE,$04EF,$04EE
+    Data.c $04EF,$04EE,$04EF,$04EE
+    Data.c $04F0,$04F0,$04F1,$04F0
+    Data.c $04F1,$04F0,$04F1,$04F0
+    Data.c $04F2,$04F2,$04F3,$04F2
+    Data.c $04F3,$04F2,$04F3,$04F2
+    Data.c $04F4,$04F4,$04F5,$04F4
+    Data.c $04F5,$04F4,$04F5,$04F4
+    Data.c $04F6,$04F6,$04F7,$04F6
+    Data.c $04F7,$04F6,$04F7,$04F6
+    Data.c $04F8,$04F8,$04F9,$04F8
+    Data.c $04F9,$04F8,$04F9,$04F8
+    Data.c $04FA,$04FA,$04FB,$04FA
+    Data.c $04FB,$04FA,$04FB,$04FA
+    Data.c $04FC,$04FC,$04FD,$04FC
+    Data.c $04FD,$04FC,$04FD,$04FC
+    Data.c $04FE,$04FE,$04FF,$04FE
+    Data.c $04FF,$04FE,$04FF,$04FE
+    Data.c $0500,$0500,$0501,$0500
+    Data.c $0501,$0500,$0501,$0500
+    Data.c $0502,$0502,$0503,$0502
+    Data.c $0503,$0502,$0503,$0502
+    Data.c $0504,$0504,$0505,$0504
+    Data.c $0505,$0504,$0505,$0504
+    Data.c $0506,$0506,$0507,$0506
+    Data.c $0507,$0506,$0507,$0506
+    Data.c $0508,$0508,$0509,$0508
+    Data.c $0509,$0508,$0509,$0508
+    Data.c $050A,$050A,$050B,$050A
+    Data.c $050B,$050A,$050B,$050A
+    Data.c $050C,$050C,$050D,$050C
+    Data.c $050D,$050C,$050D,$050C
+    Data.c $050E,$050E,$050F,$050E
+    Data.c $050F,$050E,$050F,$050E
+    Data.c $0510,$0510,$0511,$0510
+    Data.c $0511,$0510,$0511,$0510
+    Data.c $0512,$0512,$0513,$0512
+    Data.c $0513,$0512,$0513,$0512
+    Data.c $0514,$0514,$0515,$0514
+    Data.c $0515,$0514,$0515,$0514
+    Data.c $0516,$0516,$0517,$0516
+    Data.c $0517,$0516,$0517,$0516
+    Data.c $0518,$0518,$0519,$0518
+    Data.c $0519,$0518,$0519,$0518
+    Data.c $051A,$051A,$051B,$051A
+    Data.c $051B,$051A,$051B,$051A
+    Data.c $051C,$051C,$051D,$051C
+    Data.c $051D,$051C,$051D,$051C
+    Data.c $051E,$051E,$051F,$051E
+    Data.c $051F,$051E,$051F,$051E
+    Data.c $0520,$0520,$0521,$0520
+    Data.c $0521,$0520,$0521,$0520
+    Data.c $0522,$0522,$0523,$0522
+    Data.c $0523,$0522,$0523,$0522
+    Data.c $0524,$0524,$0525,$0524
+    Data.c $0525,$0524,$0525,$0524
+    Data.c $0526,$0526,$0527,$0526
+    Data.c $0527,$0526,$0527,$0526
+    Data.c $0528,$0528,$0529,$0528
+    Data.c $0529,$0528,$0529,$0528
+    Data.c $052A,$052A,$052B,$052A
+    Data.c $052B,$052A,$052B,$052A
+    Data.c $052C,$052C,$052D,$052C
+    Data.c $052D,$052C,$052D,$052C
+    Data.c $052E,$052E,$052F,$052E
+    Data.c $052F,$052E,$052F,$052E
+    Data.c $0531,$0531,$0561,$0531
+    Data.c $0532,$0532,$0562,$0532
+    Data.c $0533,$0533,$0563,$0533
+    Data.c $0534,$0534,$0564,$0534
+    Data.c $0535,$0535,$0565,$0535
+    Data.c $0536,$0536,$0566,$0536
+    Data.c $0537,$0537,$0567,$0537
+    Data.c $0538,$0538,$0568,$0538
+    Data.c $0539,$0539,$0569,$0539
+    Data.c $053A,$053A,$056A,$053A
+    Data.c $053B,$053B,$056B,$053B
+    Data.c $053C,$053C,$056C,$053C
+    Data.c $053D,$053D,$056D,$053D
+    Data.c $053E,$053E,$056E,$053E
+    Data.c $053F,$053F,$056F,$053F
+    Data.c $0540,$0540,$0570,$0540
+    Data.c $0541,$0541,$0571,$0541
+    Data.c $0542,$0542,$0572,$0542
+    Data.c $0543,$0543,$0573,$0543
+    Data.c $0544,$0544,$0574,$0544
+    Data.c $0545,$0545,$0575,$0545
+    Data.c $0546,$0546,$0576,$0546
+    Data.c $0547,$0547,$0577,$0547
+    Data.c $0548,$0548,$0578,$0548
+    Data.c $0549,$0549,$0579,$0549
+    Data.c $054A,$054A,$057A,$054A
+    Data.c $054B,$054B,$057B,$054B
+    Data.c $054C,$054C,$057C,$054C
+    Data.c $054D,$054D,$057D,$054D
+    Data.c $054E,$054E,$057E,$054E
+    Data.c $054F,$054F,$057F,$054F
+    Data.c $0550,$0550,$0580,$0550
+    Data.c $0551,$0551,$0581,$0551
+    Data.c $0552,$0552,$0582,$0552
+    Data.c $0553,$0553,$0583,$0553
+    Data.c $0554,$0554,$0584,$0554
+    Data.c $0555,$0555,$0585,$0555
+    Data.c $0556,$0556,$0586,$0556
+    Data.c $0561,$0531,$0561,$0531
+    Data.c $0562,$0532,$0562,$0532
+    Data.c $0563,$0533,$0563,$0533
+    Data.c $0564,$0534,$0564,$0534
+    Data.c $0565,$0535,$0565,$0535
+    Data.c $0566,$0536,$0566,$0536
+    Data.c $0567,$0537,$0567,$0537
+    Data.c $0568,$0538,$0568,$0538
+    Data.c $0569,$0539,$0569,$0539
+    Data.c $056A,$053A,$056A,$053A
+    Data.c $056B,$053B,$056B,$053B
+    Data.c $056C,$053C,$056C,$053C
+    Data.c $056D,$053D,$056D,$053D
+    Data.c $056E,$053E,$056E,$053E
+    Data.c $056F,$053F,$056F,$053F
+    Data.c $0570,$0540,$0570,$0540
+    Data.c $0571,$0541,$0571,$0541
+    Data.c $0572,$0542,$0572,$0542
+    Data.c $0573,$0543,$0573,$0543
+    Data.c $0574,$0544,$0574,$0544
+    Data.c $0575,$0545,$0575,$0545
+    Data.c $0576,$0546,$0576,$0546
+    Data.c $0577,$0547,$0577,$0547
+    Data.c $0578,$0548,$0578,$0548
+    Data.c $0579,$0549,$0579,$0549
+    Data.c $057A,$054A,$057A,$054A
+    Data.c $057B,$054B,$057B,$054B
+    Data.c $057C,$054C,$057C,$054C
+    Data.c $057D,$054D,$057D,$054D
+    Data.c $057E,$054E,$057E,$054E
+    Data.c $057F,$054F,$057F,$054F
+    Data.c $0580,$0550,$0580,$0550
+    Data.c $0581,$0551,$0581,$0551
+    Data.c $0582,$0552,$0582,$0552
+    Data.c $0583,$0553,$0583,$0553
+    Data.c $0584,$0554,$0584,$0554
+    Data.c $0585,$0555,$0585,$0555
+    Data.c $0586,$0556,$0586,$0556
+    Data.c $10A0,$10A0,$2D00,$10A0
+    Data.c $10A1,$10A1,$2D01,$10A1
+    Data.c $10A2,$10A2,$2D02,$10A2
+    Data.c $10A3,$10A3,$2D03,$10A3
+    Data.c $10A4,$10A4,$2D04,$10A4
+    Data.c $10A5,$10A5,$2D05,$10A5
+    Data.c $10A6,$10A6,$2D06,$10A6
+    Data.c $10A7,$10A7,$2D07,$10A7
+    Data.c $10A8,$10A8,$2D08,$10A8
+    Data.c $10A9,$10A9,$2D09,$10A9
+    Data.c $10AA,$10AA,$2D0A,$10AA
+    Data.c $10AB,$10AB,$2D0B,$10AB
+    Data.c $10AC,$10AC,$2D0C,$10AC
+    Data.c $10AD,$10AD,$2D0D,$10AD
+    Data.c $10AE,$10AE,$2D0E,$10AE
+    Data.c $10AF,$10AF,$2D0F,$10AF
+    Data.c $10B0,$10B0,$2D10,$10B0
+    Data.c $10B1,$10B1,$2D11,$10B1
+    Data.c $10B2,$10B2,$2D12,$10B2
+    Data.c $10B3,$10B3,$2D13,$10B3
+    Data.c $10B4,$10B4,$2D14,$10B4
+    Data.c $10B5,$10B5,$2D15,$10B5
+    Data.c $10B6,$10B6,$2D16,$10B6
+    Data.c $10B7,$10B7,$2D17,$10B7
+    Data.c $10B8,$10B8,$2D18,$10B8
+    Data.c $10B9,$10B9,$2D19,$10B9
+    Data.c $10BA,$10BA,$2D1A,$10BA
+    Data.c $10BB,$10BB,$2D1B,$10BB
+    Data.c $10BC,$10BC,$2D1C,$10BC
+    Data.c $10BD,$10BD,$2D1D,$10BD
+    Data.c $10BE,$10BE,$2D1E,$10BE
+    Data.c $10BF,$10BF,$2D1F,$10BF
+    Data.c $10C0,$10C0,$2D20,$10C0
+    Data.c $10C1,$10C1,$2D21,$10C1
+    Data.c $10C2,$10C2,$2D22,$10C2
+    Data.c $10C3,$10C3,$2D23,$10C3
+    Data.c $10C4,$10C4,$2D24,$10C4
+    Data.c $10C5,$10C5,$2D25,$10C5
+    Data.c $10C7,$10C7,$2D27,$10C7
+    Data.c $10CD,$10CD,$2D2D,$10CD
+    Data.c $10D0,$1C90,$10D0,$10D0
+    Data.c $10D1,$1C91,$10D1,$10D1
+    Data.c $10D2,$1C92,$10D2,$10D2
+    Data.c $10D3,$1C93,$10D3,$10D3
+    Data.c $10D4,$1C94,$10D4,$10D4
+    Data.c $10D5,$1C95,$10D5,$10D5
+    Data.c $10D6,$1C96,$10D6,$10D6
+    Data.c $10D7,$1C97,$10D7,$10D7
+    Data.c $10D8,$1C98,$10D8,$10D8
+    Data.c $10D9,$1C99,$10D9,$10D9
+    Data.c $10DA,$1C9A,$10DA,$10DA
+    Data.c $10DB,$1C9B,$10DB,$10DB
+    Data.c $10DC,$1C9C,$10DC,$10DC
+    Data.c $10DD,$1C9D,$10DD,$10DD
+    Data.c $10DE,$1C9E,$10DE,$10DE
+    Data.c $10DF,$1C9F,$10DF,$10DF
+    Data.c $10E0,$1CA0,$10E0,$10E0
+    Data.c $10E1,$1CA1,$10E1,$10E1
+    Data.c $10E2,$1CA2,$10E2,$10E2
+    Data.c $10E3,$1CA3,$10E3,$10E3
+    Data.c $10E4,$1CA4,$10E4,$10E4
+    Data.c $10E5,$1CA5,$10E5,$10E5
+    Data.c $10E6,$1CA6,$10E6,$10E6
+    Data.c $10E7,$1CA7,$10E7,$10E7
+    Data.c $10E8,$1CA8,$10E8,$10E8
+    Data.c $10E9,$1CA9,$10E9,$10E9
+    Data.c $10EA,$1CAA,$10EA,$10EA
+    Data.c $10EB,$1CAB,$10EB,$10EB
+    Data.c $10EC,$1CAC,$10EC,$10EC
+    Data.c $10ED,$1CAD,$10ED,$10ED
+    Data.c $10EE,$1CAE,$10EE,$10EE
+    Data.c $10EF,$1CAF,$10EF,$10EF
+    Data.c $10F0,$1CB0,$10F0,$10F0
+    Data.c $10F1,$1CB1,$10F1,$10F1
+    Data.c $10F2,$1CB2,$10F2,$10F2
+    Data.c $10F3,$1CB3,$10F3,$10F3
+    Data.c $10F4,$1CB4,$10F4,$10F4
+    Data.c $10F5,$1CB5,$10F5,$10F5
+    Data.c $10F6,$1CB6,$10F6,$10F6
+    Data.c $10F7,$1CB7,$10F7,$10F7
+    Data.c $10F8,$1CB8,$10F8,$10F8
+    Data.c $10F9,$1CB9,$10F9,$10F9
+    Data.c $10FA,$1CBA,$10FA,$10FA
+    Data.c $10FD,$1CBD,$10FD,$10FD
+    Data.c $10FE,$1CBE,$10FE,$10FE
+    Data.c $10FF,$1CBF,$10FF,$10FF
+    Data.c $13A0,$13A0,$AB70,$13A0
+    Data.c $13A1,$13A1,$AB71,$13A1
+    Data.c $13A2,$13A2,$AB72,$13A2
+    Data.c $13A3,$13A3,$AB73,$13A3
+    Data.c $13A4,$13A4,$AB74,$13A4
+    Data.c $13A5,$13A5,$AB75,$13A5
+    Data.c $13A6,$13A6,$AB76,$13A6
+    Data.c $13A7,$13A7,$AB77,$13A7
+    Data.c $13A8,$13A8,$AB78,$13A8
+    Data.c $13A9,$13A9,$AB79,$13A9
+    Data.c $13AA,$13AA,$AB7A,$13AA
+    Data.c $13AB,$13AB,$AB7B,$13AB
+    Data.c $13AC,$13AC,$AB7C,$13AC
+    Data.c $13AD,$13AD,$AB7D,$13AD
+    Data.c $13AE,$13AE,$AB7E,$13AE
+    Data.c $13AF,$13AF,$AB7F,$13AF
+    Data.c $13B0,$13B0,$AB80,$13B0
+    Data.c $13B1,$13B1,$AB81,$13B1
+    Data.c $13B2,$13B2,$AB82,$13B2
+    Data.c $13B3,$13B3,$AB83,$13B3
+    Data.c $13B4,$13B4,$AB84,$13B4
+    Data.c $13B5,$13B5,$AB85,$13B5
+    Data.c $13B6,$13B6,$AB86,$13B6
+    Data.c $13B7,$13B7,$AB87,$13B7
+    Data.c $13B8,$13B8,$AB88,$13B8
+    Data.c $13B9,$13B9,$AB89,$13B9
+    Data.c $13BA,$13BA,$AB8A,$13BA
+    Data.c $13BB,$13BB,$AB8B,$13BB
+    Data.c $13BC,$13BC,$AB8C,$13BC
+    Data.c $13BD,$13BD,$AB8D,$13BD
+    Data.c $13BE,$13BE,$AB8E,$13BE
+    Data.c $13BF,$13BF,$AB8F,$13BF
+    Data.c $13C0,$13C0,$AB90,$13C0
+    Data.c $13C1,$13C1,$AB91,$13C1
+    Data.c $13C2,$13C2,$AB92,$13C2
+    Data.c $13C3,$13C3,$AB93,$13C3
+    Data.c $13C4,$13C4,$AB94,$13C4
+    Data.c $13C5,$13C5,$AB95,$13C5
+    Data.c $13C6,$13C6,$AB96,$13C6
+    Data.c $13C7,$13C7,$AB97,$13C7
+    Data.c $13C8,$13C8,$AB98,$13C8
+    Data.c $13C9,$13C9,$AB99,$13C9
+    Data.c $13CA,$13CA,$AB9A,$13CA
+    Data.c $13CB,$13CB,$AB9B,$13CB
+    Data.c $13CC,$13CC,$AB9C,$13CC
+    Data.c $13CD,$13CD,$AB9D,$13CD
+    Data.c $13CE,$13CE,$AB9E,$13CE
+    Data.c $13CF,$13CF,$AB9F,$13CF
+    Data.c $13D0,$13D0,$ABA0,$13D0
+    Data.c $13D1,$13D1,$ABA1,$13D1
+    Data.c $13D2,$13D2,$ABA2,$13D2
+    Data.c $13D3,$13D3,$ABA3,$13D3
+    Data.c $13D4,$13D4,$ABA4,$13D4
+    Data.c $13D5,$13D5,$ABA5,$13D5
+    Data.c $13D6,$13D6,$ABA6,$13D6
+    Data.c $13D7,$13D7,$ABA7,$13D7
+    Data.c $13D8,$13D8,$ABA8,$13D8
+    Data.c $13D9,$13D9,$ABA9,$13D9
+    Data.c $13DA,$13DA,$ABAA,$13DA
+    Data.c $13DB,$13DB,$ABAB,$13DB
+    Data.c $13DC,$13DC,$ABAC,$13DC
+    Data.c $13DD,$13DD,$ABAD,$13DD
+    Data.c $13DE,$13DE,$ABAE,$13DE
+    Data.c $13DF,$13DF,$ABAF,$13DF
+    Data.c $13E0,$13E0,$ABB0,$13E0
+    Data.c $13E1,$13E1,$ABB1,$13E1
+    Data.c $13E2,$13E2,$ABB2,$13E2
+    Data.c $13E3,$13E3,$ABB3,$13E3
+    Data.c $13E4,$13E4,$ABB4,$13E4
+    Data.c $13E5,$13E5,$ABB5,$13E5
+    Data.c $13E6,$13E6,$ABB6,$13E6
+    Data.c $13E7,$13E7,$ABB7,$13E7
+    Data.c $13E8,$13E8,$ABB8,$13E8
+    Data.c $13E9,$13E9,$ABB9,$13E9
+    Data.c $13EA,$13EA,$ABBA,$13EA
+    Data.c $13EB,$13EB,$ABBB,$13EB
+    Data.c $13EC,$13EC,$ABBC,$13EC
+    Data.c $13ED,$13ED,$ABBD,$13ED
+    Data.c $13EE,$13EE,$ABBE,$13EE
+    Data.c $13EF,$13EF,$ABBF,$13EF
+    Data.c $13F0,$13F0,$13F8,$13F0
+    Data.c $13F1,$13F1,$13F9,$13F1
+    Data.c $13F2,$13F2,$13FA,$13F2
+    Data.c $13F3,$13F3,$13FB,$13F3
+    Data.c $13F4,$13F4,$13FC,$13F4
+    Data.c $13F5,$13F5,$13FD,$13F5
+    Data.c $13F8,$13F0,$13F8,$13F0
+    Data.c $13F9,$13F1,$13F9,$13F1
+    Data.c $13FA,$13F2,$13FA,$13F2
+    Data.c $13FB,$13F3,$13FB,$13F3
+    Data.c $13FC,$13F4,$13FC,$13F4
+    Data.c $13FD,$13F5,$13FD,$13F5
+    Data.c $1C80,$0412,$1C80,$0412
+    Data.c $1C81,$0414,$1C81,$0414
+    Data.c $1C82,$041E,$1C82,$041E
+    Data.c $1C83,$0421,$1C83,$0421
+    Data.c $1C84,$0422,$1C84,$0422
+    Data.c $1C85,$0422,$1C85,$0422
+    Data.c $1C86,$042A,$1C86,$042A
+    Data.c $1C87,$0462,$1C87,$0462
+    Data.c $1C88,$A64A,$1C88,$A64A
+    Data.c $1C90,$1C90,$10D0,$1C90
+    Data.c $1C91,$1C91,$10D1,$1C91
+    Data.c $1C92,$1C92,$10D2,$1C92
+    Data.c $1C93,$1C93,$10D3,$1C93
+    Data.c $1C94,$1C94,$10D4,$1C94
+    Data.c $1C95,$1C95,$10D5,$1C95
+    Data.c $1C96,$1C96,$10D6,$1C96
+    Data.c $1C97,$1C97,$10D7,$1C97
+    Data.c $1C98,$1C98,$10D8,$1C98
+    Data.c $1C99,$1C99,$10D9,$1C99
+    Data.c $1C9A,$1C9A,$10DA,$1C9A
+    Data.c $1C9B,$1C9B,$10DB,$1C9B
+    Data.c $1C9C,$1C9C,$10DC,$1C9C
+    Data.c $1C9D,$1C9D,$10DD,$1C9D
+    Data.c $1C9E,$1C9E,$10DE,$1C9E
+    Data.c $1C9F,$1C9F,$10DF,$1C9F
+    Data.c $1CA0,$1CA0,$10E0,$1CA0
+    Data.c $1CA1,$1CA1,$10E1,$1CA1
+    Data.c $1CA2,$1CA2,$10E2,$1CA2
+    Data.c $1CA3,$1CA3,$10E3,$1CA3
+    Data.c $1CA4,$1CA4,$10E4,$1CA4
+    Data.c $1CA5,$1CA5,$10E5,$1CA5
+    Data.c $1CA6,$1CA6,$10E6,$1CA6
+    Data.c $1CA7,$1CA7,$10E7,$1CA7
+    Data.c $1CA8,$1CA8,$10E8,$1CA8
+    Data.c $1CA9,$1CA9,$10E9,$1CA9
+    Data.c $1CAA,$1CAA,$10EA,$1CAA
+    Data.c $1CAB,$1CAB,$10EB,$1CAB
+    Data.c $1CAC,$1CAC,$10EC,$1CAC
+    Data.c $1CAD,$1CAD,$10ED,$1CAD
+    Data.c $1CAE,$1CAE,$10EE,$1CAE
+    Data.c $1CAF,$1CAF,$10EF,$1CAF
+    Data.c $1CB0,$1CB0,$10F0,$1CB0
+    Data.c $1CB1,$1CB1,$10F1,$1CB1
+    Data.c $1CB2,$1CB2,$10F2,$1CB2
+    Data.c $1CB3,$1CB3,$10F3,$1CB3
+    Data.c $1CB4,$1CB4,$10F4,$1CB4
+    Data.c $1CB5,$1CB5,$10F5,$1CB5
+    Data.c $1CB6,$1CB6,$10F6,$1CB6
+    Data.c $1CB7,$1CB7,$10F7,$1CB7
+    Data.c $1CB8,$1CB8,$10F8,$1CB8
+    Data.c $1CB9,$1CB9,$10F9,$1CB9
+    Data.c $1CBA,$1CBA,$10FA,$1CBA
+    Data.c $1CBD,$1CBD,$10FD,$1CBD
+    Data.c $1CBE,$1CBE,$10FE,$1CBE
+    Data.c $1CBF,$1CBF,$10FF,$1CBF
+    Data.c $1D79,$A77D,$1D79,$A77D
+    Data.c $1D7D,$2C63,$1D7D,$2C63
+    Data.c $1D8E,$A7C6,$1D8E,$A7C6
+    Data.c $1E00,$1E00,$1E01,$1E00
+    Data.c $1E01,$1E00,$1E01,$1E00
+    Data.c $1E02,$1E02,$1E03,$1E02
+    Data.c $1E03,$1E02,$1E03,$1E02
+    Data.c $1E04,$1E04,$1E05,$1E04
+    Data.c $1E05,$1E04,$1E05,$1E04
+    Data.c $1E06,$1E06,$1E07,$1E06
+    Data.c $1E07,$1E06,$1E07,$1E06
+    Data.c $1E08,$1E08,$1E09,$1E08
+    Data.c $1E09,$1E08,$1E09,$1E08
+    Data.c $1E0A,$1E0A,$1E0B,$1E0A
+    Data.c $1E0B,$1E0A,$1E0B,$1E0A
+    Data.c $1E0C,$1E0C,$1E0D,$1E0C
+    Data.c $1E0D,$1E0C,$1E0D,$1E0C
+    Data.c $1E0E,$1E0E,$1E0F,$1E0E
+    Data.c $1E0F,$1E0E,$1E0F,$1E0E
+    Data.c $1E10,$1E10,$1E11,$1E10
+    Data.c $1E11,$1E10,$1E11,$1E10
+    Data.c $1E12,$1E12,$1E13,$1E12
+    Data.c $1E13,$1E12,$1E13,$1E12
+    Data.c $1E14,$1E14,$1E15,$1E14
+    Data.c $1E15,$1E14,$1E15,$1E14
+    Data.c $1E16,$1E16,$1E17,$1E16
+    Data.c $1E17,$1E16,$1E17,$1E16
+    Data.c $1E18,$1E18,$1E19,$1E18
+    Data.c $1E19,$1E18,$1E19,$1E18
+    Data.c $1E1A,$1E1A,$1E1B,$1E1A
+    Data.c $1E1B,$1E1A,$1E1B,$1E1A
+    Data.c $1E1C,$1E1C,$1E1D,$1E1C
+    Data.c $1E1D,$1E1C,$1E1D,$1E1C
+    Data.c $1E1E,$1E1E,$1E1F,$1E1E
+    Data.c $1E1F,$1E1E,$1E1F,$1E1E
+    Data.c $1E20,$1E20,$1E21,$1E20
+    Data.c $1E21,$1E20,$1E21,$1E20
+    Data.c $1E22,$1E22,$1E23,$1E22
+    Data.c $1E23,$1E22,$1E23,$1E22
+    Data.c $1E24,$1E24,$1E25,$1E24
+    Data.c $1E25,$1E24,$1E25,$1E24
+    Data.c $1E26,$1E26,$1E27,$1E26
+    Data.c $1E27,$1E26,$1E27,$1E26
+    Data.c $1E28,$1E28,$1E29,$1E28
+    Data.c $1E29,$1E28,$1E29,$1E28
+    Data.c $1E2A,$1E2A,$1E2B,$1E2A
+    Data.c $1E2B,$1E2A,$1E2B,$1E2A
+    Data.c $1E2C,$1E2C,$1E2D,$1E2C
+    Data.c $1E2D,$1E2C,$1E2D,$1E2C
+    Data.c $1E2E,$1E2E,$1E2F,$1E2E
+    Data.c $1E2F,$1E2E,$1E2F,$1E2E
+    Data.c $1E30,$1E30,$1E31,$1E30
+    Data.c $1E31,$1E30,$1E31,$1E30
+    Data.c $1E32,$1E32,$1E33,$1E32
+    Data.c $1E33,$1E32,$1E33,$1E32
+    Data.c $1E34,$1E34,$1E35,$1E34
+    Data.c $1E35,$1E34,$1E35,$1E34
+    Data.c $1E36,$1E36,$1E37,$1E36
+    Data.c $1E37,$1E36,$1E37,$1E36
+    Data.c $1E38,$1E38,$1E39,$1E38
+    Data.c $1E39,$1E38,$1E39,$1E38
+    Data.c $1E3A,$1E3A,$1E3B,$1E3A
+    Data.c $1E3B,$1E3A,$1E3B,$1E3A
+    Data.c $1E3C,$1E3C,$1E3D,$1E3C
+    Data.c $1E3D,$1E3C,$1E3D,$1E3C
+    Data.c $1E3E,$1E3E,$1E3F,$1E3E
+    Data.c $1E3F,$1E3E,$1E3F,$1E3E
+    Data.c $1E40,$1E40,$1E41,$1E40
+    Data.c $1E41,$1E40,$1E41,$1E40
+    Data.c $1E42,$1E42,$1E43,$1E42
+    Data.c $1E43,$1E42,$1E43,$1E42
+    Data.c $1E44,$1E44,$1E45,$1E44
+    Data.c $1E45,$1E44,$1E45,$1E44
+    Data.c $1E46,$1E46,$1E47,$1E46
+    Data.c $1E47,$1E46,$1E47,$1E46
+    Data.c $1E48,$1E48,$1E49,$1E48
+    Data.c $1E49,$1E48,$1E49,$1E48
+    Data.c $1E4A,$1E4A,$1E4B,$1E4A
+    Data.c $1E4B,$1E4A,$1E4B,$1E4A
+    Data.c $1E4C,$1E4C,$1E4D,$1E4C
+    Data.c $1E4D,$1E4C,$1E4D,$1E4C
+    Data.c $1E4E,$1E4E,$1E4F,$1E4E
+    Data.c $1E4F,$1E4E,$1E4F,$1E4E
+    Data.c $1E50,$1E50,$1E51,$1E50
+    Data.c $1E51,$1E50,$1E51,$1E50
+    Data.c $1E52,$1E52,$1E53,$1E52
+    Data.c $1E53,$1E52,$1E53,$1E52
+    Data.c $1E54,$1E54,$1E55,$1E54
+    Data.c $1E55,$1E54,$1E55,$1E54
+    Data.c $1E56,$1E56,$1E57,$1E56
+    Data.c $1E57,$1E56,$1E57,$1E56
+    Data.c $1E58,$1E58,$1E59,$1E58
+    Data.c $1E59,$1E58,$1E59,$1E58
+    Data.c $1E5A,$1E5A,$1E5B,$1E5A
+    Data.c $1E5B,$1E5A,$1E5B,$1E5A
+    Data.c $1E5C,$1E5C,$1E5D,$1E5C
+    Data.c $1E5D,$1E5C,$1E5D,$1E5C
+    Data.c $1E5E,$1E5E,$1E5F,$1E5E
+    Data.c $1E5F,$1E5E,$1E5F,$1E5E
+    Data.c $1E60,$1E60,$1E61,$1E60
+    Data.c $1E61,$1E60,$1E61,$1E60
+    Data.c $1E62,$1E62,$1E63,$1E62
+    Data.c $1E63,$1E62,$1E63,$1E62
+    Data.c $1E64,$1E64,$1E65,$1E64
+    Data.c $1E65,$1E64,$1E65,$1E64
+    Data.c $1E66,$1E66,$1E67,$1E66
+    Data.c $1E67,$1E66,$1E67,$1E66
+    Data.c $1E68,$1E68,$1E69,$1E68
+    Data.c $1E69,$1E68,$1E69,$1E68
+    Data.c $1E6A,$1E6A,$1E6B,$1E6A
+    Data.c $1E6B,$1E6A,$1E6B,$1E6A
+    Data.c $1E6C,$1E6C,$1E6D,$1E6C
+    Data.c $1E6D,$1E6C,$1E6D,$1E6C
+    Data.c $1E6E,$1E6E,$1E6F,$1E6E
+    Data.c $1E6F,$1E6E,$1E6F,$1E6E
+    Data.c $1E70,$1E70,$1E71,$1E70
+    Data.c $1E71,$1E70,$1E71,$1E70
+    Data.c $1E72,$1E72,$1E73,$1E72
+    Data.c $1E73,$1E72,$1E73,$1E72
+    Data.c $1E74,$1E74,$1E75,$1E74
+    Data.c $1E75,$1E74,$1E75,$1E74
+    Data.c $1E76,$1E76,$1E77,$1E76
+    Data.c $1E77,$1E76,$1E77,$1E76
+    Data.c $1E78,$1E78,$1E79,$1E78
+    Data.c $1E79,$1E78,$1E79,$1E78
+    Data.c $1E7A,$1E7A,$1E7B,$1E7A
+    Data.c $1E7B,$1E7A,$1E7B,$1E7A
+    Data.c $1E7C,$1E7C,$1E7D,$1E7C
+    Data.c $1E7D,$1E7C,$1E7D,$1E7C
+    Data.c $1E7E,$1E7E,$1E7F,$1E7E
+    Data.c $1E7F,$1E7E,$1E7F,$1E7E
+    Data.c $1E80,$1E80,$1E81,$1E80
+    Data.c $1E81,$1E80,$1E81,$1E80
+    Data.c $1E82,$1E82,$1E83,$1E82
+    Data.c $1E83,$1E82,$1E83,$1E82
+    Data.c $1E84,$1E84,$1E85,$1E84
+    Data.c $1E85,$1E84,$1E85,$1E84
+    Data.c $1E86,$1E86,$1E87,$1E86
+    Data.c $1E87,$1E86,$1E87,$1E86
+    Data.c $1E88,$1E88,$1E89,$1E88
+    Data.c $1E89,$1E88,$1E89,$1E88
+    Data.c $1E8A,$1E8A,$1E8B,$1E8A
+    Data.c $1E8B,$1E8A,$1E8B,$1E8A
+    Data.c $1E8C,$1E8C,$1E8D,$1E8C
+    Data.c $1E8D,$1E8C,$1E8D,$1E8C
+    Data.c $1E8E,$1E8E,$1E8F,$1E8E
+    Data.c $1E8F,$1E8E,$1E8F,$1E8E
+    Data.c $1E90,$1E90,$1E91,$1E90
+    Data.c $1E91,$1E90,$1E91,$1E90
+    Data.c $1E92,$1E92,$1E93,$1E92
+    Data.c $1E93,$1E92,$1E93,$1E92
+    Data.c $1E94,$1E94,$1E95,$1E94
+    Data.c $1E95,$1E94,$1E95,$1E94
+    Data.c $1E9B,$1E60,$1E9B,$1E60
+    Data.c $1E9E,$1E9E,$00DF,$1E9E
+    Data.c $1EA0,$1EA0,$1EA1,$1EA0
+    Data.c $1EA1,$1EA0,$1EA1,$1EA0
+    Data.c $1EA2,$1EA2,$1EA3,$1EA2
+    Data.c $1EA3,$1EA2,$1EA3,$1EA2
+    Data.c $1EA4,$1EA4,$1EA5,$1EA4
+    Data.c $1EA5,$1EA4,$1EA5,$1EA4
+    Data.c $1EA6,$1EA6,$1EA7,$1EA6
+    Data.c $1EA7,$1EA6,$1EA7,$1EA6
+    Data.c $1EA8,$1EA8,$1EA9,$1EA8
+    Data.c $1EA9,$1EA8,$1EA9,$1EA8
+    Data.c $1EAA,$1EAA,$1EAB,$1EAA
+    Data.c $1EAB,$1EAA,$1EAB,$1EAA
+    Data.c $1EAC,$1EAC,$1EAD,$1EAC
+    Data.c $1EAD,$1EAC,$1EAD,$1EAC
+    Data.c $1EAE,$1EAE,$1EAF,$1EAE
+    Data.c $1EAF,$1EAE,$1EAF,$1EAE
+    Data.c $1EB0,$1EB0,$1EB1,$1EB0
+    Data.c $1EB1,$1EB0,$1EB1,$1EB0
+    Data.c $1EB2,$1EB2,$1EB3,$1EB2
+    Data.c $1EB3,$1EB2,$1EB3,$1EB2
+    Data.c $1EB4,$1EB4,$1EB5,$1EB4
+    Data.c $1EB5,$1EB4,$1EB5,$1EB4
+    Data.c $1EB6,$1EB6,$1EB7,$1EB6
+    Data.c $1EB7,$1EB6,$1EB7,$1EB6
+    Data.c $1EB8,$1EB8,$1EB9,$1EB8
+    Data.c $1EB9,$1EB8,$1EB9,$1EB8
+    Data.c $1EBA,$1EBA,$1EBB,$1EBA
+    Data.c $1EBB,$1EBA,$1EBB,$1EBA
+    Data.c $1EBC,$1EBC,$1EBD,$1EBC
+    Data.c $1EBD,$1EBC,$1EBD,$1EBC
+    Data.c $1EBE,$1EBE,$1EBF,$1EBE
+    Data.c $1EBF,$1EBE,$1EBF,$1EBE
+    Data.c $1EC0,$1EC0,$1EC1,$1EC0
+    Data.c $1EC1,$1EC0,$1EC1,$1EC0
+    Data.c $1EC2,$1EC2,$1EC3,$1EC2
+    Data.c $1EC3,$1EC2,$1EC3,$1EC2
+    Data.c $1EC4,$1EC4,$1EC5,$1EC4
+    Data.c $1EC5,$1EC4,$1EC5,$1EC4
+    Data.c $1EC6,$1EC6,$1EC7,$1EC6
+    Data.c $1EC7,$1EC6,$1EC7,$1EC6
+    Data.c $1EC8,$1EC8,$1EC9,$1EC8
+    Data.c $1EC9,$1EC8,$1EC9,$1EC8
+    Data.c $1ECA,$1ECA,$1ECB,$1ECA
+    Data.c $1ECB,$1ECA,$1ECB,$1ECA
+    Data.c $1ECC,$1ECC,$1ECD,$1ECC
+    Data.c $1ECD,$1ECC,$1ECD,$1ECC
+    Data.c $1ECE,$1ECE,$1ECF,$1ECE
+    Data.c $1ECF,$1ECE,$1ECF,$1ECE
+    Data.c $1ED0,$1ED0,$1ED1,$1ED0
+    Data.c $1ED1,$1ED0,$1ED1,$1ED0
+    Data.c $1ED2,$1ED2,$1ED3,$1ED2
+    Data.c $1ED3,$1ED2,$1ED3,$1ED2
+    Data.c $1ED4,$1ED4,$1ED5,$1ED4
+    Data.c $1ED5,$1ED4,$1ED5,$1ED4
+    Data.c $1ED6,$1ED6,$1ED7,$1ED6
+    Data.c $1ED7,$1ED6,$1ED7,$1ED6
+    Data.c $1ED8,$1ED8,$1ED9,$1ED8
+    Data.c $1ED9,$1ED8,$1ED9,$1ED8
+    Data.c $1EDA,$1EDA,$1EDB,$1EDA
+    Data.c $1EDB,$1EDA,$1EDB,$1EDA
+    Data.c $1EDC,$1EDC,$1EDD,$1EDC
+    Data.c $1EDD,$1EDC,$1EDD,$1EDC
+    Data.c $1EDE,$1EDE,$1EDF,$1EDE
+    Data.c $1EDF,$1EDE,$1EDF,$1EDE
+    Data.c $1EE0,$1EE0,$1EE1,$1EE0
+    Data.c $1EE1,$1EE0,$1EE1,$1EE0
+    Data.c $1EE2,$1EE2,$1EE3,$1EE2
+    Data.c $1EE3,$1EE2,$1EE3,$1EE2
+    Data.c $1EE4,$1EE4,$1EE5,$1EE4
+    Data.c $1EE5,$1EE4,$1EE5,$1EE4
+    Data.c $1EE6,$1EE6,$1EE7,$1EE6
+    Data.c $1EE7,$1EE6,$1EE7,$1EE6
+    Data.c $1EE8,$1EE8,$1EE9,$1EE8
+    Data.c $1EE9,$1EE8,$1EE9,$1EE8
+    Data.c $1EEA,$1EEA,$1EEB,$1EEA
+    Data.c $1EEB,$1EEA,$1EEB,$1EEA
+    Data.c $1EEC,$1EEC,$1EED,$1EEC
+    Data.c $1EED,$1EEC,$1EED,$1EEC
+    Data.c $1EEE,$1EEE,$1EEF,$1EEE
+    Data.c $1EEF,$1EEE,$1EEF,$1EEE
+    Data.c $1EF0,$1EF0,$1EF1,$1EF0
+    Data.c $1EF1,$1EF0,$1EF1,$1EF0
+    Data.c $1EF2,$1EF2,$1EF3,$1EF2
+    Data.c $1EF3,$1EF2,$1EF3,$1EF2
+    Data.c $1EF4,$1EF4,$1EF5,$1EF4
+    Data.c $1EF5,$1EF4,$1EF5,$1EF4
+    Data.c $1EF6,$1EF6,$1EF7,$1EF6
+    Data.c $1EF7,$1EF6,$1EF7,$1EF6
+    Data.c $1EF8,$1EF8,$1EF9,$1EF8
+    Data.c $1EF9,$1EF8,$1EF9,$1EF8
+    Data.c $1EFA,$1EFA,$1EFB,$1EFA
+    Data.c $1EFB,$1EFA,$1EFB,$1EFA
+    Data.c $1EFC,$1EFC,$1EFD,$1EFC
+    Data.c $1EFD,$1EFC,$1EFD,$1EFC
+    Data.c $1EFE,$1EFE,$1EFF,$1EFE
+    Data.c $1EFF,$1EFE,$1EFF,$1EFE
+    Data.c $1F00,$1F08,$1F00,$1F08
+    Data.c $1F01,$1F09,$1F01,$1F09
+    Data.c $1F02,$1F0A,$1F02,$1F0A
+    Data.c $1F03,$1F0B,$1F03,$1F0B
+    Data.c $1F04,$1F0C,$1F04,$1F0C
+    Data.c $1F05,$1F0D,$1F05,$1F0D
+    Data.c $1F06,$1F0E,$1F06,$1F0E
+    Data.c $1F07,$1F0F,$1F07,$1F0F
+    Data.c $1F08,$1F08,$1F00,$1F08
+    Data.c $1F09,$1F09,$1F01,$1F09
+    Data.c $1F0A,$1F0A,$1F02,$1F0A
+    Data.c $1F0B,$1F0B,$1F03,$1F0B
+    Data.c $1F0C,$1F0C,$1F04,$1F0C
+    Data.c $1F0D,$1F0D,$1F05,$1F0D
+    Data.c $1F0E,$1F0E,$1F06,$1F0E
+    Data.c $1F0F,$1F0F,$1F07,$1F0F
+    Data.c $1F10,$1F18,$1F10,$1F18
+    Data.c $1F11,$1F19,$1F11,$1F19
+    Data.c $1F12,$1F1A,$1F12,$1F1A
+    Data.c $1F13,$1F1B,$1F13,$1F1B
+    Data.c $1F14,$1F1C,$1F14,$1F1C
+    Data.c $1F15,$1F1D,$1F15,$1F1D
+    Data.c $1F18,$1F18,$1F10,$1F18
+    Data.c $1F19,$1F19,$1F11,$1F19
+    Data.c $1F1A,$1F1A,$1F12,$1F1A
+    Data.c $1F1B,$1F1B,$1F13,$1F1B
+    Data.c $1F1C,$1F1C,$1F14,$1F1C
+    Data.c $1F1D,$1F1D,$1F15,$1F1D
+    Data.c $1F20,$1F28,$1F20,$1F28
+    Data.c $1F21,$1F29,$1F21,$1F29
+    Data.c $1F22,$1F2A,$1F22,$1F2A
+    Data.c $1F23,$1F2B,$1F23,$1F2B
+    Data.c $1F24,$1F2C,$1F24,$1F2C
+    Data.c $1F25,$1F2D,$1F25,$1F2D
+    Data.c $1F26,$1F2E,$1F26,$1F2E
+    Data.c $1F27,$1F2F,$1F27,$1F2F
+    Data.c $1F28,$1F28,$1F20,$1F28
+    Data.c $1F29,$1F29,$1F21,$1F29
+    Data.c $1F2A,$1F2A,$1F22,$1F2A
+    Data.c $1F2B,$1F2B,$1F23,$1F2B
+    Data.c $1F2C,$1F2C,$1F24,$1F2C
+    Data.c $1F2D,$1F2D,$1F25,$1F2D
+    Data.c $1F2E,$1F2E,$1F26,$1F2E
+    Data.c $1F2F,$1F2F,$1F27,$1F2F
+    Data.c $1F30,$1F38,$1F30,$1F38
+    Data.c $1F31,$1F39,$1F31,$1F39
+    Data.c $1F32,$1F3A,$1F32,$1F3A
+    Data.c $1F33,$1F3B,$1F33,$1F3B
+    Data.c $1F34,$1F3C,$1F34,$1F3C
+    Data.c $1F35,$1F3D,$1F35,$1F3D
+    Data.c $1F36,$1F3E,$1F36,$1F3E
+    Data.c $1F37,$1F3F,$1F37,$1F3F
+    Data.c $1F38,$1F38,$1F30,$1F38
+    Data.c $1F39,$1F39,$1F31,$1F39
+    Data.c $1F3A,$1F3A,$1F32,$1F3A
+    Data.c $1F3B,$1F3B,$1F33,$1F3B
+    Data.c $1F3C,$1F3C,$1F34,$1F3C
+    Data.c $1F3D,$1F3D,$1F35,$1F3D
+    Data.c $1F3E,$1F3E,$1F36,$1F3E
+    Data.c $1F3F,$1F3F,$1F37,$1F3F
+    Data.c $1F40,$1F48,$1F40,$1F48
+    Data.c $1F41,$1F49,$1F41,$1F49
+    Data.c $1F42,$1F4A,$1F42,$1F4A
+    Data.c $1F43,$1F4B,$1F43,$1F4B
+    Data.c $1F44,$1F4C,$1F44,$1F4C
+    Data.c $1F45,$1F4D,$1F45,$1F4D
+    Data.c $1F48,$1F48,$1F40,$1F48
+    Data.c $1F49,$1F49,$1F41,$1F49
+    Data.c $1F4A,$1F4A,$1F42,$1F4A
+    Data.c $1F4B,$1F4B,$1F43,$1F4B
+    Data.c $1F4C,$1F4C,$1F44,$1F4C
+    Data.c $1F4D,$1F4D,$1F45,$1F4D
+    Data.c $1F51,$1F59,$1F51,$1F59
+    Data.c $1F53,$1F5B,$1F53,$1F5B
+    Data.c $1F55,$1F5D,$1F55,$1F5D
+    Data.c $1F57,$1F5F,$1F57,$1F5F
+    Data.c $1F59,$1F59,$1F51,$1F59
+    Data.c $1F5B,$1F5B,$1F53,$1F5B
+    Data.c $1F5D,$1F5D,$1F55,$1F5D
+    Data.c $1F5F,$1F5F,$1F57,$1F5F
+    Data.c $1F60,$1F68,$1F60,$1F68
+    Data.c $1F61,$1F69,$1F61,$1F69
+    Data.c $1F62,$1F6A,$1F62,$1F6A
+    Data.c $1F63,$1F6B,$1F63,$1F6B
+    Data.c $1F64,$1F6C,$1F64,$1F6C
+    Data.c $1F65,$1F6D,$1F65,$1F6D
+    Data.c $1F66,$1F6E,$1F66,$1F6E
+    Data.c $1F67,$1F6F,$1F67,$1F6F
+    Data.c $1F68,$1F68,$1F60,$1F68
+    Data.c $1F69,$1F69,$1F61,$1F69
+    Data.c $1F6A,$1F6A,$1F62,$1F6A
+    Data.c $1F6B,$1F6B,$1F63,$1F6B
+    Data.c $1F6C,$1F6C,$1F64,$1F6C
+    Data.c $1F6D,$1F6D,$1F65,$1F6D
+    Data.c $1F6E,$1F6E,$1F66,$1F6E
+    Data.c $1F6F,$1F6F,$1F67,$1F6F
+    Data.c $1F70,$1FBA,$1F70,$1FBA
+    Data.c $1F71,$1FBB,$1F71,$1FBB
+    Data.c $1F72,$1FC8,$1F72,$1FC8
+    Data.c $1F73,$1FC9,$1F73,$1FC9
+    Data.c $1F74,$1FCA,$1F74,$1FCA
+    Data.c $1F75,$1FCB,$1F75,$1FCB
+    Data.c $1F76,$1FDA,$1F76,$1FDA
+    Data.c $1F77,$1FDB,$1F77,$1FDB
+    Data.c $1F78,$1FF8,$1F78,$1FF8
+    Data.c $1F79,$1FF9,$1F79,$1FF9
+    Data.c $1F7A,$1FEA,$1F7A,$1FEA
+    Data.c $1F7B,$1FEB,$1F7B,$1FEB
+    Data.c $1F7C,$1FFA,$1F7C,$1FFA
+    Data.c $1F7D,$1FFB,$1F7D,$1FFB
+    Data.c $1F80,$1F88,$1F80,$1F88
+    Data.c $1F81,$1F89,$1F81,$1F89
+    Data.c $1F82,$1F8A,$1F82,$1F8A
+    Data.c $1F83,$1F8B,$1F83,$1F8B
+    Data.c $1F84,$1F8C,$1F84,$1F8C
+    Data.c $1F85,$1F8D,$1F85,$1F8D
+    Data.c $1F86,$1F8E,$1F86,$1F8E
+    Data.c $1F87,$1F8F,$1F87,$1F8F
+    Data.c $1F88,$1F88,$1F80,$1F88
+    Data.c $1F89,$1F89,$1F81,$1F89
+    Data.c $1F8A,$1F8A,$1F82,$1F8A
+    Data.c $1F8B,$1F8B,$1F83,$1F8B
+    Data.c $1F8C,$1F8C,$1F84,$1F8C
+    Data.c $1F8D,$1F8D,$1F85,$1F8D
+    Data.c $1F8E,$1F8E,$1F86,$1F8E
+    Data.c $1F8F,$1F8F,$1F87,$1F8F
+    Data.c $1F90,$1F98,$1F90,$1F98
+    Data.c $1F91,$1F99,$1F91,$1F99
+    Data.c $1F92,$1F9A,$1F92,$1F9A
+    Data.c $1F93,$1F9B,$1F93,$1F9B
+    Data.c $1F94,$1F9C,$1F94,$1F9C
+    Data.c $1F95,$1F9D,$1F95,$1F9D
+    Data.c $1F96,$1F9E,$1F96,$1F9E
+    Data.c $1F97,$1F9F,$1F97,$1F9F
+    Data.c $1F98,$1F98,$1F90,$1F98
+    Data.c $1F99,$1F99,$1F91,$1F99
+    Data.c $1F9A,$1F9A,$1F92,$1F9A
+    Data.c $1F9B,$1F9B,$1F93,$1F9B
+    Data.c $1F9C,$1F9C,$1F94,$1F9C
+    Data.c $1F9D,$1F9D,$1F95,$1F9D
+    Data.c $1F9E,$1F9E,$1F96,$1F9E
+    Data.c $1F9F,$1F9F,$1F97,$1F9F
+    Data.c $1FA0,$1FA8,$1FA0,$1FA8
+    Data.c $1FA1,$1FA9,$1FA1,$1FA9
+    Data.c $1FA2,$1FAA,$1FA2,$1FAA
+    Data.c $1FA3,$1FAB,$1FA3,$1FAB
+    Data.c $1FA4,$1FAC,$1FA4,$1FAC
+    Data.c $1FA5,$1FAD,$1FA5,$1FAD
+    Data.c $1FA6,$1FAE,$1FA6,$1FAE
+    Data.c $1FA7,$1FAF,$1FA7,$1FAF
+    Data.c $1FA8,$1FA8,$1FA0,$1FA8
+    Data.c $1FA9,$1FA9,$1FA1,$1FA9
+    Data.c $1FAA,$1FAA,$1FA2,$1FAA
+    Data.c $1FAB,$1FAB,$1FA3,$1FAB
+    Data.c $1FAC,$1FAC,$1FA4,$1FAC
+    Data.c $1FAD,$1FAD,$1FA5,$1FAD
+    Data.c $1FAE,$1FAE,$1FA6,$1FAE
+    Data.c $1FAF,$1FAF,$1FA7,$1FAF
+    Data.c $1FB0,$1FB8,$1FB0,$1FB8
+    Data.c $1FB1,$1FB9,$1FB1,$1FB9
+    Data.c $1FB3,$1FBC,$1FB3,$1FBC
+    Data.c $1FB8,$1FB8,$1FB0,$1FB8
+    Data.c $1FB9,$1FB9,$1FB1,$1FB9
+    Data.c $1FBA,$1FBA,$1F70,$1FBA
+    Data.c $1FBB,$1FBB,$1F71,$1FBB
+    Data.c $1FBC,$1FBC,$1FB3,$1FBC
+    Data.c $1FBE,$0399,$1FBE,$0399
+    Data.c $1FC3,$1FCC,$1FC3,$1FCC
+    Data.c $1FC8,$1FC8,$1F72,$1FC8
+    Data.c $1FC9,$1FC9,$1F73,$1FC9
+    Data.c $1FCA,$1FCA,$1F74,$1FCA
+    Data.c $1FCB,$1FCB,$1F75,$1FCB
+    Data.c $1FCC,$1FCC,$1FC3,$1FCC
+    Data.c $1FD0,$1FD8,$1FD0,$1FD8
+    Data.c $1FD1,$1FD9,$1FD1,$1FD9
+    Data.c $1FD8,$1FD8,$1FD0,$1FD8
+    Data.c $1FD9,$1FD9,$1FD1,$1FD9
+    Data.c $1FDA,$1FDA,$1F76,$1FDA
+    Data.c $1FDB,$1FDB,$1F77,$1FDB
+    Data.c $1FE0,$1FE8,$1FE0,$1FE8
+    Data.c $1FE1,$1FE9,$1FE1,$1FE9
+    Data.c $1FE5,$1FEC,$1FE5,$1FEC
+    Data.c $1FE8,$1FE8,$1FE0,$1FE8
+    Data.c $1FE9,$1FE9,$1FE1,$1FE9
+    Data.c $1FEA,$1FEA,$1F7A,$1FEA
+    Data.c $1FEB,$1FEB,$1F7B,$1FEB
+    Data.c $1FEC,$1FEC,$1FE5,$1FEC
+    Data.c $1FF3,$1FFC,$1FF3,$1FFC
+    Data.c $1FF8,$1FF8,$1F78,$1FF8
+    Data.c $1FF9,$1FF9,$1F79,$1FF9
+    Data.c $1FFA,$1FFA,$1F7C,$1FFA
+    Data.c $1FFB,$1FFB,$1F7D,$1FFB
+    Data.c $1FFC,$1FFC,$1FF3,$1FFC
+    Data.c $2126,$2126,$03C9,$2126
+    Data.c $212A,$212A,$006B,$212A
+    Data.c $212B,$212B,$00E5,$212B
+    Data.c $2132,$2132,$214E,$2132
+    Data.c $214E,$2132,$214E,$2132
+    Data.c $2160,$2160,$2170,$2160
+    Data.c $2161,$2161,$2171,$2161
+    Data.c $2162,$2162,$2172,$2162
+    Data.c $2163,$2163,$2173,$2163
+    Data.c $2164,$2164,$2174,$2164
+    Data.c $2165,$2165,$2175,$2165
+    Data.c $2166,$2166,$2176,$2166
+    Data.c $2167,$2167,$2177,$2167
+    Data.c $2168,$2168,$2178,$2168
+    Data.c $2169,$2169,$2179,$2169
+    Data.c $216A,$216A,$217A,$216A
+    Data.c $216B,$216B,$217B,$216B
+    Data.c $216C,$216C,$217C,$216C
+    Data.c $216D,$216D,$217D,$216D
+    Data.c $216E,$216E,$217E,$216E
+    Data.c $216F,$216F,$217F,$216F
+    Data.c $2170,$2160,$2170,$2160
+    Data.c $2171,$2161,$2171,$2161
+    Data.c $2172,$2162,$2172,$2162
+    Data.c $2173,$2163,$2173,$2163
+    Data.c $2174,$2164,$2174,$2164
+    Data.c $2175,$2165,$2175,$2165
+    Data.c $2176,$2166,$2176,$2166
+    Data.c $2177,$2167,$2177,$2167
+    Data.c $2178,$2168,$2178,$2168
+    Data.c $2179,$2169,$2179,$2169
+    Data.c $217A,$216A,$217A,$216A
+    Data.c $217B,$216B,$217B,$216B
+    Data.c $217C,$216C,$217C,$216C
+    Data.c $217D,$216D,$217D,$216D
+    Data.c $217E,$216E,$217E,$216E
+    Data.c $217F,$216F,$217F,$216F
+    Data.c $2183,$2183,$2184,$2183
+    Data.c $2184,$2183,$2184,$2183
+    Data.c $24B6,$24B6,$24D0,$24B6
+    Data.c $24B7,$24B7,$24D1,$24B7
+    Data.c $24B8,$24B8,$24D2,$24B8
+    Data.c $24B9,$24B9,$24D3,$24B9
+    Data.c $24BA,$24BA,$24D4,$24BA
+    Data.c $24BB,$24BB,$24D5,$24BB
+    Data.c $24BC,$24BC,$24D6,$24BC
+    Data.c $24BD,$24BD,$24D7,$24BD
+    Data.c $24BE,$24BE,$24D8,$24BE
+    Data.c $24BF,$24BF,$24D9,$24BF
+    Data.c $24C0,$24C0,$24DA,$24C0
+    Data.c $24C1,$24C1,$24DB,$24C1
+    Data.c $24C2,$24C2,$24DC,$24C2
+    Data.c $24C3,$24C3,$24DD,$24C3
+    Data.c $24C4,$24C4,$24DE,$24C4
+    Data.c $24C5,$24C5,$24DF,$24C5
+    Data.c $24C6,$24C6,$24E0,$24C6
+    Data.c $24C7,$24C7,$24E1,$24C7
+    Data.c $24C8,$24C8,$24E2,$24C8
+    Data.c $24C9,$24C9,$24E3,$24C9
+    Data.c $24CA,$24CA,$24E4,$24CA
+    Data.c $24CB,$24CB,$24E5,$24CB
+    Data.c $24CC,$24CC,$24E6,$24CC
+    Data.c $24CD,$24CD,$24E7,$24CD
+    Data.c $24CE,$24CE,$24E8,$24CE
+    Data.c $24CF,$24CF,$24E9,$24CF
+    Data.c $24D0,$24B6,$24D0,$24B6
+    Data.c $24D1,$24B7,$24D1,$24B7
+    Data.c $24D2,$24B8,$24D2,$24B8
+    Data.c $24D3,$24B9,$24D3,$24B9
+    Data.c $24D4,$24BA,$24D4,$24BA
+    Data.c $24D5,$24BB,$24D5,$24BB
+    Data.c $24D6,$24BC,$24D6,$24BC
+    Data.c $24D7,$24BD,$24D7,$24BD
+    Data.c $24D8,$24BE,$24D8,$24BE
+    Data.c $24D9,$24BF,$24D9,$24BF
+    Data.c $24DA,$24C0,$24DA,$24C0
+    Data.c $24DB,$24C1,$24DB,$24C1
+    Data.c $24DC,$24C2,$24DC,$24C2
+    Data.c $24DD,$24C3,$24DD,$24C3
+    Data.c $24DE,$24C4,$24DE,$24C4
+    Data.c $24DF,$24C5,$24DF,$24C5
+    Data.c $24E0,$24C6,$24E0,$24C6
+    Data.c $24E1,$24C7,$24E1,$24C7
+    Data.c $24E2,$24C8,$24E2,$24C8
+    Data.c $24E3,$24C9,$24E3,$24C9
+    Data.c $24E4,$24CA,$24E4,$24CA
+    Data.c $24E5,$24CB,$24E5,$24CB
+    Data.c $24E6,$24CC,$24E6,$24CC
+    Data.c $24E7,$24CD,$24E7,$24CD
+    Data.c $24E8,$24CE,$24E8,$24CE
+    Data.c $24E9,$24CF,$24E9,$24CF
+    Data.c $2C00,$2C00,$2C30,$2C00
+    Data.c $2C01,$2C01,$2C31,$2C01
+    Data.c $2C02,$2C02,$2C32,$2C02
+    Data.c $2C03,$2C03,$2C33,$2C03
+    Data.c $2C04,$2C04,$2C34,$2C04
+    Data.c $2C05,$2C05,$2C35,$2C05
+    Data.c $2C06,$2C06,$2C36,$2C06
+    Data.c $2C07,$2C07,$2C37,$2C07
+    Data.c $2C08,$2C08,$2C38,$2C08
+    Data.c $2C09,$2C09,$2C39,$2C09
+    Data.c $2C0A,$2C0A,$2C3A,$2C0A
+    Data.c $2C0B,$2C0B,$2C3B,$2C0B
+    Data.c $2C0C,$2C0C,$2C3C,$2C0C
+    Data.c $2C0D,$2C0D,$2C3D,$2C0D
+    Data.c $2C0E,$2C0E,$2C3E,$2C0E
+    Data.c $2C0F,$2C0F,$2C3F,$2C0F
+    Data.c $2C10,$2C10,$2C40,$2C10
+    Data.c $2C11,$2C11,$2C41,$2C11
+    Data.c $2C12,$2C12,$2C42,$2C12
+    Data.c $2C13,$2C13,$2C43,$2C13
+    Data.c $2C14,$2C14,$2C44,$2C14
+    Data.c $2C15,$2C15,$2C45,$2C15
+    Data.c $2C16,$2C16,$2C46,$2C16
+    Data.c $2C17,$2C17,$2C47,$2C17
+    Data.c $2C18,$2C18,$2C48,$2C18
+    Data.c $2C19,$2C19,$2C49,$2C19
+    Data.c $2C1A,$2C1A,$2C4A,$2C1A
+    Data.c $2C1B,$2C1B,$2C4B,$2C1B
+    Data.c $2C1C,$2C1C,$2C4C,$2C1C
+    Data.c $2C1D,$2C1D,$2C4D,$2C1D
+    Data.c $2C1E,$2C1E,$2C4E,$2C1E
+    Data.c $2C1F,$2C1F,$2C4F,$2C1F
+    Data.c $2C20,$2C20,$2C50,$2C20
+    Data.c $2C21,$2C21,$2C51,$2C21
+    Data.c $2C22,$2C22,$2C52,$2C22
+    Data.c $2C23,$2C23,$2C53,$2C23
+    Data.c $2C24,$2C24,$2C54,$2C24
+    Data.c $2C25,$2C25,$2C55,$2C25
+    Data.c $2C26,$2C26,$2C56,$2C26
+    Data.c $2C27,$2C27,$2C57,$2C27
+    Data.c $2C28,$2C28,$2C58,$2C28
+    Data.c $2C29,$2C29,$2C59,$2C29
+    Data.c $2C2A,$2C2A,$2C5A,$2C2A
+    Data.c $2C2B,$2C2B,$2C5B,$2C2B
+    Data.c $2C2C,$2C2C,$2C5C,$2C2C
+    Data.c $2C2D,$2C2D,$2C5D,$2C2D
+    Data.c $2C2E,$2C2E,$2C5E,$2C2E
+    Data.c $2C2F,$2C2F,$2C5F,$2C2F
+    Data.c $2C30,$2C00,$2C30,$2C00
+    Data.c $2C31,$2C01,$2C31,$2C01
+    Data.c $2C32,$2C02,$2C32,$2C02
+    Data.c $2C33,$2C03,$2C33,$2C03
+    Data.c $2C34,$2C04,$2C34,$2C04
+    Data.c $2C35,$2C05,$2C35,$2C05
+    Data.c $2C36,$2C06,$2C36,$2C06
+    Data.c $2C37,$2C07,$2C37,$2C07
+    Data.c $2C38,$2C08,$2C38,$2C08
+    Data.c $2C39,$2C09,$2C39,$2C09
+    Data.c $2C3A,$2C0A,$2C3A,$2C0A
+    Data.c $2C3B,$2C0B,$2C3B,$2C0B
+    Data.c $2C3C,$2C0C,$2C3C,$2C0C
+    Data.c $2C3D,$2C0D,$2C3D,$2C0D
+    Data.c $2C3E,$2C0E,$2C3E,$2C0E
+    Data.c $2C3F,$2C0F,$2C3F,$2C0F
+    Data.c $2C40,$2C10,$2C40,$2C10
+    Data.c $2C41,$2C11,$2C41,$2C11
+    Data.c $2C42,$2C12,$2C42,$2C12
+    Data.c $2C43,$2C13,$2C43,$2C13
+    Data.c $2C44,$2C14,$2C44,$2C14
+    Data.c $2C45,$2C15,$2C45,$2C15
+    Data.c $2C46,$2C16,$2C46,$2C16
+    Data.c $2C47,$2C17,$2C47,$2C17
+    Data.c $2C48,$2C18,$2C48,$2C18
+    Data.c $2C49,$2C19,$2C49,$2C19
+    Data.c $2C4A,$2C1A,$2C4A,$2C1A
+    Data.c $2C4B,$2C1B,$2C4B,$2C1B
+    Data.c $2C4C,$2C1C,$2C4C,$2C1C
+    Data.c $2C4D,$2C1D,$2C4D,$2C1D
+    Data.c $2C4E,$2C1E,$2C4E,$2C1E
+    Data.c $2C4F,$2C1F,$2C4F,$2C1F
+    Data.c $2C50,$2C20,$2C50,$2C20
+    Data.c $2C51,$2C21,$2C51,$2C21
+    Data.c $2C52,$2C22,$2C52,$2C22
+    Data.c $2C53,$2C23,$2C53,$2C23
+    Data.c $2C54,$2C24,$2C54,$2C24
+    Data.c $2C55,$2C25,$2C55,$2C25
+    Data.c $2C56,$2C26,$2C56,$2C26
+    Data.c $2C57,$2C27,$2C57,$2C27
+    Data.c $2C58,$2C28,$2C58,$2C28
+    Data.c $2C59,$2C29,$2C59,$2C29
+    Data.c $2C5A,$2C2A,$2C5A,$2C2A
+    Data.c $2C5B,$2C2B,$2C5B,$2C2B
+    Data.c $2C5C,$2C2C,$2C5C,$2C2C
+    Data.c $2C5D,$2C2D,$2C5D,$2C2D
+    Data.c $2C5E,$2C2E,$2C5E,$2C2E
+    Data.c $2C5F,$2C2F,$2C5F,$2C2F
+    Data.c $2C60,$2C60,$2C61,$2C60
+    Data.c $2C61,$2C60,$2C61,$2C60
+    Data.c $2C62,$2C62,$026B,$2C62
+    Data.c $2C63,$2C63,$1D7D,$2C63
+    Data.c $2C64,$2C64,$027D,$2C64
+    Data.c $2C65,$023A,$2C65,$023A
+    Data.c $2C66,$023E,$2C66,$023E
+    Data.c $2C67,$2C67,$2C68,$2C67
+    Data.c $2C68,$2C67,$2C68,$2C67
+    Data.c $2C69,$2C69,$2C6A,$2C69
+    Data.c $2C6A,$2C69,$2C6A,$2C69
+    Data.c $2C6B,$2C6B,$2C6C,$2C6B
+    Data.c $2C6C,$2C6B,$2C6C,$2C6B
+    Data.c $2C6D,$2C6D,$0251,$2C6D
+    Data.c $2C6E,$2C6E,$0271,$2C6E
+    Data.c $2C6F,$2C6F,$0250,$2C6F
+    Data.c $2C70,$2C70,$0252,$2C70
+    Data.c $2C72,$2C72,$2C73,$2C72
+    Data.c $2C73,$2C72,$2C73,$2C72
+    Data.c $2C75,$2C75,$2C76,$2C75
+    Data.c $2C76,$2C75,$2C76,$2C75
+    Data.c $2C7E,$2C7E,$023F,$2C7E
+    Data.c $2C7F,$2C7F,$0240,$2C7F
+    Data.c $2C80,$2C80,$2C81,$2C80
+    Data.c $2C81,$2C80,$2C81,$2C80
+    Data.c $2C82,$2C82,$2C83,$2C82
+    Data.c $2C83,$2C82,$2C83,$2C82
+    Data.c $2C84,$2C84,$2C85,$2C84
+    Data.c $2C85,$2C84,$2C85,$2C84
+    Data.c $2C86,$2C86,$2C87,$2C86
+    Data.c $2C87,$2C86,$2C87,$2C86
+    Data.c $2C88,$2C88,$2C89,$2C88
+    Data.c $2C89,$2C88,$2C89,$2C88
+    Data.c $2C8A,$2C8A,$2C8B,$2C8A
+    Data.c $2C8B,$2C8A,$2C8B,$2C8A
+    Data.c $2C8C,$2C8C,$2C8D,$2C8C
+    Data.c $2C8D,$2C8C,$2C8D,$2C8C
+    Data.c $2C8E,$2C8E,$2C8F,$2C8E
+    Data.c $2C8F,$2C8E,$2C8F,$2C8E
+    Data.c $2C90,$2C90,$2C91,$2C90
+    Data.c $2C91,$2C90,$2C91,$2C90
+    Data.c $2C92,$2C92,$2C93,$2C92
+    Data.c $2C93,$2C92,$2C93,$2C92
+    Data.c $2C94,$2C94,$2C95,$2C94
+    Data.c $2C95,$2C94,$2C95,$2C94
+    Data.c $2C96,$2C96,$2C97,$2C96
+    Data.c $2C97,$2C96,$2C97,$2C96
+    Data.c $2C98,$2C98,$2C99,$2C98
+    Data.c $2C99,$2C98,$2C99,$2C98
+    Data.c $2C9A,$2C9A,$2C9B,$2C9A
+    Data.c $2C9B,$2C9A,$2C9B,$2C9A
+    Data.c $2C9C,$2C9C,$2C9D,$2C9C
+    Data.c $2C9D,$2C9C,$2C9D,$2C9C
+    Data.c $2C9E,$2C9E,$2C9F,$2C9E
+    Data.c $2C9F,$2C9E,$2C9F,$2C9E
+    Data.c $2CA0,$2CA0,$2CA1,$2CA0
+    Data.c $2CA1,$2CA0,$2CA1,$2CA0
+    Data.c $2CA2,$2CA2,$2CA3,$2CA2
+    Data.c $2CA3,$2CA2,$2CA3,$2CA2
+    Data.c $2CA4,$2CA4,$2CA5,$2CA4
+    Data.c $2CA5,$2CA4,$2CA5,$2CA4
+    Data.c $2CA6,$2CA6,$2CA7,$2CA6
+    Data.c $2CA7,$2CA6,$2CA7,$2CA6
+    Data.c $2CA8,$2CA8,$2CA9,$2CA8
+    Data.c $2CA9,$2CA8,$2CA9,$2CA8
+    Data.c $2CAA,$2CAA,$2CAB,$2CAA
+    Data.c $2CAB,$2CAA,$2CAB,$2CAA
+    Data.c $2CAC,$2CAC,$2CAD,$2CAC
+    Data.c $2CAD,$2CAC,$2CAD,$2CAC
+    Data.c $2CAE,$2CAE,$2CAF,$2CAE
+    Data.c $2CAF,$2CAE,$2CAF,$2CAE
+    Data.c $2CB0,$2CB0,$2CB1,$2CB0
+    Data.c $2CB1,$2CB0,$2CB1,$2CB0
+    Data.c $2CB2,$2CB2,$2CB3,$2CB2
+    Data.c $2CB3,$2CB2,$2CB3,$2CB2
+    Data.c $2CB4,$2CB4,$2CB5,$2CB4
+    Data.c $2CB5,$2CB4,$2CB5,$2CB4
+    Data.c $2CB6,$2CB6,$2CB7,$2CB6
+    Data.c $2CB7,$2CB6,$2CB7,$2CB6
+    Data.c $2CB8,$2CB8,$2CB9,$2CB8
+    Data.c $2CB9,$2CB8,$2CB9,$2CB8
+    Data.c $2CBA,$2CBA,$2CBB,$2CBA
+    Data.c $2CBB,$2CBA,$2CBB,$2CBA
+    Data.c $2CBC,$2CBC,$2CBD,$2CBC
+    Data.c $2CBD,$2CBC,$2CBD,$2CBC
+    Data.c $2CBE,$2CBE,$2CBF,$2CBE
+    Data.c $2CBF,$2CBE,$2CBF,$2CBE
+    Data.c $2CC0,$2CC0,$2CC1,$2CC0
+    Data.c $2CC1,$2CC0,$2CC1,$2CC0
+    Data.c $2CC2,$2CC2,$2CC3,$2CC2
+    Data.c $2CC3,$2CC2,$2CC3,$2CC2
+    Data.c $2CC4,$2CC4,$2CC5,$2CC4
+    Data.c $2CC5,$2CC4,$2CC5,$2CC4
+    Data.c $2CC6,$2CC6,$2CC7,$2CC6
+    Data.c $2CC7,$2CC6,$2CC7,$2CC6
+    Data.c $2CC8,$2CC8,$2CC9,$2CC8
+    Data.c $2CC9,$2CC8,$2CC9,$2CC8
+    Data.c $2CCA,$2CCA,$2CCB,$2CCA
+    Data.c $2CCB,$2CCA,$2CCB,$2CCA
+    Data.c $2CCC,$2CCC,$2CCD,$2CCC
+    Data.c $2CCD,$2CCC,$2CCD,$2CCC
+    Data.c $2CCE,$2CCE,$2CCF,$2CCE
+    Data.c $2CCF,$2CCE,$2CCF,$2CCE
+    Data.c $2CD0,$2CD0,$2CD1,$2CD0
+    Data.c $2CD1,$2CD0,$2CD1,$2CD0
+    Data.c $2CD2,$2CD2,$2CD3,$2CD2
+    Data.c $2CD3,$2CD2,$2CD3,$2CD2
+    Data.c $2CD4,$2CD4,$2CD5,$2CD4
+    Data.c $2CD5,$2CD4,$2CD5,$2CD4
+    Data.c $2CD6,$2CD6,$2CD7,$2CD6
+    Data.c $2CD7,$2CD6,$2CD7,$2CD6
+    Data.c $2CD8,$2CD8,$2CD9,$2CD8
+    Data.c $2CD9,$2CD8,$2CD9,$2CD8
+    Data.c $2CDA,$2CDA,$2CDB,$2CDA
+    Data.c $2CDB,$2CDA,$2CDB,$2CDA
+    Data.c $2CDC,$2CDC,$2CDD,$2CDC
+    Data.c $2CDD,$2CDC,$2CDD,$2CDC
+    Data.c $2CDE,$2CDE,$2CDF,$2CDE
+    Data.c $2CDF,$2CDE,$2CDF,$2CDE
+    Data.c $2CE0,$2CE0,$2CE1,$2CE0
+    Data.c $2CE1,$2CE0,$2CE1,$2CE0
+    Data.c $2CE2,$2CE2,$2CE3,$2CE2
+    Data.c $2CE3,$2CE2,$2CE3,$2CE2
+    Data.c $2CEB,$2CEB,$2CEC,$2CEB
+    Data.c $2CEC,$2CEB,$2CEC,$2CEB
+    Data.c $2CED,$2CED,$2CEE,$2CED
+    Data.c $2CEE,$2CED,$2CEE,$2CED
+    Data.c $2CF2,$2CF2,$2CF3,$2CF2
+    Data.c $2CF3,$2CF2,$2CF3,$2CF2
+    Data.c $2D00,$10A0,$2D00,$10A0
+    Data.c $2D01,$10A1,$2D01,$10A1
+    Data.c $2D02,$10A2,$2D02,$10A2
+    Data.c $2D03,$10A3,$2D03,$10A3
+    Data.c $2D04,$10A4,$2D04,$10A4
+    Data.c $2D05,$10A5,$2D05,$10A5
+    Data.c $2D06,$10A6,$2D06,$10A6
+    Data.c $2D07,$10A7,$2D07,$10A7
+    Data.c $2D08,$10A8,$2D08,$10A8
+    Data.c $2D09,$10A9,$2D09,$10A9
+    Data.c $2D0A,$10AA,$2D0A,$10AA
+    Data.c $2D0B,$10AB,$2D0B,$10AB
+    Data.c $2D0C,$10AC,$2D0C,$10AC
+    Data.c $2D0D,$10AD,$2D0D,$10AD
+    Data.c $2D0E,$10AE,$2D0E,$10AE
+    Data.c $2D0F,$10AF,$2D0F,$10AF
+    Data.c $2D10,$10B0,$2D10,$10B0
+    Data.c $2D11,$10B1,$2D11,$10B1
+    Data.c $2D12,$10B2,$2D12,$10B2
+    Data.c $2D13,$10B3,$2D13,$10B3
+    Data.c $2D14,$10B4,$2D14,$10B4
+    Data.c $2D15,$10B5,$2D15,$10B5
+    Data.c $2D16,$10B6,$2D16,$10B6
+    Data.c $2D17,$10B7,$2D17,$10B7
+    Data.c $2D18,$10B8,$2D18,$10B8
+    Data.c $2D19,$10B9,$2D19,$10B9
+    Data.c $2D1A,$10BA,$2D1A,$10BA
+    Data.c $2D1B,$10BB,$2D1B,$10BB
+    Data.c $2D1C,$10BC,$2D1C,$10BC
+    Data.c $2D1D,$10BD,$2D1D,$10BD
+    Data.c $2D1E,$10BE,$2D1E,$10BE
+    Data.c $2D1F,$10BF,$2D1F,$10BF
+    Data.c $2D20,$10C0,$2D20,$10C0
+    Data.c $2D21,$10C1,$2D21,$10C1
+    Data.c $2D22,$10C2,$2D22,$10C2
+    Data.c $2D23,$10C3,$2D23,$10C3
+    Data.c $2D24,$10C4,$2D24,$10C4
+    Data.c $2D25,$10C5,$2D25,$10C5
+    Data.c $2D27,$10C7,$2D27,$10C7
+    Data.c $2D2D,$10CD,$2D2D,$10CD
+    Data.c $A640,$A640,$A641,$A640
+    Data.c $A641,$A640,$A641,$A640
+    Data.c $A642,$A642,$A643,$A642
+    Data.c $A643,$A642,$A643,$A642
+    Data.c $A644,$A644,$A645,$A644
+    Data.c $A645,$A644,$A645,$A644
+    Data.c $A646,$A646,$A647,$A646
+    Data.c $A647,$A646,$A647,$A646
+    Data.c $A648,$A648,$A649,$A648
+    Data.c $A649,$A648,$A649,$A648
+    Data.c $A64A,$A64A,$A64B,$A64A
+    Data.c $A64B,$A64A,$A64B,$A64A
+    Data.c $A64C,$A64C,$A64D,$A64C
+    Data.c $A64D,$A64C,$A64D,$A64C
+    Data.c $A64E,$A64E,$A64F,$A64E
+    Data.c $A64F,$A64E,$A64F,$A64E
+    Data.c $A650,$A650,$A651,$A650
+    Data.c $A651,$A650,$A651,$A650
+    Data.c $A652,$A652,$A653,$A652
+    Data.c $A653,$A652,$A653,$A652
+    Data.c $A654,$A654,$A655,$A654
+    Data.c $A655,$A654,$A655,$A654
+    Data.c $A656,$A656,$A657,$A656
+    Data.c $A657,$A656,$A657,$A656
+    Data.c $A658,$A658,$A659,$A658
+    Data.c $A659,$A658,$A659,$A658
+    Data.c $A65A,$A65A,$A65B,$A65A
+    Data.c $A65B,$A65A,$A65B,$A65A
+    Data.c $A65C,$A65C,$A65D,$A65C
+    Data.c $A65D,$A65C,$A65D,$A65C
+    Data.c $A65E,$A65E,$A65F,$A65E
+    Data.c $A65F,$A65E,$A65F,$A65E
+    Data.c $A660,$A660,$A661,$A660
+    Data.c $A661,$A660,$A661,$A660
+    Data.c $A662,$A662,$A663,$A662
+    Data.c $A663,$A662,$A663,$A662
+    Data.c $A664,$A664,$A665,$A664
+    Data.c $A665,$A664,$A665,$A664
+    Data.c $A666,$A666,$A667,$A666
+    Data.c $A667,$A666,$A667,$A666
+    Data.c $A668,$A668,$A669,$A668
+    Data.c $A669,$A668,$A669,$A668
+    Data.c $A66A,$A66A,$A66B,$A66A
+    Data.c $A66B,$A66A,$A66B,$A66A
+    Data.c $A66C,$A66C,$A66D,$A66C
+    Data.c $A66D,$A66C,$A66D,$A66C
+    Data.c $A680,$A680,$A681,$A680
+    Data.c $A681,$A680,$A681,$A680
+    Data.c $A682,$A682,$A683,$A682
+    Data.c $A683,$A682,$A683,$A682
+    Data.c $A684,$A684,$A685,$A684
+    Data.c $A685,$A684,$A685,$A684
+    Data.c $A686,$A686,$A687,$A686
+    Data.c $A687,$A686,$A687,$A686
+    Data.c $A688,$A688,$A689,$A688
+    Data.c $A689,$A688,$A689,$A688
+    Data.c $A68A,$A68A,$A68B,$A68A
+    Data.c $A68B,$A68A,$A68B,$A68A
+    Data.c $A68C,$A68C,$A68D,$A68C
+    Data.c $A68D,$A68C,$A68D,$A68C
+    Data.c $A68E,$A68E,$A68F,$A68E
+    Data.c $A68F,$A68E,$A68F,$A68E
+    Data.c $A690,$A690,$A691,$A690
+    Data.c $A691,$A690,$A691,$A690
+    Data.c $A692,$A692,$A693,$A692
+    Data.c $A693,$A692,$A693,$A692
+    Data.c $A694,$A694,$A695,$A694
+    Data.c $A695,$A694,$A695,$A694
+    Data.c $A696,$A696,$A697,$A696
+    Data.c $A697,$A696,$A697,$A696
+    Data.c $A698,$A698,$A699,$A698
+    Data.c $A699,$A698,$A699,$A698
+    Data.c $A69A,$A69A,$A69B,$A69A
+    Data.c $A69B,$A69A,$A69B,$A69A
+    Data.c $A722,$A722,$A723,$A722
+    Data.c $A723,$A722,$A723,$A722
+    Data.c $A724,$A724,$A725,$A724
+    Data.c $A725,$A724,$A725,$A724
+    Data.c $A726,$A726,$A727,$A726
+    Data.c $A727,$A726,$A727,$A726
+    Data.c $A728,$A728,$A729,$A728
+    Data.c $A729,$A728,$A729,$A728
+    Data.c $A72A,$A72A,$A72B,$A72A
+    Data.c $A72B,$A72A,$A72B,$A72A
+    Data.c $A72C,$A72C,$A72D,$A72C
+    Data.c $A72D,$A72C,$A72D,$A72C
+    Data.c $A72E,$A72E,$A72F,$A72E
+    Data.c $A72F,$A72E,$A72F,$A72E
+    Data.c $A732,$A732,$A733,$A732
+    Data.c $A733,$A732,$A733,$A732
+    Data.c $A734,$A734,$A735,$A734
+    Data.c $A735,$A734,$A735,$A734
+    Data.c $A736,$A736,$A737,$A736
+    Data.c $A737,$A736,$A737,$A736
+    Data.c $A738,$A738,$A739,$A738
+    Data.c $A739,$A738,$A739,$A738
+    Data.c $A73A,$A73A,$A73B,$A73A
+    Data.c $A73B,$A73A,$A73B,$A73A
+    Data.c $A73C,$A73C,$A73D,$A73C
+    Data.c $A73D,$A73C,$A73D,$A73C
+    Data.c $A73E,$A73E,$A73F,$A73E
+    Data.c $A73F,$A73E,$A73F,$A73E
+    Data.c $A740,$A740,$A741,$A740
+    Data.c $A741,$A740,$A741,$A740
+    Data.c $A742,$A742,$A743,$A742
+    Data.c $A743,$A742,$A743,$A742
+    Data.c $A744,$A744,$A745,$A744
+    Data.c $A745,$A744,$A745,$A744
+    Data.c $A746,$A746,$A747,$A746
+    Data.c $A747,$A746,$A747,$A746
+    Data.c $A748,$A748,$A749,$A748
+    Data.c $A749,$A748,$A749,$A748
+    Data.c $A74A,$A74A,$A74B,$A74A
+    Data.c $A74B,$A74A,$A74B,$A74A
+    Data.c $A74C,$A74C,$A74D,$A74C
+    Data.c $A74D,$A74C,$A74D,$A74C
+    Data.c $A74E,$A74E,$A74F,$A74E
+    Data.c $A74F,$A74E,$A74F,$A74E
+    Data.c $A750,$A750,$A751,$A750
+    Data.c $A751,$A750,$A751,$A750
+    Data.c $A752,$A752,$A753,$A752
+    Data.c $A753,$A752,$A753,$A752
+    Data.c $A754,$A754,$A755,$A754
+    Data.c $A755,$A754,$A755,$A754
+    Data.c $A756,$A756,$A757,$A756
+    Data.c $A757,$A756,$A757,$A756
+    Data.c $A758,$A758,$A759,$A758
+    Data.c $A759,$A758,$A759,$A758
+    Data.c $A75A,$A75A,$A75B,$A75A
+    Data.c $A75B,$A75A,$A75B,$A75A
+    Data.c $A75C,$A75C,$A75D,$A75C
+    Data.c $A75D,$A75C,$A75D,$A75C
+    Data.c $A75E,$A75E,$A75F,$A75E
+    Data.c $A75F,$A75E,$A75F,$A75E
+    Data.c $A760,$A760,$A761,$A760
+    Data.c $A761,$A760,$A761,$A760
+    Data.c $A762,$A762,$A763,$A762
+    Data.c $A763,$A762,$A763,$A762
+    Data.c $A764,$A764,$A765,$A764
+    Data.c $A765,$A764,$A765,$A764
+    Data.c $A766,$A766,$A767,$A766
+    Data.c $A767,$A766,$A767,$A766
+    Data.c $A768,$A768,$A769,$A768
+    Data.c $A769,$A768,$A769,$A768
+    Data.c $A76A,$A76A,$A76B,$A76A
+    Data.c $A76B,$A76A,$A76B,$A76A
+    Data.c $A76C,$A76C,$A76D,$A76C
+    Data.c $A76D,$A76C,$A76D,$A76C
+    Data.c $A76E,$A76E,$A76F,$A76E
+    Data.c $A76F,$A76E,$A76F,$A76E
+    Data.c $A779,$A779,$A77A,$A779
+    Data.c $A77A,$A779,$A77A,$A779
+    Data.c $A77B,$A77B,$A77C,$A77B
+    Data.c $A77C,$A77B,$A77C,$A77B
+    Data.c $A77D,$A77D,$1D79,$A77D
+    Data.c $A77E,$A77E,$A77F,$A77E
+    Data.c $A77F,$A77E,$A77F,$A77E
+    Data.c $A780,$A780,$A781,$A780
+    Data.c $A781,$A780,$A781,$A780
+    Data.c $A782,$A782,$A783,$A782
+    Data.c $A783,$A782,$A783,$A782
+    Data.c $A784,$A784,$A785,$A784
+    Data.c $A785,$A784,$A785,$A784
+    Data.c $A786,$A786,$A787,$A786
+    Data.c $A787,$A786,$A787,$A786
+    Data.c $A78B,$A78B,$A78C,$A78B
+    Data.c $A78C,$A78B,$A78C,$A78B
+    Data.c $A78D,$A78D,$0265,$A78D
+    Data.c $A790,$A790,$A791,$A790
+    Data.c $A791,$A790,$A791,$A790
+    Data.c $A792,$A792,$A793,$A792
+    Data.c $A793,$A792,$A793,$A792
+    Data.c $A794,$A7C4,$A794,$A7C4
+    Data.c $A796,$A796,$A797,$A796
+    Data.c $A797,$A796,$A797,$A796
+    Data.c $A798,$A798,$A799,$A798
+    Data.c $A799,$A798,$A799,$A798
+    Data.c $A79A,$A79A,$A79B,$A79A
+    Data.c $A79B,$A79A,$A79B,$A79A
+    Data.c $A79C,$A79C,$A79D,$A79C
+    Data.c $A79D,$A79C,$A79D,$A79C
+    Data.c $A79E,$A79E,$A79F,$A79E
+    Data.c $A79F,$A79E,$A79F,$A79E
+    Data.c $A7A0,$A7A0,$A7A1,$A7A0
+    Data.c $A7A1,$A7A0,$A7A1,$A7A0
+    Data.c $A7A2,$A7A2,$A7A3,$A7A2
+    Data.c $A7A3,$A7A2,$A7A3,$A7A2
+    Data.c $A7A4,$A7A4,$A7A5,$A7A4
+    Data.c $A7A5,$A7A4,$A7A5,$A7A4
+    Data.c $A7A6,$A7A6,$A7A7,$A7A6
+    Data.c $A7A7,$A7A6,$A7A7,$A7A6
+    Data.c $A7A8,$A7A8,$A7A9,$A7A8
+    Data.c $A7A9,$A7A8,$A7A9,$A7A8
+    Data.c $A7AA,$A7AA,$0266,$A7AA
+    Data.c $A7AB,$A7AB,$025C,$A7AB
+    Data.c $A7AC,$A7AC,$0261,$A7AC
+    Data.c $A7AD,$A7AD,$026C,$A7AD
+    Data.c $A7AE,$A7AE,$026A,$A7AE
+    Data.c $A7B0,$A7B0,$029E,$A7B0
+    Data.c $A7B1,$A7B1,$0287,$A7B1
+    Data.c $A7B2,$A7B2,$029D,$A7B2
+    Data.c $A7B3,$A7B3,$AB53,$A7B3
+    Data.c $A7B4,$A7B4,$A7B5,$A7B4
+    Data.c $A7B5,$A7B4,$A7B5,$A7B4
+    Data.c $A7B6,$A7B6,$A7B7,$A7B6
+    Data.c $A7B7,$A7B6,$A7B7,$A7B6
+    Data.c $A7B8,$A7B8,$A7B9,$A7B8
+    Data.c $A7B9,$A7B8,$A7B9,$A7B8
+    Data.c $A7BA,$A7BA,$A7BB,$A7BA
+    Data.c $A7BB,$A7BA,$A7BB,$A7BA
+    Data.c $A7BC,$A7BC,$A7BD,$A7BC
+    Data.c $A7BD,$A7BC,$A7BD,$A7BC
+    Data.c $A7BE,$A7BE,$A7BF,$A7BE
+    Data.c $A7BF,$A7BE,$A7BF,$A7BE
+    Data.c $A7C0,$A7C0,$A7C1,$A7C0
+    Data.c $A7C1,$A7C0,$A7C1,$A7C0
+    Data.c $A7C2,$A7C2,$A7C3,$A7C2
+    Data.c $A7C3,$A7C2,$A7C3,$A7C2
+    Data.c $A7C4,$A7C4,$A794,$A7C4
+    Data.c $A7C5,$A7C5,$0282,$A7C5
+    Data.c $A7C6,$A7C6,$1D8E,$A7C6
+    Data.c $A7C7,$A7C7,$A7C8,$A7C7
+    Data.c $A7C8,$A7C7,$A7C8,$A7C7
+    Data.c $A7C9,$A7C9,$A7CA,$A7C9
+    Data.c $A7CA,$A7C9,$A7CA,$A7C9
+    Data.c $A7D0,$A7D0,$A7D1,$A7D0
+    Data.c $A7D1,$A7D0,$A7D1,$A7D0
+    Data.c $A7D6,$A7D6,$A7D7,$A7D6
+    Data.c $A7D7,$A7D6,$A7D7,$A7D6
+    Data.c $A7D8,$A7D8,$A7D9,$A7D8
+    Data.c $A7D9,$A7D8,$A7D9,$A7D8
+    Data.c $A7F5,$A7F5,$A7F6,$A7F5
+    Data.c $A7F6,$A7F5,$A7F6,$A7F5
+    Data.c $AB53,$A7B3,$AB53,$A7B3
+    Data.c $AB70,$13A0,$AB70,$13A0
+    Data.c $AB71,$13A1,$AB71,$13A1
+    Data.c $AB72,$13A2,$AB72,$13A2
+    Data.c $AB73,$13A3,$AB73,$13A3
+    Data.c $AB74,$13A4,$AB74,$13A4
+    Data.c $AB75,$13A5,$AB75,$13A5
+    Data.c $AB76,$13A6,$AB76,$13A6
+    Data.c $AB77,$13A7,$AB77,$13A7
+    Data.c $AB78,$13A8,$AB78,$13A8
+    Data.c $AB79,$13A9,$AB79,$13A9
+    Data.c $AB7A,$13AA,$AB7A,$13AA
+    Data.c $AB7B,$13AB,$AB7B,$13AB
+    Data.c $AB7C,$13AC,$AB7C,$13AC
+    Data.c $AB7D,$13AD,$AB7D,$13AD
+    Data.c $AB7E,$13AE,$AB7E,$13AE
+    Data.c $AB7F,$13AF,$AB7F,$13AF
+    Data.c $AB80,$13B0,$AB80,$13B0
+    Data.c $AB81,$13B1,$AB81,$13B1
+    Data.c $AB82,$13B2,$AB82,$13B2
+    Data.c $AB83,$13B3,$AB83,$13B3
+    Data.c $AB84,$13B4,$AB84,$13B4
+    Data.c $AB85,$13B5,$AB85,$13B5
+    Data.c $AB86,$13B6,$AB86,$13B6
+    Data.c $AB87,$13B7,$AB87,$13B7
+    Data.c $AB88,$13B8,$AB88,$13B8
+    Data.c $AB89,$13B9,$AB89,$13B9
+    Data.c $AB8A,$13BA,$AB8A,$13BA
+    Data.c $AB8B,$13BB,$AB8B,$13BB
+    Data.c $AB8C,$13BC,$AB8C,$13BC
+    Data.c $AB8D,$13BD,$AB8D,$13BD
+    Data.c $AB8E,$13BE,$AB8E,$13BE
+    Data.c $AB8F,$13BF,$AB8F,$13BF
+    Data.c $AB90,$13C0,$AB90,$13C0
+    Data.c $AB91,$13C1,$AB91,$13C1
+    Data.c $AB92,$13C2,$AB92,$13C2
+    Data.c $AB93,$13C3,$AB93,$13C3
+    Data.c $AB94,$13C4,$AB94,$13C4
+    Data.c $AB95,$13C5,$AB95,$13C5
+    Data.c $AB96,$13C6,$AB96,$13C6
+    Data.c $AB97,$13C7,$AB97,$13C7
+    Data.c $AB98,$13C8,$AB98,$13C8
+    Data.c $AB99,$13C9,$AB99,$13C9
+    Data.c $AB9A,$13CA,$AB9A,$13CA
+    Data.c $AB9B,$13CB,$AB9B,$13CB
+    Data.c $AB9C,$13CC,$AB9C,$13CC
+    Data.c $AB9D,$13CD,$AB9D,$13CD
+    Data.c $AB9E,$13CE,$AB9E,$13CE
+    Data.c $AB9F,$13CF,$AB9F,$13CF
+    Data.c $ABA0,$13D0,$ABA0,$13D0
+    Data.c $ABA1,$13D1,$ABA1,$13D1
+    Data.c $ABA2,$13D2,$ABA2,$13D2
+    Data.c $ABA3,$13D3,$ABA3,$13D3
+    Data.c $ABA4,$13D4,$ABA4,$13D4
+    Data.c $ABA5,$13D5,$ABA5,$13D5
+    Data.c $ABA6,$13D6,$ABA6,$13D6
+    Data.c $ABA7,$13D7,$ABA7,$13D7
+    Data.c $ABA8,$13D8,$ABA8,$13D8
+    Data.c $ABA9,$13D9,$ABA9,$13D9
+    Data.c $ABAA,$13DA,$ABAA,$13DA
+    Data.c $ABAB,$13DB,$ABAB,$13DB
+    Data.c $ABAC,$13DC,$ABAC,$13DC
+    Data.c $ABAD,$13DD,$ABAD,$13DD
+    Data.c $ABAE,$13DE,$ABAE,$13DE
+    Data.c $ABAF,$13DF,$ABAF,$13DF
+    Data.c $ABB0,$13E0,$ABB0,$13E0
+    Data.c $ABB1,$13E1,$ABB1,$13E1
+    Data.c $ABB2,$13E2,$ABB2,$13E2
+    Data.c $ABB3,$13E3,$ABB3,$13E3
+    Data.c $ABB4,$13E4,$ABB4,$13E4
+    Data.c $ABB5,$13E5,$ABB5,$13E5
+    Data.c $ABB6,$13E6,$ABB6,$13E6
+    Data.c $ABB7,$13E7,$ABB7,$13E7
+    Data.c $ABB8,$13E8,$ABB8,$13E8
+    Data.c $ABB9,$13E9,$ABB9,$13E9
+    Data.c $ABBA,$13EA,$ABBA,$13EA
+    Data.c $ABBB,$13EB,$ABBB,$13EB
+    Data.c $ABBC,$13EC,$ABBC,$13EC
+    Data.c $ABBD,$13ED,$ABBD,$13ED
+    Data.c $ABBE,$13EE,$ABBE,$13EE
+    Data.c $ABBF,$13EF,$ABBF,$13EF
+    Data.c $FF21,$FF21,$FF41,$FF21
+    Data.c $FF22,$FF22,$FF42,$FF22
+    Data.c $FF23,$FF23,$FF43,$FF23
+    Data.c $FF24,$FF24,$FF44,$FF24
+    Data.c $FF25,$FF25,$FF45,$FF25
+    Data.c $FF26,$FF26,$FF46,$FF26
+    Data.c $FF27,$FF27,$FF47,$FF27
+    Data.c $FF28,$FF28,$FF48,$FF28
+    Data.c $FF29,$FF29,$FF49,$FF29
+    Data.c $FF2A,$FF2A,$FF4A,$FF2A
+    Data.c $FF2B,$FF2B,$FF4B,$FF2B
+    Data.c $FF2C,$FF2C,$FF4C,$FF2C
+    Data.c $FF2D,$FF2D,$FF4D,$FF2D
+    Data.c $FF2E,$FF2E,$FF4E,$FF2E
+    Data.c $FF2F,$FF2F,$FF4F,$FF2F
+    Data.c $FF30,$FF30,$FF50,$FF30
+    Data.c $FF31,$FF31,$FF51,$FF31
+    Data.c $FF32,$FF32,$FF52,$FF32
+    Data.c $FF33,$FF33,$FF53,$FF33
+    Data.c $FF34,$FF34,$FF54,$FF34
+    Data.c $FF35,$FF35,$FF55,$FF35
+    Data.c $FF36,$FF36,$FF56,$FF36
+    Data.c $FF37,$FF37,$FF57,$FF37
+    Data.c $FF38,$FF38,$FF58,$FF38
+    Data.c $FF39,$FF39,$FF59,$FF39
+    Data.c $FF3A,$FF3A,$FF5A,$FF3A
+    Data.c $FF41,$FF21,$FF41,$FF21
+    Data.c $FF42,$FF22,$FF42,$FF22
+    Data.c $FF43,$FF23,$FF43,$FF23
+    Data.c $FF44,$FF24,$FF44,$FF24
+    Data.c $FF45,$FF25,$FF45,$FF25
+    Data.c $FF46,$FF26,$FF46,$FF26
+    Data.c $FF47,$FF27,$FF47,$FF27
+    Data.c $FF48,$FF28,$FF48,$FF28
+    Data.c $FF49,$FF29,$FF49,$FF29
+    Data.c $FF4A,$FF2A,$FF4A,$FF2A
+    Data.c $FF4B,$FF2B,$FF4B,$FF2B
+    Data.c $FF4C,$FF2C,$FF4C,$FF2C
+    Data.c $FF4D,$FF2D,$FF4D,$FF2D
+    Data.c $FF4E,$FF2E,$FF4E,$FF2E
+    Data.c $FF4F,$FF2F,$FF4F,$FF2F
+    Data.c $FF50,$FF30,$FF50,$FF30
+    Data.c $FF51,$FF31,$FF51,$FF31
+    Data.c $FF52,$FF32,$FF52,$FF32
+    Data.c $FF53,$FF33,$FF53,$FF33
+    Data.c $FF54,$FF34,$FF54,$FF34
+    Data.c $FF55,$FF35,$FF55,$FF35
+    Data.c $FF56,$FF36,$FF56,$FF36
+    Data.c $FF57,$FF37,$FF57,$FF37
+    Data.c $FF58,$FF38,$FF58,$FF38
+    Data.c $FF59,$FF39,$FF59,$FF39
+    Data.c $FF5A,$FF3A,$FF5A,$FF3A
+    Data.c $0000
   EndDataSection
-
+  
 EndModule
 
 ;- End Of Module
@@ -1293,38 +2548,38 @@ EndModule
 CompilerIf #PB_Compiler_IsMainFile
   
   UseModule CaseUnicode
- 
+  
   Debug "PB-LCase"
   t1.s = "ABCdef 0123456789, äöü, ÄÖÜ, áóú"
   r1.s = LCase(t1)
   Debug r1
- 
+  
   Debug "Uni-LCase"
   t1.s = "ABCdef 0123456789, äöü, ÄÖÜ, áóú"
   r1.s = LCaseW(t1)
   Debug r1
- 
+  
   Debug "PB-UCase"
   t1.s = "ABCdef 0123456789, äöü, ÄÖÜ, áóú"
   r1.s = UCase(t1)
   Debug r1
- 
+  
   Debug "Uni-UCase"
   t1.s = "ABCdef 0123456789, äöü, ÄÖÜ, áóú"
   r1.s = UCaseW(t1)
   Debug r1
- 
+  
   Debug "PB-FindString"
   Debug FindString(t1, "äÖ", 1, #PB_String_NoCase)
- 
+  
   Debug "Uni-FindString"
   Debug FindStringW(t1, "äÖ")
- 
+  
   Debug "Uni-ULCase"
   t1.s = "ABCdef 0123456789, äöü, ÄÖÜ, áóú"
   r1.s = ULCaseW(t1)
   Debug r1
- 
+  
   Debug "Uni-ULCase"
   t1.s = "h e l l o  w o r l d"
   r1.s = ULCaseW(t1)
