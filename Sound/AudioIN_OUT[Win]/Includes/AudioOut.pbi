@@ -2,7 +2,7 @@
 ;     
 ;     The MIT License (MIT)
 ;     
-;     Copyright (c) 2014  David Vogel
+;     Copyright (c) 2014-2020  David Vogel
 ;     
 ;     Permission is hereby granted, free of charge, To any person obtaining a copy
 ;     of this software And associated documentation files (the "Software"), To deal
@@ -21,6 +21,10 @@
 ;     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT Or OTHERWISE, ARISING FROM,
 ;     OUT OF Or IN CONNECTION With THE SOFTWARE Or THE USE Or OTHER DEALINGS IN THE
 ;     SOFTWARE.
+; 
+; Created by David Vogel (Dadido3)
+; http://github.com/Dadido3
+; http://D3nexus.de
 ; 
 ; Inspired by AudioIN by Chimorin (Bananenfreak)
 ;   See: http://www.purebasic.fr/german/viewtopic.php?f=8&t=28447
@@ -133,7 +137,7 @@ Module AudioOut
     Protected Text.s
     
     Text = Space(#MAXERRORLENGTH)
-    waveOutGetErrorText_(Last_Error, Text, #MAXERRORLENGTH)
+    waveOutGetErrorText_(Last_Error, @Text, #MAXERRORLENGTH)
     
     ProcedureReturn Text
   EndProcedure

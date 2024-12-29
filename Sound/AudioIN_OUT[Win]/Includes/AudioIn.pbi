@@ -2,7 +2,7 @@
 ;     
 ;     The MIT License (MIT)
 ;     
-;     Copyright (c) 2014  David Vogel
+;     Copyright (c) 2014-2020  David Vogel
 ;     
 ;     Permission is hereby granted, free of charge, To any person obtaining a copy
 ;     of this software And associated documentation files (the "Software"), To deal
@@ -24,6 +24,10 @@
 ; 
 ; Original version by Chimorin (Bananenfreak)
 ;   See: http://www.purebasic.fr/german/viewtopic.php?f=8&t=28447
+; 
+; Further developed by David Vogel (Dadido3)
+; http://github.com/Dadido3
+; http://D3nexus.de
 ; 
 ; ##################################################### Documentation ###############################################
 ; 
