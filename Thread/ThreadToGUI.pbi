@@ -7,7 +7,7 @@
 
 ; MIT License
 ; 
-; Copyright (c) 2016-2018 mk-soft
+; Copyright (c) 2016 mk-soft
 ; 
 ; Permission is hereby granted, free of charge, to any person obtaining a copy
 ; of this software and associated documentation files (the "Software"), to deal
@@ -31,9 +31,9 @@
 
 ; Comment: Thread To GUI
 ; Author : mk-soft
-; Version: v1.19
+; Version: v1.21.2
 ; Created: 16.07.2016
-; Updated: 21.05.2018
+; Updated: 30.12.2024
 ; Link En: http://www.purebasic.fr/english/viewtopic.php?f=12&t=66180
 ; Link De: http://www.purebasic.fr/german/viewtopic.php?f=8&t=29728
 
@@ -46,15 +46,16 @@ CompilerIf #PB_Compiler_Thread = 0
 CompilerEndIf
 
 DeclareModule ThreadToGUI
- 
+  
   ;-Public
- 
+  
   ;- Init
-  Declare   BindEventGUI(EventCustomValue = #PB_Event_FirstCustomValue)
-  Declare   UnBindEventGUI()
+  Declare BindEventGUI(EventCustomValue = #PB_Event_FirstCustomValue)
+  Declare UnBindEventGUI()
   ; Main
   Declare   DoWait()
   ; Windows
+  Declare   DoCloseWindow(Window)
   Declare   DoDisableWindow(Window, State)
   Declare   DoHideWindow(Window, State, Flags)
   Declare   DoSetActiveWindow(Window)
@@ -68,7 +69,7 @@ DeclareModule ThreadToGUI
   Declare   DoSetMenuItemText(Menu, MenuItem, Text.s)
   Declare   DoSetMenuTitleText(Menu, Index, Text.s)
   Declare   DoDisplayPopupMenu(Menu, WindowID, x = #PB_Ignore, y = #PB_Ignore)
- 
+  
   ; Gadgets
   Declare   DoAddGadgetColumn(Gadget, Position, Text.s, Width)
   Declare   DoAddGadgetItem(Gadget, Position, Text.s, ImageID = 0, Flags = #PB_Ignore)
@@ -111,44 +112,49 @@ DeclareModule ThreadToGUI
   Declare   DoClearClipboard()
   ; Requester
   Declare   DoMessageRequester(Title.s, Text.s, Flags=0)
- 
+  
   Declare.s DoOpenFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
-  Declare.s DoNextSelectedFileName()
-  Declare   DoSelectedFilePattern()
-         
+  Declare.s   DoNextSelectedFileName()
+  Declare     DoSelectedFilePattern()
+  
   Declare.s DoSaveFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition)
   Declare.s DoPathRequester(Title.s, InitialPath.s)
   Declare.s DoInputRequester(Title.s, Message.s, DefaultString.s, Flags=0)
   Declare   DoColorRequester(Color = $FFFFFF)
- 
+  
   Declare   DoFontRequester(FontName.s, FontSize, Flags, Color = 0, Style = 0)
-  Declare.s DoSelectedFontName()
-  Declare   DoSelectedFontSize()
-  Declare   DoSelectedFontColor()
-  Declare   DoSelectedFontStyle()
- 
+  Declare.s   DoSelectedFontName()
+  Declare     DoSelectedFontSize()
+  Declare     DoSelectedFontColor()
+  Declare     DoSelectedFontStyle()
+  
+  ; Timer
+  Declare   DoAddWindowTimer(Window, Timer, Timeout)
+  Declare   DoRemoveWindowTimer(Window, Timer)
+  
   ; SendEvent
-  Declare   SendEvent(Event, Window = 0, Object = 0, EventType = 0, pData = 0, Semaphore = 0)
-  Declare   SendEventData(*MyEvent)
-  Declare   DispatchEvent(*MyEvent, result)
- 
+  Declare SendEvent(Event, Window = 0, Object = 0, EventType = 0, pData = 0, Semaphore = 0)
+  Declare SendEventData(*MyEvent)
+  Declare DispatchEvent(*MyEvent, result)
+  
 EndDeclareModule
 
 ;- Begin Module
 
 Module ThreadToGUI
- 
+  
   EnableExplicit
- 
+  
   ;-- Const
   Enumeration Command ; Main
     #BeginOfMain
     #WaitOnSignal
     #EndOfMain
   EndEnumeration
- 
+  
   Enumeration Command ; Windows
     #BeginOfWindows
+    #CloseWindow
     #DisableWindow
     #HideWindow
     #SetActiveWindow
@@ -158,7 +164,7 @@ Module ThreadToGUI
     #SetWindowTitle
     #EndOfWindows
   EndEnumeration
- 
+  
   Enumeration Command ; Menus
     #BeginOfMenu
     #DisableMenuItem
@@ -168,7 +174,7 @@ Module ThreadToGUI
     #DisplayPopupMenu
     #EndOfMenu
   EndEnumeration
- 
+  
   Enumeration Command ; Gadgets
     #BeginOfGadgets
     #AddGadgetColumn
@@ -196,7 +202,7 @@ Module ThreadToGUI
     #GadgetToolTip
     #EndOfGadgets
   EndEnumeration
- 
+  
   Enumeration Command ; Statusbar
     #BeginOfStatusbar
     #StatusBarImage
@@ -204,21 +210,21 @@ Module ThreadToGUI
     #StatusBarText
     #EndOfStatusbar
   EndEnumeration
- 
+  
   Enumeration Command ; ToolBar
     #BeginOfToolbar
     #DisableToolBarButton
     #SetToolBarButtonState
     #EndOfToolbar
   EndEnumeration
- 
+  
   Enumeration Command ; Systray
     #BeginOfSystray
     #ChangeSysTrayIcon
     #SysTrayIconToolTip
     #EndOfSystray
   EndEnumeration
- 
+  
   Enumeration Command ; Clipboard
     #BeginOfClipboard
     #GetClipboardImage
@@ -228,7 +234,7 @@ Module ThreadToGUI
     #ClearClipboard
     #EndOfClipboard
   EndEnumeration
- 
+  
   Enumeration Command ; Requester
     #BeginOfRequester
     #MessageRequester
@@ -240,7 +246,14 @@ Module ThreadToGUI
     #FontRequester
     #EndOfRequester
   EndEnumeration
- 
+  
+  Enumeration Command ; Timer
+    #BeginOfTimer
+    #AddWindowTimer
+    #RemoveWindowTimer
+    #EndOfTimer
+  EndEnumeration
+  
   ;-- Structure DoCommand
   Structure udtParam
     Command.i
@@ -253,7 +266,7 @@ Module ThreadToGUI
     Param4.i
     Param5.i
   EndStructure
- 
+  
   Structure udtParamText
     Command.i
     Signal.i
@@ -266,7 +279,7 @@ Module ThreadToGUI
     Param5.i
     Text.s
   EndStructure
- 
+  
   Structure udtParamText2
     Command.i
     Signal.i
@@ -280,7 +293,7 @@ Module ThreadToGUI
     Text.s
     Text2.s
   EndStructure
- 
+  
   Structure udtParamText3
     Command.i
     Signal.i
@@ -295,41 +308,43 @@ Module ThreadToGUI
     Text2.s
     Text3.s
   EndStructure
- 
+  
   Structure udtParamAll Extends udtParamText3
   EndStructure
- 
+  
   ;-- Structure SendEvent
   Structure udtSendEvent
     Signal.i
     Result.i
     *pData
   EndStructure
- 
+  
   ;-- Global
   Global DoEvent
   Global LockMessageRequester = CreateMutex()
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Functions
- 
+  
   Procedure PostEventCB()
-   
+    
     Protected *data.udtParamAll
-   
+    
     *data = EventData()
     With *data
       Select \Command
         Case #WaitOnSignal
           ; Do nothing
-         
+          
         Case #BeginOfWindows To #EndOfWindows
           If IsWindow(\Object)
             Select \Command
+              Case #CloseWindow
+                CloseWindow(\Object)
               Case #DisableGadget
                 DisableWindow(\Object, \Param1)
-              Case #HideGadget
+              Case #HideWindow
                 HideWindow(\Object, \Param1, \Param2)
               Case #SetActiveGadget
                 SetActiveWindow(\Object)
@@ -343,7 +358,7 @@ Module ThreadToGUI
                 SetWindowTitle(\Object, \Text)
             EndSelect
           EndIf
-         
+          
         Case #BeginOfMenu To #EndOfMenu
           If IsMenu(\Object)
             Select \Command
@@ -361,10 +376,10 @@ Module ThreadToGUI
                   DisplayPopupMenu(\Object, \Param1)
                 Else
                   DisplayPopupMenu(\Object, \Param1, \Param2, \Param3)
-                EndIf 
+                EndIf
             EndSelect
           EndIf
-         
+          
         Case #BeginOfGadgets To #EndOfGadgets
           If IsGadget(\Object)
             Select \Command
@@ -427,7 +442,7 @@ Module ThreadToGUI
                 GadgetToolTip(\Object, \Text)
             EndSelect
           EndIf
-         
+          
         Case #BeginOfStatusbar To #EndOfStatusbar
           If IsStatusBar(\Object)
             Select \Command
@@ -439,7 +454,7 @@ Module ThreadToGUI
                 StatusBarText(\Object, \Param1, \Text, \Param3)
             EndSelect
           EndIf
-         
+          
         Case #BeginOfToolbar To #EndOfToolbar
           If IsToolBar(\Object)
             Select \Command
@@ -449,7 +464,7 @@ Module ThreadToGUI
                 SetToolBarButtonState(\Object, \Param1, \Param2)
             EndSelect
           EndIf
-         
+          
         Case #BeginOfSystray To #EndOfSystray
           If IsSysTrayIcon(\Object)
             Select \Command
@@ -459,7 +474,7 @@ Module ThreadToGUI
                 SysTrayIconToolTip(\Object, \Text)
             EndSelect
           EndIf
-         
+          
         Case #BeginOfClipboard To #EndOfClipboard
           Select \Command
             Case #GetClipboardImage
@@ -473,7 +488,7 @@ Module ThreadToGUI
             Case #ClearClipboard
               ClearClipboard()
           EndSelect
-         
+          
         Case #BeginOfRequester To #EndOfRequester
           Select \Command
             Case #MessageRequester
@@ -510,46 +525,54 @@ Module ThreadToGUI
                 \Param5 = SelectedFontStyle()
               EndIf
           EndSelect
-         
+          
+        Case #BeginOfTimer To #EndOfTimer
+          Select \Command
+            Case #AddWindowTimer
+              AddWindowTimer(\Object, \Param1, \Param2)
+            Case #RemoveWindowTimer
+              RemoveWindowTimer(\Object, \Param1)
+          EndSelect
+          
       EndSelect
-     
+      
       If \Signal
         SignalSemaphore(\Signal)
       Else
         FreeStructure(*data)
       EndIf
-     
+      
     EndWith
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;- Public
- 
+  
   Procedure BindEventGUI(EventCustomValue = #PB_Event_FirstCustomValue)
     If Not DoEvent
       BindEvent(EventCustomValue, @PostEventCB())
       DoEvent = EventCustomValue
     EndIf
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure UnbindEventGUI()
     If DoEvent
       UnbindEvent(DoEvent, @PostEventCB())
       DoEvent = 0
     EndIf
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Speziale main command
- 
+  
   Procedure DoWait()
     Protected *data.udtParam, signal, result
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -568,14 +591,33 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Windows commands
- 
+  
+  Procedure DoCloseWindow(Window)
+    Protected *data.udtParam
+    
+    If Not DoEvent : ProcedureReturn 0 : EndIf
+    With *data
+      *data = AllocateStructure(udtParam)
+      If *data
+        \Command = #CloseWindow
+        \Object = Window
+        PostEvent(DoEvent, 0, 0, 0, *data)
+        ProcedureReturn 1
+      Else
+        ProcedureReturn 0
+      EndIf
+    EndWith
+  EndProcedure
+  
+  ; -----------------------------------------------------------------------------------
+  
   Procedure DoDisableWindow(Window, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -590,12 +632,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoHideWindow(Window, State, Flags)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -611,12 +653,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetActiveWindow(Window)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -630,12 +672,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetWindowColor(Window, Color)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -650,12 +692,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetWindowData(Window, Value)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -670,12 +712,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetWindowState(Window, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -690,12 +732,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetWindowTitle(Window, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -710,14 +752,14 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Menu commands
- 
+  
   Procedure DoDisableMenuItem(Menu, MenuItem, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -733,12 +775,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetMenuItemState(Menu, MenuItem, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -754,12 +796,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetMenuItemText(Menu, MenuItem, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -775,12 +817,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetMenuTitleText(Menu, Index, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -796,12 +838,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoDisplayPopupMenu(Menu, WindowID, x = #PB_Ignore, y = #PB_Ignore)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -818,14 +860,14 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Gadget commands
- 
+  
   Procedure DoAddGadgetColumn(Gadget, Position, Text.s, Width)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -842,12 +884,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoAddGadgetItem(Gadget, Position, Text.s, ImageID = 0, Flags = #PB_Ignore)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -865,12 +907,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoClearGadgetItems(Gadget)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -884,12 +926,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoClearGadgetColumns(Gadget)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -903,12 +945,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoDisableGadget(Gadget, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -923,12 +965,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoHideGadget(Gadget, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -943,12 +985,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetActiveGadget(Gadget)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -962,12 +1004,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetAttribute(Gadget, Attribute, Value)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -983,12 +1025,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetColor(Gadget, ColorType, Color)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1004,12 +1046,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetData(Gadget, Value)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1024,12 +1066,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetFont(Gadget, FontID)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1044,12 +1086,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemAttribute(Gadget, Item, Attribute, Value, Column = 0)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1067,12 +1109,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemColor(Gadget, Item, ColorType, Color, Column = 0)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1090,12 +1132,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemData(Gadget, Item, Value)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1111,12 +1153,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemImage(Gadget, Item, ImageID)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1132,12 +1174,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemState(Gadget, Position, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1153,12 +1195,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetItemText(Gadget, Position, Text.s, Column = 0)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1175,12 +1217,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetState(Gadget, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1195,12 +1237,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetGadgetText(Gadget, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1215,12 +1257,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoResizeGadget(Gadget, x, y, Width, Height)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1238,12 +1280,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoRemoveGadgetColumn(Gadget, Column)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1258,12 +1300,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoRemoveGadgetItem(Gadget, Position)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1278,14 +1320,14 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoGadgetToolTip(Gadget, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParamText)
     With *data
       \Command = #GadgetToolTip
@@ -1293,20 +1335,20 @@ Module ThreadToGUI
       \Text = Text
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Statusbar commands
- 
+  
   Procedure DoStatusBarImage(StatusBar, Field, ImageID, Appearance = 0)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParam)
     With *data
       \Command = #StatusBarImage
@@ -1316,18 +1358,18 @@ Module ThreadToGUI
       \Param3 = Appearance
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoStatusBarProgress(StatusBar, Field, Value, Appearance = 0, Min = #PB_Ignore, Max = #PB_Ignore)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParam)
     With *data
       \Command = #StatusBarProgress
@@ -1339,18 +1381,18 @@ Module ThreadToGUI
       \Param5 = Max
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoStatusBarText(StatusBar, Field, Text.s, Appearance = 0)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParamText)
     With *data
       \Command = #StatusBarText
@@ -1360,20 +1402,20 @@ Module ThreadToGUI
       \Param3 = Appearance
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Toolbar commands
- 
+  
   Procedure DoDisableToolBarButton(ToolBar, ButtonID, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParam)
     With *data
       \Command = #DisableToolBarButton
@@ -1382,18 +1424,18 @@ Module ThreadToGUI
       \Param2 = State
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetToolBarButtonState(ToolBar, ButtonID, State)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
-   
+    
     *data = AllocateStructure(udtParam)
     With *data
       \Command = #SetToolBarButtonState
@@ -1402,18 +1444,18 @@ Module ThreadToGUI
       \Param2 = State
       PostEvent(DoEvent, 0, 0, 0, *data)
     EndWith
-   
+    
     ProcedureReturn 1
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Systray commands
- 
+  
   Procedure DoChangeSysTrayIcon(SysTrayIcon, ImageID)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1428,12 +1470,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSysTrayIconToolTip(SysTrayIcon, Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1448,14 +1490,14 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Clipboard command
- 
+  
   Procedure DoGetClipboardImage(Image, Depth=24)
     Protected *data.udtParam, signal, result
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1474,12 +1516,12 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure.s DoGetClipboardText()
     Protected *data.udtParamText, signal, result.s
-   
+    
     If Not DoEvent : ProcedureReturn "" : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1496,12 +1538,12 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetClipboardImage(Image)
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1515,12 +1557,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoSetClipboardText(Text.s)
     Protected *data.udtParamText
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1534,12 +1576,12 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoClearClipboard()
     Protected *data.udtParam
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       If *data
@@ -1552,14 +1594,14 @@ Module ThreadToGUI
       EndIf
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   ;-- Requester
- 
+  
   Procedure DoMessageRequester(Title.s, Text.s, Flags=0)
     Protected *data.udtParamText2, signal, result
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText2)
@@ -1583,15 +1625,15 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Threaded NewList SelectedFileName.s()
   Threaded __SelectedFilePattern.i
- 
+  
   Procedure.s DoOpenFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition, Flags=0)
     Protected *data.udtParamText3, signal, result.s, cnt, index, filename.s
-   
+    
     If Not DoEvent : ProcedureReturn "" : EndIf
     With *data
       *data = AllocateStructure(udtParamText3)
@@ -1628,9 +1670,9 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- 
+  
   Procedure.s DoNextSelectedFileName()
     Protected result.s
     If NextElement(SelectedFileName())
@@ -1641,16 +1683,16 @@ Module ThreadToGUI
     EndIf
     ProcedureReturn result
   EndProcedure
- 
+  
   Procedure DoSelectedFilePattern()
     ProcedureReturn __SelectedFilePattern
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure.s DoSaveFileRequester(Title.s, DefaultFile.s, Pattern.s, PatterPosition)
     Protected *data.udtParamText3, signal, result.s
-   
+    
     If Not DoEvent : ProcedureReturn "" : EndIf
     With *data
       *data = AllocateStructure(udtParamText3)
@@ -1673,12 +1715,12 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure.s DoPathRequester(Title.s, InitialPath.s)
     Protected *data.udtParamText2, signal, result.s
-   
+    
     If Not DoEvent : ProcedureReturn "" : EndIf
     With *data
       *data = AllocateStructure(udtParamText2)
@@ -1699,12 +1741,12 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure.s DoInputRequester(Title.s, Message.s, DefaultString.s, Flags=0)
     Protected *data.udtParamText3, signal, result.s
-   
+    
     If Not DoEvent : ProcedureReturn "" : EndIf
     With *data
       *data = AllocateStructure(udtParamText3)
@@ -1727,12 +1769,12 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DoColorRequester(Color = $FFFFFF)
     Protected *data.udtParam, signal, result
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParam)
@@ -1752,21 +1794,21 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Structure udtSelectedFont
     Name.s
     Size.i
     Color.i
     Style.i
   EndStructure
- 
+  
   Threaded SelectedFont.udtSelectedFont
- 
+  
   Procedure DoFontRequester(FontName.s, FontSize, Flags, Color = 0, Style = 0)
     Protected *data.udtParamText, signal, result
-   
+    
     If Not DoEvent : ProcedureReturn 0 : EndIf
     With *data
       *data = AllocateStructure(udtParamText)
@@ -1796,34 +1838,75 @@ Module ThreadToGUI
       ProcedureReturn result
     EndWith
   EndProcedure
- 
+  
   ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- 
+  
   Procedure.s DoSelectedFontName()
     ProcedureReturn SelectedFont\Name
   EndProcedure
- 
+  
   Procedure DoSelectedFontSize()
     ProcedureReturn SelectedFont\Size
   EndProcedure
- 
+  
   Procedure DoSelectedFontColor()
     ProcedureReturn SelectedFont\Color
   EndProcedure
- 
+  
   Procedure DoSelectedFontStyle()
     ProcedureReturn SelectedFont\Style
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
+  ;-- Timer commands
+  
+  Procedure DoAddWindowTimer(Window, Timer, Timeout)
+    Protected *data.udtParam
+    
+    If Not DoEvent : ProcedureReturn 0 : EndIf
+    
+    *data = AllocateStructure(udtParam)
+    With *data
+      \Command = #AddWindowTimer
+      \Object = Window
+      \Param1 = Timer
+      \Param2 = Timeout
+      PostEvent(DoEvent, 0, 0, 0, *data)
+    EndWith
+    
+    ProcedureReturn 1
+    
+  EndProcedure
+  
+  ; -----------------------------------------------------------------------------------
+  
+  Procedure DoRemoveWindowTimer(Window, Timer)
+    Protected *data.udtParam
+    
+    If Not DoEvent : ProcedureReturn 0 : EndIf
+    
+    *data = AllocateStructure(udtParam)
+    With *data
+      \Command = #RemoveWindowTimer
+      \Object = Window
+      \Param1 = Timer
+      PostEvent(DoEvent, 0, 0, 0, *data)
+    EndWith
+    
+    ProcedureReturn 1
+    
+  EndProcedure
+  
+  ; -----------------------------------------------------------------------------------
+  
   ; *************************************************************************************
- 
+  
   ;-- SendEvent commands
- 
+  
   Procedure SendEvent(Event, Window = 0, Object = 0, EventType = 0, pData = 0, Semaphore = 0)
     Protected MyEvent.udtSendEvent, result
-   
+    
     With MyEvent
       If Semaphore
         \Signal = Semaphore
@@ -1838,26 +1921,26 @@ Module ThreadToGUI
         FreeSemaphore(\Signal)
       EndIf
     EndWith
-   
+    
     ProcedureReturn result
-   
+    
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure SendEventData(*MyEvent.udtSendEvent)
     ProcedureReturn *MyEvent\pData
   EndProcedure
- 
+  
   ; -----------------------------------------------------------------------------------
- 
+  
   Procedure DispatchEvent(*MyEvent.udtSendEvent, result)
     *MyEvent\Result = result
     SignalSemaphore(*MyEvent\Signal)
   EndProcedure
- 
+  
   ; *************************************************************************************
- 
+  
 EndModule
 
 ;- End Module
